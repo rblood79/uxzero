@@ -1,0 +1,74 @@
+* {
+  box-sizing: border-box;
+}
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /*min-width: 1200px;*/
+  min-height: 100%;
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.notSupport{
+  display: flex;
+  flex: 1;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+#root {
+  min-height: 100%;
+  height: 100%;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+button {
+  /*height: 48px !important;*/
+  font-family: 'Noto Sans KR', sans-serif;
+  cursor: pointer;
+}
+.button, .buttonLeft, .buttonRight {
+  outline: 0;
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  background-color: #0067B8;
+  color: #fff;
+  width: 100%;
+  height: 46px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-family: 'Noto Sans KR', sans-serif;
+  cursor: pointer;
+}
+input {
+  font-size: 16px;
+}
+label {
+  cursor: pointer;
+}
+
+.button:disabled {
+  background-color: #efefef;
+  color: #999;
+  text-shadow: none;
+}
+
+.button:focus {
+  border: 1px solid rgba(0, 0, 0, 0.48);
+}
