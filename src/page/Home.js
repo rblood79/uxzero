@@ -31,15 +31,12 @@ const App = (props) => {
     } else {
       //setNumber('접속이 원활하지 않습니다')
     }
-
-
   }
+  
 
   useEffect(() => {
-    //console.log(props)
     setNumber(null)
     setPw(null)
-    //setArmy(null)
     setUser(null)
   }, [setUser])
 
@@ -57,7 +54,6 @@ const App = (props) => {
         </div>
         <div>
           <div className='armyWrap'>
-            <form>
               <div className={'input'}>
                 <input className={'id'} type='text' maxLength={12} placeholder="아이디" onChange={({ target: { value } }) => {
                   setNumber(value)
@@ -70,7 +66,6 @@ const App = (props) => {
                 <button className='passView' onClick={() => { setView(view ? false : true) }}><i className={view ? "ri-eye-off-line" : "ri-eye-line"}></i></button>
                 <span className={'vali'}>{number === null && pw === null ? '아이디와 비밀번호는 관리자에게 문의하세요' : number === 'fail' ? '올바른 아이디가 아닙니다' : pw === 'fail' ? '비밀번호를 입력하세요' : pw === 'same' && '비밀번호가 일치하지 않습니다'}</span>
               </div>
-            </form>
           </div>
           <div className='controll'>
 
