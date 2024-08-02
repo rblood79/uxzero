@@ -156,8 +156,8 @@ const App = (props) => {
   };
 
   const onUpdate = async () => {
-    await updateDoc(doc(props.manage, id), {
-    //await setDoc(doc(props.manage, id), {
+    //await updateDoc(doc(props.manage, id), {
+    await setDoc(doc(props.manage, id), {
       ID: id,
       CHECKNUM: checknum,
       LEADER: leader,
