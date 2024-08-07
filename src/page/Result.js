@@ -4,7 +4,7 @@ import React, { useState, useEffect, useContext, useRef, useCallback, useMemo } 
 import context from '../component/Context';
 import { useHistory } from "react-router-dom";
 import { isMobile } from 'react-device-detect';
-import { doc, query, where, getDoc, getDocs, orderBy, deleteDoc } from 'firebase/firestore';
+import { doc, query, where, getDoc, orderBy, deleteDoc, onSnapshot } from 'firebase/firestore';
 import moment from "moment";
 
 const App = (props) => {
@@ -14,7 +14,12 @@ const App = (props) => {
   const { user } = state;
   const [data, setData] = useState([]);
   const [result, setResult] = useState([]);
+  const [startYear, setStartYear] = useState('all');
+  const [endYear, setEndYear] = useState('all');
+
   const tableRef = useRef();
+
+  const yearArray = ["2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030", "2031", "2032", "2033", "2034"];
 
   const style = {
     table: {
@@ -62,12 +67,15 @@ const App = (props) => {
       },
       tdRed: {
         background: "#D01414",
+        borderBottom: isMobile ? "1px solid rgba(0,0,0,0.3)" : "0.5pt solid rgba(0,0,0,0.3)",
       },
       tdGreen: {
         background: "#20D067",
+        borderBottom: isMobile ? "1px solid rgba(0,0,0,0.3)" : "0.5pt solid rgba(0,0,0,0.3)",
       },
       tdYellow: {
         background: "#EFD214",
+        borderBottom: isMobile ? "1px solid rgba(0,0,0,0.3)" : "0.5pt solid rgba(0,0,0,0.3)",
       },
       tdNormal: {
         background: "#efefef",
@@ -100,7 +108,7 @@ const App = (props) => {
           <td rowSpan={rspan} style={style.table.td}>{item.ENDCOMPRESULT}</td>
           <td rowSpan={rspan} style={style.table.td}>{item.STARTYEAR}</td>
           <td rowSpan={rspan} style={style.table.td}>{item.STARTRESULT}</td>
-          <td rowSpan={rspan} style={style.table.td}>{item.ENDCOMPYEAR}</td>
+          <td rowSpan={rspan} style={style.table.td}>{item.ENDYEAR}</td>
           <td rowSpan={rspan} style={style.table.td}>{item.ENDRESULT}</td>
           <td rowSpan={rspan} style={style.table.td}>{item.RESULT}</td>
           <td rowSpan={rspan} style={item.COLOR === 'red' ? style.table.tdRed : item.COLOR === 'green' ? style.table.tdGreen : item.COLOR === 'yellow' ? style.table.tdYellow : style.table.tdNormal}></td>
@@ -160,19 +168,9 @@ const App = (props) => {
     setColor('all');
     setResult(data);
   }*/
-  const onLoad = useCallback(async () => {
-    //console.log('onload--------------')
-    const manageDoc = [];
-    const q = query(props.manage, where("ID", "!=", ""), orderBy("ID", "desc"));
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      manageDoc.push({ id: doc.id, ...doc.data() });
-    });
-    setData(manageDoc);
-  }, [props.manage]);
+  
 
   useEffect(() => {
-    //console.log('data change', data)
     data && handleSearch();
   // eslint-disable-next-line no-use-before-define
   }, [data, handleSearch])
@@ -198,24 +196,32 @@ const App = (props) => {
     a.click();
   };
 
+  const onLoad = useCallback(async () => {
+    const q = query(props.manage, where("ID", "!=", ""), orderBy("ID", "desc"));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const manageDoc = [];
+      querySnapshot.forEach((doc) => {
+        manageDoc.push({ ...doc.data(), id: doc.id });
+      });
+      setData(manageDoc);
+    });
+
+    // 컴포넌트 언마운트 시 리스너 해제
+    return () => unsubscribe();
+  }, [props.manage]);
+
+
   useEffect(() => {
     if (!user) {
       history.push('/');
     } else {
-      //onLoad();
-      const timer = setTimeout(() => {
-        onLoad();
-      }, 100);
-      return () => clearTimeout(timer);	// 타이머 클리어
+      const unsubscribe = onLoad();
+      if (typeof unsubscribe === 'function') {
+        return () => unsubscribe();  // Clean up on unmount
+      }
     }
-  }, [user, history, onLoad]);
+  }, [history, onLoad, user]);
 
-  /*useEffect(() => {
-    if (location.state && location.state.updated) {
-      onLoad();
-      history.replace({ state: {} });
-    }
-  }, [history, location, onLoad]);*/
 
   const [inputs, setInputs] = useState({
     regNum: "",
@@ -241,14 +247,15 @@ const App = (props) => {
       const isIndiMatch = !regIndi || o.INDI.includes(regIndi);
       const isLeaderMatch = !regLeader || o.LEADER.includes(regLeader);
       const isColorMatch = regColor === 'all' || o.COLOR === regColor;
+      const isDateMatch = (startYear === 'all' || (o.STARTCOMPYEAR >= startYear && o.STARTCOMPYEAR <= endYear)) && (endYear === 'all' || (o.STARTCOMPYEAR <= endYear));
+      const isDateMatch2 = (startYear === 'all' || (o.STARTYEAR >= startYear && o.STARTYEAR <= endYear)) && (endYear === 'all' || (o.STARTYEAR <= endYear));
 
-      return isNumMatch && isTitleMatch && isLeaderMatch && isColorMatch && isIndiMatch;
+      return isNumMatch && isTitleMatch && isLeaderMatch && isColorMatch && isIndiMatch && isDateMatch && isDateMatch2;
     });
-  }, [data, regNum, regTitle, regLeader, regColor, regIndi]);
+  }, [data, regNum, regTitle, regIndi, regLeader, regColor, startYear, endYear]);
 
   const handleSearch = useCallback(() => {
     setResult(memoizedResult);
-    //console.log('handleSearch end')
   }, [memoizedResult]);
 
   return (
@@ -278,6 +285,25 @@ const App = (props) => {
                 onChange={onChange}
                 value={regTitle}
               />
+            </div>
+            <div className='formWrap'>
+              <label className='label'>1차 완료평가기간</label>
+              <select onChange={(e) => { setStartYear(e.target.value) }} value={startYear}>
+                <option value="all">전체</option>
+                {yearArray.map((item) => (
+                  <option value={item} key={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+              <select onChange={(e) => { setEndYear(e.target.value) }} value={endYear}>
+              <option value="all">전체</option>
+                {yearArray.map((item) => (
+                  <option value={item} key={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className='formWrap'>
               <label className='label'>팀장</label>
@@ -368,7 +394,7 @@ const App = (props) => {
                 {
                 result.length > 0 ? result.map((item) => (
                   <ItemList key={item.ID + item.DATE} data={item} />
-                )) : <tr><td colSpan="22" style={style.table.tdE}>데이터가 없습니다</td></tr>
+                )) : <tr><td colSpan="22" style={style.table.tdE}></td></tr>
                 }
               </tbody>
             </table>

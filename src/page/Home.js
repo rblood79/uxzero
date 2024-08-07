@@ -53,6 +53,7 @@ const App = (props) => {
           </div>
         </div>
         <div>
+          <form onSubmit={(e)=>{e.preventDefault()}}>
           <div className='armyWrap'>
               <div className={'input'}>
                 <input className={'id'} type='text' maxLength={12} placeholder="아이디" onChange={({ target: { value } }) => {
@@ -68,12 +69,11 @@ const App = (props) => {
               </div>
           </div>
           <div className='controll'>
-
             <button className={'button'} onClick={() => {
               onCheck(number)
             }}>확인</button>
-
           </div>
+          </form>
         </div>
       </div>
     </div>
