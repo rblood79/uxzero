@@ -50,10 +50,10 @@ const App = (props) => {
     });
   };
 
-  const startCompResultArray = ["완료", "조건부완료", "중단", "연장"];
-  const endCompResultArray = ["완료", "조건부완료", "중단", "연장", "1차완료"];
+  const startCompResultArray = ["완료", "조건부완료", "중단", "연장","미평가"];
+  const endCompResultArray = ["완료", "조건부완료", "중단", "연장", "1차완료","미평가"];
   const startResultArray = ["인증", "인증(대상)", "인증(금상)", "인증(은상)", "인증(동상)", "인증(장려)", "미인증(중단)", "미인증(재도전)"];
-  const endResultArray = ["인증", "인증(대상)", "인증(금상)", "인증(은상)", "인증(동상)", "인증(장려)", "미인증(중단)"];
+  const endResultArray = ["인증", "인증(대상)", "인증(금상)", "인증(은상)", "인증(동상)", "인증(장려)", "미인증(중단)", "1차인증"];
   const yearArray = ["2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030", "2031", "2032", "2033", "2034"];
   const colorArray = ["red", "green", "yellow"];
 
@@ -196,7 +196,7 @@ const App = (props) => {
             <h3>단일입력</h3>
             <div className='formGroup'>
               <div className='formWrap'>
-                <label className='label'>관리번호</label>
+                <label className='label' htmlFor="id">관리번호</label>
                 <input
                   name="id"
                   placeholder="입력하세요(등록후 변경 불가합니다)"
@@ -206,7 +206,7 @@ const App = (props) => {
                 />
               </div>
               <div className='formWrap'>
-                <label className='label'>확인번호</label>
+                <label className='label' htmlFor="checknum">확인번호</label>
                 <input
                   name="checknum"
                   placeholder="입력하세요"
@@ -215,7 +215,7 @@ const App = (props) => {
                 />
               </div>
               <div className='formWrap'>
-                <label className='label'>팀장</label>
+                <label className='label' htmlFor="leader">팀장</label>
                 <input
                   name="leader"
                   placeholder="입력하세요"
@@ -224,7 +224,7 @@ const App = (props) => {
                 />
               </div>
               <div className='formWrap'>
-                <label className='label'>과제명</label>
+                <label className='label' htmlFor="title">과제명</label>
                 <input
                   name="title"
                   placeholder="입력하세요"
@@ -255,7 +255,7 @@ const App = (props) => {
                 </select>
               </div>
               <div className='formWrap borderTop'>
-                <label className='label'>2차 완료평가연도</label>
+                <label className='label' htmlFor="endcompyear">2차 완료평가연도</label>
                 <input
                   name="endcompyear"
                   placeholder="입력하세요"
@@ -297,7 +297,7 @@ const App = (props) => {
                 </select>
               </div>
               <div className='formWrap borderTop'>
-                <label className='label'>2차 성과평가연도</label>
+                <label className='label' htmlFor="endyear">2차 성과평가연도</label>
                 <input
                   name="endyear"
                   placeholder="연도를 입력하세요"
@@ -317,7 +317,7 @@ const App = (props) => {
                 </select>
               </div>
               <div className='formWrap borderTop'>
-                <label className='label'>재무성과(원)</label>
+                <label className='label' htmlFor="result">재무성과(원)</label>
                 <input
                   name="result"
                   placeholder="성과를 입력하세요"
@@ -326,7 +326,7 @@ const App = (props) => {
                 />
               </div>
               <div className='formWrap borderTop'>
-                <label className='label'>사후관리</label>
+                <label className='label'>사후관리상태</label>
                 <select onChange={(e) => { setColor(e.target.value) }} value={color ? color : "default"}>
                   <option value="default" disabled>선택하세요</option>
                   {colorArray.map((item) => (
@@ -340,7 +340,7 @@ const App = (props) => {
             <h3>다중입력</h3>
             <div className='formGroup'>
               <div className='formWrap'>
-                <label className='label'>관리지표</label>
+                <label className='label' htmlFor="indi">관리지표</label>
                 <textarea
                   name="indi"
                   placeholder="입력하세요"
@@ -350,7 +350,7 @@ const App = (props) => {
                 ></textarea>
               </div>
               <div className='formWrap'>
-                <label className='label'>단위</label>
+                <label className='label' htmlFor="unit">단위</label>
                 <textarea
                   name="unit"
                   placeholder="입력하세요"
@@ -360,7 +360,7 @@ const App = (props) => {
                 ></textarea>
               </div>
               <div className='formWrap'>
-                <label className='label'>수치</label>
+                <label className='label' htmlFor="datay0">수치</label>
                 <textarea
                   name="datay0"
                   placeholder="입력하세요"
@@ -370,7 +370,7 @@ const App = (props) => {
                 ></textarea>
               </div>
               <div className='formWrap'>
-                <label className='label'>Y+1</label>
+                <label className='label' htmlFor="datay1">Y+1</label>
                 <textarea
                   name="datay1"
                   placeholder="입력하세요"
@@ -380,7 +380,7 @@ const App = (props) => {
                 ></textarea>
               </div>
               <div className='formWrap borderTop'>
-                <label className='label'>Y+2</label>
+                <label className='label' htmlFor="datay2">Y+2</label>
                 <textarea
                   name="datay2"
                   placeholder="입력하세요"
@@ -390,7 +390,7 @@ const App = (props) => {
                 ></textarea>
               </div>
               <div className='formWrap borderTop'>
-                <label className='label'>Y+3</label>
+                <label className='label' htmlFor="datay3">Y+3</label>
                 <textarea
                   name="datay3"
                   placeholder="입력하세요"
@@ -400,7 +400,7 @@ const App = (props) => {
                 ></textarea>
               </div>
               <div className='formWrap borderTop'>
-                <label className='label'>Y+4</label>
+                <label className='label' htmlFor="datay4">Y+4</label>
                 <textarea
                   name="datay4"
                   placeholder="입력하세요"
@@ -410,7 +410,7 @@ const App = (props) => {
                 ></textarea>
               </div>
               <div className='formWrap borderTop'>
-                <label className='label'>Y+5</label>
+                <label className='label' htmlFor="datay5">Y+5</label>
                 <textarea
                   name="datay5"
                   placeholder="입력하세요"

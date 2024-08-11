@@ -16,7 +16,7 @@ const App = (props) => {
   return (
     <header className="head">
       <nav className='nav sub'>
-        <div className='headTitle'><img src={logo} alt='MND'/><span>과제관리프로그램</span></div>
+        <div className='headTitle'><img src={logo} alt='MND'/><span>과제관리대장</span></div>
         <div className='navRes'>
           <NavLink className='navButton' exact to="/result"><i className="ri-todo-line"></i>과제목록</NavLink>
           <NavLink className='navButton' exact to="/form"><i className="ri-pencil-line"></i>과제등록</NavLink>

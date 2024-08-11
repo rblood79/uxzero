@@ -1,11 +1,13 @@
+
 import _ from 'lodash';
 import 'remixicon/fonts/remixicon.css'
 import React, { useState, useEffect, useContext, useRef, useCallback, useMemo } from 'react';
 import context from '../component/Context';
 import { useHistory } from "react-router-dom";
 import { isMobile } from 'react-device-detect';
-import { doc, query, where, getDoc, orderBy, deleteDoc, onSnapshot } from 'firebase/firestore';
+import { query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import moment from "moment";
+
 
 const App = (props) => {
   const history = useHistory();
@@ -17,9 +19,24 @@ const App = (props) => {
   const [startYear, setStartYear] = useState('all');
   const [endYear, setEndYear] = useState('all');
 
+  const [startcompresult, setStartcompresult] = useState('all');
+  const [endcompresult, setEndcompresult] = useState('all');
+
+  const [startResult, setStartResult] = useState('all');
+  const [endResult, setEndResult] = useState('all');
+
+  const [startResult2, setStartResult2] = useState('all');
+  const [endResult2, setEndResult2] = useState('all');
+
   const tableRef = useRef();
 
   const yearArray = ["2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030", "2031", "2032", "2033", "2034"];
+  const startCompResultArray = ["완료", "조건부완료", "중단", "연장", "미평가"];
+  const endCompResultArray = ["완료", "조건부완료", "중단", "연장", "1차완료","미평가"];
+
+  const startResultArray = ["인증", "인증(대상)", "인증(금상)", "인증(은상)", "인증(동상)", "인증(장려)", "미인증(중단)", "미인증(재도전)"];
+  const endResultArray = ["인증", "인증(대상)", "인증(금상)", "인증(은상)", "인증(동상)", "인증(장려)", "미인증(중단)", "1차인증"];
+
 
   const style = {
     table: {
@@ -120,7 +137,7 @@ const App = (props) => {
           <td style={style.table.td}>{d3Array[0]}</td>
           <td style={style.table.td}>{d4Array[0]}</td>
           <td style={style.table.td}>{d5Array[0]}</td>
-          {isMobile ? <td className='delTd' onClick={() => { test(item) }}><i className="ri-edit-circle-fill"></i></td> : <td className='delTd' onClick={() => { onDelete(item.ID) }}><i className="ri-close-circle-fill"></i></td>}
+          <td className='delTd' onClick={() => { onView(item) }}><i className="ri-arrow-right-circle-fill"></i></td>
         </tr>
         {indiArray.slice(1).map((indi, index) => (
           <tr key={`list${index + 1}`} onDoubleClick={() => !isMobile && test(item)}>
@@ -145,7 +162,14 @@ const App = (props) => {
     });
   };
 
-  const onDelete = async (id) => {
+  const onView = (e) => {
+    history.push({
+      pathname: '/view',
+      state: { userCell: e.ID }
+    });
+  };
+
+  /*const onDelete = async (id) => {
     await deleteDoc(doc(props.manage, id));
     onCheck(id);
   };
@@ -156,10 +180,9 @@ const App = (props) => {
     if (docSnap.exists()) {
       console.log('Document still exists!');
     } else {
-      //console.log('Document deleted');
       onLoad();
     }
-  };
+  };*/
 
   /*const onReset = () => {
     setInputs({
@@ -168,11 +191,11 @@ const App = (props) => {
     setColor('all');
     setResult(data);
   }*/
-  
+
 
   useEffect(() => {
     data && handleSearch();
-  // eslint-disable-next-line no-use-before-define
+    // eslint-disable-next-line no-use-before-define
   }, [data, handleSearch])
 
   const onDownload = async () => {
@@ -227,9 +250,10 @@ const App = (props) => {
     regNum: "",
     regTitle: "",
     regLeader: "",
-    regIndi: "",
+    regEndCompYear: "",
+    regEndYear: "",
   });
-  const { regNum, regTitle, regLeader, regIndi } = inputs;
+  const { regNum, regTitle, regLeader, regEndCompYear, regEndYear } = inputs;
   const [regColor, setColor] = useState('all');
 
   const onChange = (e) => {
@@ -244,19 +268,30 @@ const App = (props) => {
     return _.filter(data, function (o) {
       const isNumMatch = !regNum || o.ID.includes(regNum);
       const isTitleMatch = !regTitle || o.TITLE.includes(regTitle);
-      const isIndiMatch = !regIndi || o.INDI.includes(regIndi);
+      const isEndCompYearMatch = !regEndCompYear || o.ENDCOMPYEAR.includes(regEndCompYear);
       const isLeaderMatch = !regLeader || o.LEADER.includes(regLeader);
       const isColorMatch = regColor === 'all' || o.COLOR === regColor;
       const isDateMatch = (startYear === 'all' || (o.STARTCOMPYEAR >= startYear && o.STARTCOMPYEAR <= endYear)) && (endYear === 'all' || (o.STARTCOMPYEAR <= endYear));
-      const isDateMatch2 = (startYear === 'all' || (o.STARTYEAR >= startYear && o.STARTYEAR <= endYear)) && (endYear === 'all' || (o.STARTYEAR <= endYear));
+      const isStartCompResultMatch = startcompresult === 'all' || o.STARTCOMPRESULT === startcompresult;
+      const isEndCompResultMatch = endcompresult === 'all' || o.ENDCOMPRESULT === endcompresult;
+      const isDateMatch2 = (startResult === 'all' || (o.STARTYEAR >= startResult && o.STARTYEAR <= endResult)) && (endResult === 'all' || (o.STARTYEAR <= endResult));
 
-      return isNumMatch && isTitleMatch && isLeaderMatch && isColorMatch && isIndiMatch && isDateMatch && isDateMatch2;
+      const isStartResultMatch = startResult2 === 'all' || o.STARTRESULT === startResult2;
+      const isEndYearMatch = !regEndYear || o.ENDYEAR.includes(regEndYear);
+
+      const isEndResultMatch = endResult2 === 'all' || o.ENDRESULT === endResult2;
+
+      return isNumMatch && isTitleMatch && isLeaderMatch && isColorMatch && isEndCompYearMatch && isDateMatch && isStartCompResultMatch && isEndCompResultMatch && isDateMatch2 && isStartResultMatch && isEndYearMatch && isEndResultMatch;
     });
-  }, [data, regNum, regTitle, regIndi, regLeader, regColor, startYear, endYear]);
+  }, [data, regNum, regTitle, regEndCompYear, regLeader, regColor, startYear, endYear, startcompresult, endcompresult, startResult, endResult, startResult2, regEndYear, endResult2]);
 
   const handleSearch = useCallback(() => {
     setResult(memoizedResult);
   }, [memoizedResult]);
+
+  const onPrint = () => {
+    window.print();
+  }
 
   return (
     <div className='resultContainer'>
@@ -266,101 +301,186 @@ const App = (props) => {
           <div className='resultRight'>
           </div>
         </div>
+
         <div>
           <div className='searchForm'>
-            <div className='formWrap'>
-              <label className='label'>관리번호</label>
-              <input
-                name="regNum"
-                placeholder="관리번호"
-                onChange={onChange}
-                value={regNum}
-              />
+            <div className='searchGroup'>
+              <div className='formWrap'>
+                <label className='label' >팀장</label>
+                <input
+                  name="regLeader"
+                  placeholder="팀장"
+                  onChange={onChange}
+                  value={regLeader}
+                />
+              </div>
+              <div className='formWrap span2'>
+                <label className='label'>과제명</label>
+                <input
+                  name="regTitle"
+                  placeholder="과제명"
+                  onChange={onChange}
+                  value={regTitle}
+                />
+              </div>
+              <div className='formWrap'>
+                <label className='label'>1차 완료평가연도</label>
+                <select onChange={(e) => { setStartYear(e.target.value) }} value={startYear}>
+                  <option value="all">전체</option>
+                  {yearArray.map((item) => (
+                    <option value={item} key={item}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+                <span className='space'>~</span>
+                <select onChange={(e) => { setEndYear(e.target.value) }} value={endYear}>
+                  <option value="all">전체</option>
+                  {yearArray.map((item) => (
+                    <option value={item} key={item}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className='formWrap'>
+                <label className='label'>1차 완료평가결과</label>
+                <select onChange={(e) => { setStartcompresult(e.target.value) }} value={startcompresult}>
+                  <option value="all">전체</option>
+                  {startCompResultArray.map((item) => (
+                    <option value={item} key={item}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className='formWrap'>
+                <label className='label'>2차 완료평가연도</label>
+                <input
+                  name="regEndCompYear"
+                  placeholder="관리지표"
+                  onChange={onChange}
+                  value={regEndCompYear}
+                />
+              </div>
+
+              <div className='formWrap'>
+                <label className='label'>2차 완료평가결과</label>
+                <select onChange={(e) => { setEndcompresult(e.target.value) }} value={endcompresult}>
+                  <option value="all">전체</option>
+                  {endCompResultArray.map((item) => (
+                    <option value={item} key={item}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className='formWrap'>
+                <label className='label'>1차 성과평가연도</label>
+                <select onChange={(e) => { setStartResult(e.target.value) }} value={startResult}>
+                  <option value="all">전체</option>
+                  {yearArray.map((item) => (
+                    <option value={item} key={item}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+                <span className='space'>~</span>
+                <select onChange={(e) => { setEndResult(e.target.value) }} value={endResult}>
+                  <option value="all">전체</option>
+                  {yearArray.map((item) => (
+                    <option value={item} key={item}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className='formWrap'>
+                <label className='label'>1차 성과평가결과</label>
+                <select onChange={(e) => { setStartResult2(e.target.value) }} value={startResult2}>
+                  <option value="all">전체</option>
+                  {startResultArray.map((item) => (
+                    <option value={item} key={item}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className='formWrap'>
+                <label className='label'>2차 성과평가연도</label>
+                <input
+                  name="regEndYear"
+                  placeholder="관리번호"
+                  onChange={onChange}
+                  value={regEndYear}
+                />
+              </div>
+
+              <div className='formWrap'>
+                <label className='label'>2차 성과평가결과</label>
+                <select onChange={(e) => { setEndResult2(e.target.value) }} value={endResult2}>
+                  <option value="all">전체</option>
+                  {endResultArray.map((item) => (
+                    <option value={item} key={item}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className='formWrap'>
+                <label className='label'>사후관리상태</label>
+                <select onChange={(e) => { setColor(e.target.value) }} value={regColor}>
+                  <option value="all">전체</option>
+                  <option value="red">red</option>
+                  <option value="green">green</option>
+                  <option value="yellow">yellow</option>
+                </select>
+              </div>
+              
             </div>
-            <div className='formWrap'>
-              <label className='label'>과제명</label>
-              <input
-                name="regTitle"
-                placeholder="과제명"
-                onChange={onChange}
-                value={regTitle}
-              />
-            </div>
-            <div className='formWrap'>
-              <label className='label'>1차 완료평가기간</label>
-              <select onChange={(e) => { setStartYear(e.target.value) }} value={startYear}>
-                <option value="all">전체</option>
-                {yearArray.map((item) => (
-                  <option value={item} key={item}>
-                    {item}
-                  </option>
-                ))}
-              </select>
-              <select onChange={(e) => { setEndYear(e.target.value) }} value={endYear}>
-              <option value="all">전체</option>
-                {yearArray.map((item) => (
-                  <option value={item} key={item}>
-                    {item}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className='formWrap'>
-              <label className='label'>팀장</label>
-              <input
-                name="regLeader"
-                placeholder="팀장"
-                onChange={onChange}
-                value={regLeader}
-              />
-            </div>
-            <div className='formWrap'>
-              <label className='label'>관리지표</label>
-              <input
-                name="regIndi"
-                placeholder="관리지표"
-                onChange={onChange}
-                value={regIndi}
-              />
-            </div>
-            <div className='formWrap'>
-              <label className='label'>사후관리</label>
-              <select onChange={(e) => { setColor(e.target.value) }} value={regColor}>
-                <option value="all">전체</option>
-                <option value="red">red</option>
-                <option value="green">green</option>
-                <option value="yellow">yellow</option>
-              </select>
-            </div>
-            <button className="search" onClick={handleSearch}><i className="ri-search-line"></i></button>
-            {/*<button className="refresh" onClick={onReset}><i className="ri-refresh-line"></i></button>*/}
-            {!isMobile && <button className="search excel" onClick={onDownload}><i className="ri-file-excel-2-line"></i></button>}
           </div>
+          <div className='controll'>
+            <button className="button delete" onClick={handleSearch}>검색</button>
+            {/*<button className="refresh" onClick={onReset}><i className="ri-refresh-line"></i></button>*/}
+            {
+              !isMobile &&
+              <>
+                <button className="button excel" onClick={onDownload}>엑셀다운</button>
+                
+              </>
+            }
+            </div>
           <div className='tableContents'>
             <table ref={tableRef} style={style.table}>
               <colgroup>
                 <col width="70px" />
                 <col width="110px" />
                 <col width="50px" />
-                <col width="150px" />
-                <col width="60px" />
-                <col width="70px" />
-                <col width="70px" />
-                <col width="70px" />
-                <col width="70px" />
-                <col width="70px" />
-                <col width="70px" />
-                <col width="70px" />
-                <col width="80px" />
-                <col width="40px" />
                 <col width={isMobile ? "234px" : "auto"} />
+                <col width="54px" />
+                <col width="70px" />
+                <col width="70px" />
+                <col width="70px" />
+                <col width="54px" />
+                <col width="70px" />
+                <col width="70px" />
+                <col width="70px" />
+                <col width="70px" />
+                <col width="54px" />
+                <col width="170px" />
                 <col width="48px" />
-                <col width="84px" />
-                <col width="84px" />
-                <col width="84px" />
-                <col width="84px" />
-                <col width="84px" />
-                <col width="84px" />
+                <col width="54px" />
+                <col width="54px" />
+                <col width="54px" />
+                <col width="54px" />
+                <col width="54px" />
+                <col width="54px" />
                 <col width="0px" />
               </colgroup>
               <thead>
@@ -378,7 +498,7 @@ const App = (props) => {
                   <th style={style.table.th}>2차성과<br />평가연도</th>
                   <th style={style.table.th}>2차성과<br />평가결과</th>
                   <th style={style.table.th}>재무성과<br />(원)</th>
-                  <th style={style.table.th}>사후<br />관리</th>
+                  <th style={style.table.th}>사후<br />관리상태</th>
                   <th style={style.table.th}>관리지표</th>
                   <th style={style.table.th}>단위</th>
                   <th style={style.table.th}>수치</th>
@@ -392,9 +512,9 @@ const App = (props) => {
               </thead>
               <tbody>
                 {
-                result.length > 0 ? result.map((item) => (
-                  <ItemList key={item.ID + item.DATE} data={item} />
-                )) : <tr><td colSpan="22" style={style.table.tdE}></td></tr>
+                  result.length > 0 ? result.map((item) => (
+                    <ItemList key={item.ID + item.DATE} data={item} />
+                  )) : <tr><td colSpan="22" style={style.table.tdE}>등록된 자료가 없습니다</td></tr>
                 }
               </tbody>
             </table>

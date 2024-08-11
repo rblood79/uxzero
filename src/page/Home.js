@@ -47,7 +47,7 @@ const App = (props) => {
           <div className='visualText'>
             <div className='textGroup'>
               <span>과</span><span>제</span><span>관</span><span>리</span>
-              <span>프</span><span>로</span><span>그</span><span>램</span>
+              <span>대</span><span>장</span>
             </div>
             <img className='visualLogo' src={mnd} alt={'logo'} />
           </div>

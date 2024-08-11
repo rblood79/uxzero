@@ -12,6 +12,7 @@ import Foot from './component/Foot';
 import Home from './page/Home';
 import Form from './page/Form';
 import Result from './page/Result';
+import View from './page/View';
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
@@ -40,6 +41,7 @@ const App = (props) => {
   const state = useContext(context);
   const { user } = state;
 
+
   useEffect(() => {
     //console.log(props.location.pathname)
   }, [])
@@ -50,6 +52,7 @@ const App = (props) => {
         <Route exact path="/" render={() => <Home manage={manageRef}/>} />
         <Route path="/form" render={() => <Form manage={manageRef}/>} />
         <Route path="/result" render={() => <Result manage={manageRef}/>} />
+        <Route path="/view" render={() => <View manage={manageRef}/>} />
       </main>
       <Foot />
     </div>

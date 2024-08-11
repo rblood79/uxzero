@@ -97,6 +97,10 @@
 .tableContents {
   width: 100%;
   overflow-x: auto;
+  display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .delTd {
@@ -321,7 +325,7 @@
 
 .order {
   width: 100%;
-    max-width: 1870px;
+    max-width: 1840px;
     padding: 0 16px;
     display: flex;
     flex-direction: column;
@@ -484,6 +488,7 @@
   gap: 16px;
   z-index: 1;
   margin-top: 16px;
+  margin-bottom: 16px;
 }
 
 .controll .button{
@@ -590,8 +595,7 @@
 .nav.sub {
   justify-content: space-between;
   width: 100%;
-  min-width: 1870px;
-  max-width: 1870px;
+  max-width: 1840px;
   padding: 0 16px;
 }
 
@@ -760,8 +764,7 @@ tbody tr:hover td.delTd{
 
 .resultContainer {
   width: 100%;
-  min-width: 1870px;
-  max-width: 1870px;
+  max-width: 1840px;
   padding: 0 16px;
   display: flex;
   flex-direction: column;
@@ -801,14 +804,14 @@ tbody tr:hover td.delTd{
 
 .formGroup {
   display: grid;
-    grid-template-columns: repeat(4, auto);
-    grid-template-rows: repeat(4, auto);
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
     gap: 16px;
     gap: 0px;
     margin-bottom: 16px;
 }
 .formGroup:last-child {
-    grid-template-rows: repeat(2, auto);
+    grid-template-rows: repeat(2, 1fr);
     margin-bottom: 0;
 }
 
@@ -861,7 +864,34 @@ tbody tr:hover td.delTd{
 .searchForm {
   display: flex;
   border: 2px solid #000;
-  margin-bottom: 24px;
+  
+}
+
+.searchForm .searchGroup{
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+}
+
+.span2 {
+  grid-column: span 2;
+}
+
+.searchGroup .label {
+  width: 110px;
+}
+
+.searchGroup .formWrap select, .searchGroup .formWrap input {
+  border-left-width: 0;
+  border-right-width: 0;
+}
+
+.space{
+  display: flex;
+    align-items: center;
+    border-top: 1px solid #E0E0E0;
+    border-bottom: 1px solid #E0E0E0;
 }
 
 .refresh {
@@ -892,6 +922,10 @@ tbody tr:hover td.delTd{
   background: #107c41;
 }
 
+.print {
+  background: #4c4c4c;
+}
+
 .search i {
   font-size: 21px;
   color: #fff;
@@ -903,6 +937,10 @@ tbody tr:hover td.delTd{
 
 
 @media (max-width: 459.9px) {
+
+  .tableContents {
+      align-items:normal;
+  }
   .container {
     width: 100% !important;
   }
@@ -914,7 +952,7 @@ tbody tr:hover td.delTd{
     min-width: 100% !important;
     max-width: 100% !important;
   }
-  .formGroup {
+  .formGroup ,.searchGroup{
     grid-template-columns: auto !important;
     grid-template-rows: auto !important;
   }
@@ -953,23 +991,40 @@ tbody tr:hover td.delTd{
 }
 
 @media print {
-  header, footer, .refresh, .delTd {
+  header, footer, .refresh, .delTd, .controll, .resultHead, .searchForm {
     display: none !important;
   }
-  
+  .order {
+    padding: 0 !important;
+  }
   .users {
-    margin-top: 0px !important;
-    margin-bottom: 0px !important;
+    margin: 0px !important;
   }
 
   .resultContainer{
-    min-width: 1870px !important;
+    min-width: 100% !important;
     max-width: 100% !important;
   }
-
+  
   .print-show { display:block;}
-    .print-hide {display:none;}
-    @page {margin:0 1.3cm}
-    html {margin:1.3cm 0;}
+  .print-hide {display:none;}
+
+  
+  
+  html {margin:0cm;}
+
+  body{
+    background: #fff;
+    padding: 10mm;
+  }
+
+  @page {
+    size: auto A4 !important;
+  }
+
+  table {
+      width: 100% !important;
+      height: calc(297mm - 20mm) !important;
+  }
 
 }
