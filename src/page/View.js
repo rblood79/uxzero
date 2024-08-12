@@ -53,37 +53,58 @@ const App = (props) => {
             borderCollapse: "collapse",
             border: "2px solid #000",
             backgroundColor: "#fff",
-            fontSize: isMobile ? "11pt" : "14pt",
+            fontSize: isMobile ? "14px" : "12pt",
             tableLayout: "fixed",
             th: {
                 fontWeight: "600",
-                padding: "16px",
-                height: "92px",
-                minHeight: "92px",
+                padding: "4px 16px",
+                height: "68px",
                 wordBreak: "keep-all",
-                fontSize: isMobile ? "12pt" : "16pt",
-                textDecoration: "underline"
+                fontSize: isMobile ? "14px" : "14pt",
+                textDecoration: "underline",
+                textUnderlineOffset: "4px",
             },
             td: {
-                borderBottom: isMobile ? "1px solid #d3d3d3" : "0.5pt solid #d3d3d3",
-                fontWeight: "400",
-                padding: "6px 4px",
+                //borderBottom: isMobile ? "1px solid #d3d3d3" : "0.5pt solid #d3d3d3",
+                fontWeight: "600",
+                padding: "6px 16px",
                 height: "56px",
-                minHeight: "56px",
+                //minHeight: "56px",
                 wordBreak: "keep-all",
                 textAlign: "left",
                 letterSpacing: "1.2pt",
             },
-            tde: {
-                fontWeight: "400",
-                padding: "6px 4px",
+            tdT: {
+                borderTop: isMobile ? "2px solid #d3d3d3" : "1pt solid #d3d3d3",
+                fontWeight: "600",
+                padding: "6px 16px",
                 height: "56px",
-                minHeight: "56px",
+                //minHeight: "56px",
+                wordBreak: "keep-all",
+                textAlign: "left",
+                letterSpacing: "1.2pt",
+            },
+            tdL: {
+                borderRight: isMobile ? "2px solid #d3d3d3" : "1pt solid #d3d3d3",
+            },
+            tdR: {
+                borderLeft: isMobile ? "2px solid #d3d3d3" : "1pt solid #d3d3d3",
+            },
+            tdB: {
+                borderBottom: isMobile ? "2px solid #d3d3d3" : "1pt solid #d3d3d3",
+            },
+            tde: {
+                fontWeight: "600",
+                padding: "6px 42px",
+                height: "56px",
                 wordBreak: "keep-all",
                 textAlign: "left",
                 paddingLeft: "28px",
                 letterSpacing: "1.2pt",
             },
+            foot :{
+                height: isMobile ? "16px" : "24px",
+            }
         }
     };
 
@@ -124,21 +145,23 @@ const App = (props) => {
 
     const onPrint = () => {
         const style = document.createElement('style');
-        //style.type = 'text/css';
         style.media = 'print';
         style.innerHTML = `
-        body{
-          background: #fff;
-          padding: 10mm;
-        }
-        table {
-          height: calc(297mm - 20mm) !important;
-        }
-        @page {
-            size: portrait A4 !important;
-            margin: 0 !important;
-        }
-    `;
+            body{
+                background: #fff;
+                padding: 0mm;
+                height: 100% !important;
+            }
+                
+            table {
+                height: calc(297mm - 20mm) !important;
+
+            }
+            @page {
+                size: A4 portrait !important;
+                margin: 10mm !important;
+            }
+        `;
         // head 태그에 스타일을 추가합니다.
         document.head.appendChild(style);
         window.print();
@@ -157,9 +180,9 @@ const App = (props) => {
                     <div className='tableContents'>
                         <table ref={tableRef} style={style.table}>
                             <colgroup>
-                                <col width="24px" />
+                                <col width={isMobile ? "16px" : "24px"} />
                                 <col width="auto" />
-                                <col width="24px" />
+                                <col width={isMobile ? "16px" : "24px"} />
                             </colgroup>
                             <thead>
                                 <tr>
@@ -168,52 +191,55 @@ const App = (props) => {
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td></td><th style={style.table.td}>□ 관리번호&nbsp;:&nbsp;{id}</th><td></td>
+                                    <td style={style.table.tdL}></td><td style={style.table.tdT}>□ 관리번호&nbsp;:&nbsp;{id}</td><td style={style.table.tdR}></td>
                                 </tr>
                                 <tr>
-                                    <td></td><th style={style.table.td}>□ 확인번호&nbsp;:&nbsp;{checknum}</th><td></td>
+                                    <td style={style.table.tdL}></td><td style={style.table.td}>□ 확인번호&nbsp;:&nbsp;{checknum}</td><td style={style.table.tdR}></td>
                                 </tr>
                                 <tr>
-                                    <td></td><th style={style.table.td}>□ 팀장&nbsp;:&nbsp;{leader}</th><td></td>
+                                    <td style={style.table.tdL}></td><td style={style.table.td}>□ 팀장&nbsp;:&nbsp;{leader}</td><td style={style.table.tdR}></td>
                                 </tr>
                                 <tr>
-                                    <td></td><th style={style.table.td}>□ 1차완료 평가연도&nbsp;:&nbsp;{startcompyear}</th><td></td>
+                                    <td style={style.table.tdL}></td><td style={style.table.td}>□ 1차완료 평가연도&nbsp;:&nbsp;{startcompyear}</td><td style={style.table.tdR}></td>
                                 </tr>
                                 <tr>
-                                    <td></td><th style={style.table.td}>□ 1차완료 평가결과&nbsp;:&nbsp;{startcompresult}</th><td></td>
+                                    <td style={style.table.tdL}></td><td style={style.table.td}>□ 1차완료 평가결과&nbsp;:&nbsp;{startcompresult}</td><td style={style.table.tdR}></td>
                                 </tr>
                                 <tr>
-                                    <td></td><th style={style.table.td}>□ 2차완료 평가연도&nbsp;:&nbsp;{endcompyear}</th><td></td>
+                                    <td style={style.table.tdL}></td><td style={style.table.td}>□ 2차완료 평가연도&nbsp;:&nbsp;{endcompyear}</td><td style={style.table.tdR}></td>
                                 </tr>
                                 <tr>
-                                    <td></td><th style={style.table.td}>□ 2차완료 평가결과&nbsp;:&nbsp;{endcompresult}</th><td></td>
+                                    <td style={style.table.tdL}></td><td style={style.table.td}>□ 2차완료 평가결과&nbsp;:&nbsp;{endcompresult}</td><td style={style.table.tdR}></td>
                                 </tr>
                                 <tr>
-                                    <td></td><th style={style.table.td}>□ 1차 성과 평가연도&nbsp;:&nbsp;{startyear}</th><td></td>
+                                    <td style={style.table.tdL}></td><td style={style.table.td}>□ 1차 성과 평가연도&nbsp;:&nbsp;{startyear}</td><td style={style.table.tdR}></td>
                                 </tr>
                                 <tr>
-                                    <td></td><th style={style.table.td}>□ 1차 성과 평가결과&nbsp;:&nbsp;{startresult}</th><td></td>
+                                    <td style={style.table.tdL}></td><td style={style.table.td}>□ 1차 성과 평가결과&nbsp;:&nbsp;{startresult}</td><td style={style.table.tdR}></td>
                                 </tr>
                                 <tr>
-                                    <td></td><th style={style.table.td}>□ 2차 성과 평가연도&nbsp;:&nbsp;{endyear}</th><td></td>
+                                    <td style={style.table.tdL}></td><td style={style.table.td}>□ 2차 성과 평가연도&nbsp;:&nbsp;{endyear}</td><td style={style.table.tdR}></td>
                                 </tr>
                                 <tr>
-                                    <td></td><th style={style.table.td}>□ 2차 성과 평가결과&nbsp;:&nbsp;{endresult}</th><td></td>
+                                    <td style={style.table.tdL}></td><td style={style.table.td}>□ 2차 성과 평가결과&nbsp;:&nbsp;{endresult}</td><td style={style.table.tdR}></td>
                                 </tr>
                                 <tr>
-                                    <td></td><th style={style.table.td}>□ 재무성과(원)&nbsp;:&nbsp;{result}</th><td></td>
+                                    <td style={style.table.tdL}></td><td style={style.table.td}>□ 재무성과(원)&nbsp;:&nbsp;{result}</td><td style={style.table.tdR}></td>
                                 </tr>
                                 <tr>
-                                    <td></td><th style={style.table.td}>□ 관리지표&nbsp;:&nbsp;{indi[0]}</th><td></td>
+                                    <td style={style.table.tdL}></td><td style={style.table.td}>□ 관리지표&nbsp;:&nbsp;{indi[0]}</td><td style={style.table.tdR}></td>
                                 </tr>
                                 <tr>
-                                    <td></td><th style={style.table.tde}>○ 단위&nbsp;:&nbsp;{unit[0]}</th><td></td>
+                                    <td style={style.table.tdL}></td><td style={style.table.tde}>○ 단위&nbsp;:&nbsp;{unit[0]}</td><td style={style.table.tdR}></td>
                                 </tr>
                                 <tr>
-                                    <td></td><th style={style.table.tde}>○ 수치&nbsp;:&nbsp;{datay0[0]}</th><td></td>
+                                    <td style={style.table.tdL}></td><td style={style.table.tde}>○ 수치&nbsp;:&nbsp;{datay0[0]}</td><td style={style.table.tdR}></td>
                                 </tr>
                                 <tr>
-                                    <th colSpan={3}></th>
+                                    <td style={style.table.tdL}></td><td style={style.table.tdB}></td><td style={style.table.tdR}></td>
+                                </tr>
+                                <tr>
+                                    <th colSpan={3} style={style.table.foot}></th>
                                 </tr>
                             </tbody>
                         </table>

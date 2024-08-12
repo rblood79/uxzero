@@ -300,7 +300,6 @@ const App = (props) => {
 
   const onPrint = () => {
     const style = document.createElement('style');
-    //style.type = 'text/css';
     style.media = 'print';
     style.innerHTML = `
         body{
@@ -316,7 +315,7 @@ const App = (props) => {
           border-color: #333 !important;
         }
         @page {
-            size: landscape A3 !important;
+            size: A3 landscape !important;
             margin: 10mm !important;
         }
     `;
@@ -340,8 +339,9 @@ const App = (props) => {
           <div className='searchForm'>
             <div className='searchGroup'>
               <div className='formWrap'>
-                <label className='label' >팀장</label>
+                <label className='label' htmlFor='RL'>팀장</label>
                 <input
+                  id="RL"
                   name="regLeader"
                   placeholder=""
                   onChange={onChange}
@@ -349,8 +349,9 @@ const App = (props) => {
                 />
               </div>
               <div className='formWrap span2'>
-                <label className='label'>과제명</label>
+                <label className='label' htmlFor='RT'>과제명</label>
                 <input
+                  id='RT'
                   name="regTitle"
                   placeholder=""
                   onChange={onChange}
@@ -358,8 +359,8 @@ const App = (props) => {
                 />
               </div>
               <div className='formWrap'>
-                <label className='label'>1차 완료평가연도</label>
-                <select onChange={(e) => { setStartYear(e.target.value) }} value={startYear}>
+                <label className='label' htmlFor='SY'>1차 완료평가연도</label>
+                <select id="SY" onChange={(e) => { setStartYear(e.target.value) }} value={startYear}>
                   <option value="all">전체</option>
                   {yearArray.map((item) => (
                     <option value={item} key={item}>
@@ -368,7 +369,7 @@ const App = (props) => {
                   ))}
                 </select>
                 <span className='space'>~</span>
-                <select onChange={(e) => { setEndYear(e.target.value) }} value={endYear}>
+                <select id="EY" onChange={(e) => { setEndYear(e.target.value) }} value={endYear}>
                   <option value="all">전체</option>
                   {yearArray.map((item) => (
                     <option value={item} key={item}>
@@ -379,8 +380,8 @@ const App = (props) => {
               </div>
 
               <div className='formWrap'>
-                <label className='label'>1차 완료평가결과</label>
-                <select onChange={(e) => { setStartcompresult(e.target.value) }} value={startcompresult}>
+                <label className='label' htmlFor='SCR'>1차 완료평가결과</label>
+                <select id="SCR" onChange={(e) => { setStartcompresult(e.target.value) }} value={startcompresult}>
                   <option value="all">전체</option>
                   {startCompResultArray.map((item) => (
                     <option value={item} key={item}>
@@ -391,8 +392,9 @@ const App = (props) => {
               </div>
 
               <div className='formWrap borderTop'>
-                <label className='label'>2차 완료평가연도</label>
+                <label className='label' htmlFor='RECY'>2차 완료평가연도</label>
                 <input
+                  id='RECY'
                   name="regEndCompYear"
                   placeholder=""
                   onChange={onChange}
@@ -401,8 +403,8 @@ const App = (props) => {
               </div>
 
               <div className='formWrap borderTop'>
-                <label className='label'>2차 완료평가결과</label>
-                <select onChange={(e) => { setEndcompresult(e.target.value) }} value={endcompresult}>
+                <label className='label' htmlFor='ECR'>2차 완료평가결과</label>
+                <select id="ECR" onChange={(e) => { setEndcompresult(e.target.value) }} value={endcompresult}>
                   <option value="all">전체</option>
                   {endCompResultArray.map((item) => (
                     <option value={item} key={item}>
@@ -413,8 +415,8 @@ const App = (props) => {
               </div>
 
               <div className='formWrap borderTop'>
-                <label className='label'>1차 성과평가연도</label>
-                <select onChange={(e) => { setStartResult(e.target.value) }} value={startResult}>
+                <label className='label' htmlFor='SR'>1차 성과평가연도</label>
+                <select id="SR" onChange={(e) => { setStartResult(e.target.value) }} value={startResult}>
                   <option value="all">전체</option>
                   {yearArray.map((item) => (
                     <option value={item} key={item}>
@@ -423,7 +425,7 @@ const App = (props) => {
                   ))}
                 </select>
                 <span className='space'>~</span>
-                <select onChange={(e) => { setEndResult(e.target.value) }} value={endResult}>
+                <select id="ER" onChange={(e) => { setEndResult(e.target.value) }} value={endResult}>
                   <option value="all">전체</option>
                   {yearArray.map((item) => (
                     <option value={item} key={item}>
@@ -434,8 +436,8 @@ const App = (props) => {
               </div>
 
               <div className='formWrap borderTop'>
-                <label className='label'>1차 성과평가결과</label>
-                <select onChange={(e) => { setStartResult2(e.target.value) }} value={startResult2}>
+                <label className='label' htmlFor='SR2'>1차 성과평가결과</label>
+                <select id="SR2" onChange={(e) => { setStartResult2(e.target.value) }} value={startResult2}>
                   <option value="all">전체</option>
                   {startResultArray.map((item) => (
                     <option value={item} key={item}>
@@ -446,8 +448,9 @@ const App = (props) => {
               </div>
 
               <div className='formWrap borderTop'>
-                <label className='label'>2차 성과평가연도</label>
+                <label className='label' htmlFor='REY'>2차 성과평가연도</label>
                 <input
+                  id='REY'
                   name="regEndYear"
                   placeholder=""
                   onChange={onChange}
@@ -456,8 +459,8 @@ const App = (props) => {
               </div>
 
               <div className='formWrap borderTop'>
-                <label className='label'>2차 성과평가결과</label>
-                <select onChange={(e) => { setEndResult2(e.target.value) }} value={endResult2}>
+                <label className='label' htmlFor='ER2'>2차 성과평가결과</label>
+                <select id="ER2" onChange={(e) => { setEndResult2(e.target.value) }} value={endResult2}>
                   <option value="all">전체</option>
                   {endResultArray.map((item) => (
                     <option value={item} key={item}>
@@ -468,8 +471,8 @@ const App = (props) => {
               </div>
 
               <div className='formWrap borderTop'>
-                <label className='label'>사후관리상태</label>
-                <select onChange={(e) => { setColor(e.target.value) }} value={regColor}>
+                <label className='label' htmlFor='CO'>사후관리상태</label>
+                <select id="CO" onChange={(e) => { setColor(e.target.value) }} value={regColor}>
                   <option value="all">전체</option>
                   <option value="red">red</option>
                   <option value="green">green</option>

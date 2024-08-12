@@ -113,8 +113,8 @@
 }
 
 .delTd i {
-  color:#0067b8;
-  font-size: 21px;
+  color:#09a5c5;
+  font-size: 24px;
 }
 
 .input {
@@ -819,8 +819,7 @@ tbody tr:hover td.delTd{
 .formGroup {
   display: grid;
     grid-template-columns: repeat(5, 1fr);
-    /*grid-template-rows: repeat(4, 1fr);*/
-    grid-template-rows: repeat(3, 48px);
+    grid-template-rows: repeat(5, 48px);
     gap: 16px;
     gap: 0px;
 }

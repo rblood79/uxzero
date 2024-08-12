@@ -20,6 +20,8 @@ const App = (props) => {
   const [endresult, setEndresult] = useState(null);
   const [color, setColor] = useState(null);
 
+  const [rowCount, setRowCount] = useState(10);
+
   const memoizedInputs = useMemo(() => ({
     id: data?.ID || "",
     checknum: data?.CHECKNUM || "",
@@ -45,11 +47,13 @@ const App = (props) => {
   const onChange = (e) => {
     const { name, value } = e.target;
     const lines = value.split('\n');
+    
     if (lines.length <= 10) {
         setInputs({
             ...inputs,
             [name]: value
         });
+        //setRowCount(Math.max(rowCount,lines.length))
     } else {
         // 10줄을 초과하는 경우 첫 10줄만 유지
         const limitedValue = lines.slice(0, 10).join('\n');
@@ -216,8 +220,9 @@ const App = (props) => {
           <div className='formBody'>
             <div className='formGroup'>
               <div className='formWrap'>
-                <label className='label' htmlFor="title">과제명</label>
+                <label className='label' htmlFor="TITL">과제명</label>
                 <input
+                  id='TITL'
                   name="title"
                   placeholder="입력하세요"
                   onChange={onChange}
@@ -225,8 +230,9 @@ const App = (props) => {
                 />
               </div>
               <div className='formWrap'>
-                <label className='label' htmlFor="id">관리번호</label>
+                <label className='label' htmlFor="IDN">관리번호</label>
                 <input
+                  id='IDN'
                   name="id"
                   placeholder="입력하세요(등록후 변경 불가합니다)"
                   onChange={onChange}
@@ -235,8 +241,9 @@ const App = (props) => {
                 />
               </div>
               <div className='formWrap'>
-                <label className='label' htmlFor="checknum">확인번호</label>
+                <label className='label' htmlFor="CN">확인번호</label>
                 <input
+                  id='CN'
                   name="checknum"
                   placeholder="입력하세요"
                   onChange={onChange}
@@ -244,8 +251,9 @@ const App = (props) => {
                 />
               </div>
               <div className='formWrap'>
-                <label className='label' htmlFor="leader">팀장</label>
+                <label className='label' htmlFor="LD">팀장</label>
                 <input
+                  id='LD'
                   name="leader"
                   placeholder="입력하세요"
                   onChange={onChange}
@@ -254,8 +262,8 @@ const App = (props) => {
               </div>
 
               <div className='formWrap spanN borderTop'>
-                <label className='label'>1차 완료평가연도</label>
-                <select onChange={(e) => { setStartcompyear(e.target.value) }} value={startcompyear ? startcompyear : "default"}>
+                <label className='label' htmlFor='SCY'>1차 완료평가연도</label>
+                <select id="SCY" onChange={(e) => { setStartcompyear(e.target.value) }} value={startcompyear ? startcompyear : "default"}>
                   <option value="default" disabled>선택하세요</option>
                   {yearArray.map((item) => (
                     <option value={item} key={item}>
@@ -265,8 +273,8 @@ const App = (props) => {
                 </select>
               </div>
               <div className='formWrap borderTop'>
-                <label className='label'>1차 완료평가결과</label>
-                <select onChange={(e) => { setStartcompresult(e.target.value) }} value={startcompresult ? startcompresult : "default"}>
+                <label className='label' htmlFor='SCR'>1차 완료평가결과</label>
+                <select id="SCR" onChange={(e) => { setStartcompresult(e.target.value) }} value={startcompresult ? startcompresult : "default"}>
                   <option value="default" disabled>선택하세요</option>
                   {startCompResultArray.map((item) => (
                     <option value={item} key={item}>
@@ -276,8 +284,9 @@ const App = (props) => {
                 </select>
               </div>
               <div className='formWrap borderTop'>
-                <label className='label' htmlFor="endcompyear">2차 완료평가연도</label>
+                <label className='label' htmlFor="ECY">2차 완료평가연도</label>
                 <input
+                  id='ECY'
                   name="endcompyear"
                   placeholder="입력하세요"
                   onChange={onChange}
@@ -285,8 +294,8 @@ const App = (props) => {
                 />
               </div>
               <div className='formWrap borderTop'>
-                <label className='label'>2차 완료평가결과</label>
-                <select onChange={(e) => { setEndcompresult(e.target.value) }} value={endcompresult ? endcompresult : "default"}>
+                <label className='label' htmlFor='ECR'>2차 완료평가결과</label>
+                <select id="ECR" onChange={(e) => { setEndcompresult(e.target.value) }} value={endcompresult ? endcompresult : "default"}>
                   <option value="default" disabled>선택하세요</option>
                   {endCompResultArray.map((item) => (
                     <option value={item} key={item}>
@@ -296,8 +305,8 @@ const App = (props) => {
                 </select>
               </div>
               <div className='formWrap spanN borderTop'>
-                <label className='label'>1차 성과평가연도</label>
-                <select onChange={(e) => { setStartyear(e.target.value) }} value={startyear ? startyear : "default"}>
+                <label className='label' htmlFor='SY'>1차 성과평가연도</label>
+                <select id="SY" onChange={(e) => { setStartyear(e.target.value) }} value={startyear ? startyear : "default"}>
                   <option value="default" disabled>선택하세요</option>
                   {yearArray.map((item) => (
                     <option value={item} key={item}>
@@ -307,8 +316,8 @@ const App = (props) => {
                 </select>
               </div>
               <div className='formWrap borderTop'>
-                <label className='label'>1차 성과평가결과</label>
-                <select onChange={(e) => { setStartresult(e.target.value) }} value={startresult ? startresult : "default"}>
+                <label className='label' htmlFor='SR'>1차 성과평가결과</label>
+                <select id="SR" onChange={(e) => { setStartresult(e.target.value) }} value={startresult ? startresult : "default"}>
                   <option value="default" disabled>선택하세요</option>
                   {startResultArray.map((item) => (
                     <option value={item} key={item}>
@@ -318,8 +327,9 @@ const App = (props) => {
                 </select>
               </div>
               <div className='formWrap borderTop'>
-                <label className='label' htmlFor="endyear">2차 성과평가연도</label>
+                <label className='label' htmlFor="EY">2차 성과평가연도</label>
                 <input
+                  id='EY'
                   name="endyear"
                   placeholder="연도를 입력하세요"
                   onChange={onChange}
@@ -327,8 +337,8 @@ const App = (props) => {
                 />
               </div>
               <div className='formWrap borderTop'>
-                <label className='label'>2차 성과평가결과</label>
-                <select onChange={(e) => { setEndresult(e.target.value) }} value={endresult ? endresult : "default"}>
+                <label className='label' htmlFor='ER'>2차 성과평가결과</label>
+                <select id="ER" onChange={(e) => { setEndresult(e.target.value) }} value={endresult ? endresult : "default"}>
                   <option value="default" disabled>선택하세요</option>
                   {endResultArray.map((item) => (
                     <option value={item} key={item}>
@@ -338,8 +348,9 @@ const App = (props) => {
                 </select>
               </div>
               <div className='formWrap spanN borderTop'>
-                <label className='label' htmlFor="result">재무성과(원)</label>
+                <label className='label' htmlFor="RES">재무성과(원)</label>
                 <input
+                  id='RES'
                   name="result"
                   placeholder="입력하세요"
                   onChange={onChange}
@@ -347,38 +358,41 @@ const App = (props) => {
                 />
               </div>
               <div className='formWrap borderTop'>
-                <label className='label' htmlFor="indi">관리지표</label>
+                <label className='label' htmlFor="ID">관리지표</label>
                 <textarea
+                  id='ID'
                   name="indi"
                   placeholder="입력하세요"
                   onChange={onChange}
                   value={indi || ""}
-                  rows={5}
+                  rows={rowCount}
                 ></textarea>
               </div>
               <div className='formWrap borderTop'>
-                <label className='label' htmlFor="unit">단위</label>
+                <label className='label' htmlFor="UN">단위</label>
                 <textarea
+                  id='UN'
                   name="unit"
                   placeholder="입력하세요"
                   onChange={onChange}
                   value={unit || ""}
-                  rows={5}
+                  rows={rowCount}
                 ></textarea>
               </div>
               <div className='formWrap borderTop'>
-                <label className='label' htmlFor="datay0">수치</label>
+                <label className='label' htmlFor="D0">수치</label>
                 <textarea
+                  id='D0'
                   name="datay0"
                   placeholder="입력하세요"
                   onChange={onChange}
                   value={datay0 || ""}
-                  rows={5}
+                  rows={rowCount}
                 ></textarea>
               </div>
               <div className='formWrap'>
-                <label className='label'>사후관리상태</label>
-                <select onChange={(e) => { setColor(e.target.value) }} value={color ? color : "default"}>
+                <label className='label' htmlFor='CO'>사후관리상태</label>
+                <select id="CO" onChange={(e) => { setColor(e.target.value) }} value={color ? color : "default"}>
                   <option value="default" disabled>선택하세요</option>
                   {colorArray.map((item) => (
                     <option value={item} key={item}>
@@ -388,28 +402,31 @@ const App = (props) => {
                 </select>
               </div>
               <div className='formWrap borderTop'>
-                <label className='label' htmlFor="datay1">Y+1</label>
+                <label className='label' htmlFor="D1">Y+1</label>
                 <textarea
+                  id='D1'
                   name="datay1"
                   placeholder="입력하세요"
                   onChange={onChange}
                   value={datay1 || ""}
-                  rows={5}
+                  rows={rowCount}
                 ></textarea>
               </div>
               <div className='formWrap borderTop'>
-                <label className='label' htmlFor="datay2">Y+2</label>
+                <label className='label' htmlFor="D2">Y+2</label>
                 <textarea
+                  id='D2'
                   name="datay2"
                   placeholder="입력하세요"
                   onChange={onChange}
                   value={datay2 || ""}
-                  rows={5}
+                  rows={rowCount}
                 ></textarea>
               </div>
               <div className='formWrap borderTop'>
-                <label className='label' htmlFor="datay3">Y+3</label>
+                <label className='label' htmlFor="D3">Y+3</label>
                 <textarea
+                  id='D3'
                   name="datay3"
                   placeholder="입력하세요"
                   onChange={onChange}
@@ -418,23 +435,25 @@ const App = (props) => {
                 ></textarea>
               </div>
               <div className='formWrap borderTop'>
-                <label className='label' htmlFor="datay4">Y+4</label>
+                <label className='label' htmlFor="D4">Y+4</label>
                 <textarea
+                  id='D4'
                   name="datay4"
                   placeholder="입력하세요"
                   onChange={onChange}
                   value={datay4 || ""}
-                  rows={5}
+                  rows={rowCount}
                 ></textarea>
               </div>
               <div className='formWrap borderTop'>
-                <label className='label' htmlFor="datay5">Y+5</label>
+                <label className='label' htmlFor="D5">Y+5</label>
                 <textarea
+                  id='D5'
                   name="datay5"
                   placeholder="입력하세요"
                   onChange={onChange}
                   value={datay5 || ""}
-                  rows={5}
+                  rows={rowCount}
                 ></textarea>
               </div>
             </div>

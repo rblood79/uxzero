@@ -56,12 +56,13 @@ const App = (props) => {
           <form onSubmit={(e)=>{e.preventDefault()}}>
           <div className='armyWrap'>
               <div className={'input'}>
-                <input className={'id'} type='text' maxLength={12} placeholder="아이디" onChange={({ target: { value } }) => {
+                
+                <input id="ID" className={'id'} type='text' maxLength={12} placeholder="아이디" onChange={({ target: { value } }) => {
                   setNumber(value)
                 }} />
               </div>
               <div className={'input'}>
-                <input className={'pw'} type={view ? 'text' : 'password'} maxLength={12} placeholder="비밀번호" autoComplete="off" onChange={({ target: { value } }) => {
+                <input id="PW" className={'pw'} type={view ? 'text' : 'password'} maxLength={12} placeholder="비밀번호" autoComplete="off" onChange={({ target: { value } }) => {
                   setPw(value)
                 }} />
                 <button className='passView' onClick={() => { setView(view ? false : true) }}><i className={view ? "ri-eye-off-line" : "ri-eye-line"}></i></button>
