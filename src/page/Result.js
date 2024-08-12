@@ -32,7 +32,7 @@ const App = (props) => {
 
   const yearArray = ["2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030", "2031", "2032", "2033", "2034"];
   const startCompResultArray = ["완료", "조건부완료", "중단", "연장", "미평가"];
-  const endCompResultArray = ["완료", "조건부완료", "중단", "연장", "1차완료","미평가"];
+  const endCompResultArray = ["완료", "조건부완료", "중단", "연장", "1차완료", "미평가"];
 
   const startResultArray = ["인증", "인증(대상)", "인증(금상)", "인증(은상)", "인증(동상)", "인증(장려)", "미인증(중단)", "미인증(재도전)"];
   const endResultArray = ["인증", "인증(대상)", "인증(금상)", "인증(은상)", "인증(동상)", "인증(장려)", "미인증(중단)", "1차인증"];
@@ -47,6 +47,13 @@ const App = (props) => {
       backgroundColor: "#fff",
       fontSize: "12px",
       tableLayout: "fixed",
+      caption: {
+        fontSize: "21px",
+        fontWeight: "600",
+        padding: "16px",
+        textAlign: "center",
+        height: "96px",
+      },
       th: {
         background: "#efefef",
         border: isMobile ? "1px solid #d3d3d3" : "0.5pt solid #d3d3d3",
@@ -96,13 +103,14 @@ const App = (props) => {
       },
       tdNormal: {
         background: "#efefef",
+        borderBottom: isMobile ? "1px solid rgba(0,0,0,0.3)" : "0.5pt solid rgba(0,0,0,0.3)",
       }
     }
   };
 
   const ItemList = (props) => {
     const item = props.data;
-    const indiArray = item.INDI ? item.INDI.split('\n') : [];
+    const indiArray = item.INDI ? item.INDI.split('\n').slice(0, 10) : [];
     const unitArray = item.UNIT ? item.UNIT.split('\n') : [];
     const d0Array = item.DATAY0 ? item.DATAY0.split('\n') : [];
     const d1Array = item.DATAY1 ? item.DATAY1.split('\n') : [];
@@ -202,16 +210,17 @@ const App = (props) => {
     let xData = '<html xmlns:x="urn:schemas-microsoft-com:office:excel">';
     xData += '<head><meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8">';
     xData += '<xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>'
-    xData += '<x:Name>DATA Sheet</x:Name>';
+    xData += '<x:Name>과제관리대장</x:Name>';
     xData += '<x:WorksheetOptions><x:Panes></x:Panes></x:WorksheetOptions></x:ExcelWorksheet>';
     xData += '</x:ExcelWorksheets></x:ExcelWorkbook></xml>';
+    xData += '<style></style>';
     xData += '</head><body>';
     xData += tableRef.current.outerHTML;
     xData += '</body></html>';
 
     let fileName = moment(new Date()).format("YYYYMMDD");
     let blob = new Blob([xData], {
-      type: "application/csv;charset=utf-8;"
+      type: "application/vnd.ms-excel;charset=utf-8;"
     });
     let a = document.createElement("a");
     a.href = window.URL.createObjectURL(blob);
@@ -290,7 +299,32 @@ const App = (props) => {
   }, [memoizedResult]);
 
   const onPrint = () => {
+    const style = document.createElement('style');
+    //style.type = 'text/css';
+    style.media = 'print';
+    style.innerHTML = `
+        body{
+          background: #fff;
+          padding: 0mm !important;
+        }
+        table {
+          font-size: 10px !important;
+          table-layout: auto !important;
+          border: 0 !important;
+        }
+        th, td {
+          border-color: #333 !important;
+        }
+        @page {
+            size: landscape A3 !important;
+            margin: 10mm !important;
+        }
+    `;
+    // head 태그에 스타일을 추가합니다.
+    document.head.appendChild(style);
     window.print();
+    // 인쇄 후 스타일 시트를 제거합니다.
+    document.head.removeChild(style);
   }
 
   return (
@@ -309,7 +343,7 @@ const App = (props) => {
                 <label className='label' >팀장</label>
                 <input
                   name="regLeader"
-                  placeholder="팀장"
+                  placeholder=""
                   onChange={onChange}
                   value={regLeader}
                 />
@@ -318,7 +352,7 @@ const App = (props) => {
                 <label className='label'>과제명</label>
                 <input
                   name="regTitle"
-                  placeholder="과제명"
+                  placeholder=""
                   onChange={onChange}
                   value={regTitle}
                 />
@@ -356,17 +390,17 @@ const App = (props) => {
                 </select>
               </div>
 
-              <div className='formWrap'>
+              <div className='formWrap borderTop'>
                 <label className='label'>2차 완료평가연도</label>
                 <input
                   name="regEndCompYear"
-                  placeholder="관리지표"
+                  placeholder=""
                   onChange={onChange}
                   value={regEndCompYear}
                 />
               </div>
 
-              <div className='formWrap'>
+              <div className='formWrap borderTop'>
                 <label className='label'>2차 완료평가결과</label>
                 <select onChange={(e) => { setEndcompresult(e.target.value) }} value={endcompresult}>
                   <option value="all">전체</option>
@@ -378,7 +412,7 @@ const App = (props) => {
                 </select>
               </div>
 
-              <div className='formWrap'>
+              <div className='formWrap borderTop'>
                 <label className='label'>1차 성과평가연도</label>
                 <select onChange={(e) => { setStartResult(e.target.value) }} value={startResult}>
                   <option value="all">전체</option>
@@ -399,7 +433,7 @@ const App = (props) => {
                 </select>
               </div>
 
-              <div className='formWrap'>
+              <div className='formWrap borderTop'>
                 <label className='label'>1차 성과평가결과</label>
                 <select onChange={(e) => { setStartResult2(e.target.value) }} value={startResult2}>
                   <option value="all">전체</option>
@@ -411,17 +445,17 @@ const App = (props) => {
                 </select>
               </div>
 
-              <div className='formWrap'>
+              <div className='formWrap borderTop'>
                 <label className='label'>2차 성과평가연도</label>
                 <input
                   name="regEndYear"
-                  placeholder="관리번호"
+                  placeholder=""
                   onChange={onChange}
                   value={regEndYear}
                 />
               </div>
 
-              <div className='formWrap'>
+              <div className='formWrap borderTop'>
                 <label className='label'>2차 성과평가결과</label>
                 <select onChange={(e) => { setEndResult2(e.target.value) }} value={endResult2}>
                   <option value="all">전체</option>
@@ -433,7 +467,7 @@ const App = (props) => {
                 </select>
               </div>
 
-              <div className='formWrap'>
+              <div className='formWrap borderTop'>
                 <label className='label'>사후관리상태</label>
                 <select onChange={(e) => { setColor(e.target.value) }} value={regColor}>
                   <option value="all">전체</option>
@@ -442,27 +476,27 @@ const App = (props) => {
                   <option value="yellow">yellow</option>
                 </select>
               </div>
-              
+
             </div>
           </div>
           <div className='controll'>
-            <button className="button delete" onClick={handleSearch}>검색</button>
+            <button className="button search" onClick={handleSearch}>검색</button>
             {/*<button className="refresh" onClick={onReset}><i className="ri-refresh-line"></i></button>*/}
             {
               !isMobile &&
               <>
                 <button className="button excel" onClick={onDownload}>엑셀다운</button>
-                
+                <button className="button print" onClick={onPrint}>인쇄</button>
               </>
             }
-            </div>
+          </div>
           <div className='tableContents'>
             <table ref={tableRef} style={style.table}>
               <colgroup>
                 <col width="70px" />
                 <col width="110px" />
                 <col width="50px" />
-                <col width={isMobile ? "234px" : "auto"} />
+                <col width="340px" />
                 <col width="54px" />
                 <col width="70px" />
                 <col width="70px" />
@@ -473,7 +507,7 @@ const App = (props) => {
                 <col width="70px" />
                 <col width="70px" />
                 <col width="54px" />
-                <col width="170px" />
+                <col width={isMobile ? "170px" : "auto"} />
                 <col width="48px" />
                 <col width="54px" />
                 <col width="54px" />
@@ -484,6 +518,9 @@ const App = (props) => {
                 <col width="0px" />
               </colgroup>
               <thead>
+                <tr>
+                  <td colSpan="22" style={style.table.caption} className='caption'>과제관리대장</td>
+                </tr>
                 <tr>
                   <th style={style.table.th}>관리번호</th>
                   <th style={style.table.th}>확인번호</th>
@@ -514,7 +551,7 @@ const App = (props) => {
                 {
                   result.length > 0 ? result.map((item) => (
                     <ItemList key={item.ID + item.DATE} data={item} />
-                  )) : <tr><td colSpan="22" style={style.table.tdE}>등록된 자료가 없습니다</td></tr>
+                  )) : <tr><td colSpan="22" style={style.table.tdE}>자료가 없습니다</td></tr>
                 }
               </tbody>
             </table>

@@ -44,14 +44,28 @@ const App = (props) => {
 
   const onChange = (e) => {
     const { name, value } = e.target;
-    setInputs({
+    const lines = value.split('\n');
+    if (lines.length <= 10) {
+        setInputs({
+            ...inputs,
+            [name]: value
+        });
+    } else {
+        // 10줄을 초과하는 경우 첫 10줄만 유지
+        const limitedValue = lines.slice(0, 10).join('\n');
+        setInputs({
+            ...inputs,
+            [name]: limitedValue
+        });
+    }
+    /*setInputs({
       ...inputs,
       [name]: value || "",
-    });
+    });*/
   };
 
-  const startCompResultArray = ["완료", "조건부완료", "중단", "연장","미평가"];
-  const endCompResultArray = ["완료", "조건부완료", "중단", "연장", "1차완료","미평가"];
+  const startCompResultArray = ["완료", "조건부완료", "중단", "연장", "미평가"];
+  const endCompResultArray = ["완료", "조건부완료", "중단", "연장", "1차완료", "미평가"];
   const startResultArray = ["인증", "인증(대상)", "인증(금상)", "인증(은상)", "인증(동상)", "인증(장려)", "미인증(중단)", "미인증(재도전)"];
   const endResultArray = ["인증", "인증(대상)", "인증(금상)", "인증(은상)", "인증(동상)", "인증(장려)", "미인증(중단)", "1차인증"];
   const yearArray = ["2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030", "2031", "2032", "2033", "2034"];
@@ -117,9 +131,16 @@ const App = (props) => {
     }
   };
 
-  const onBack = ()=>{
-    history.push('/result', { updated: false });
+  const onBack = () => {
+    history.goBack();//push('/result', { updated: false });
   }
+
+  const onView = () => {
+    history.push({
+      pathname: '/view',
+      state: { userCell: id }
+    });
+  };
 
   const onSave = async () => {
     const docRef = doc(props.manage, id);
@@ -193,8 +214,16 @@ const App = (props) => {
             <span>{data && "마지막 수정일 " + moment(data.DATE).format("YYYY-MM-DD hh:mm:ss")}</span>
           </div>
           <div className='formBody'>
-            <h3>단일입력</h3>
             <div className='formGroup'>
+              <div className='formWrap'>
+                <label className='label' htmlFor="title">과제명</label>
+                <input
+                  name="title"
+                  placeholder="입력하세요"
+                  onChange={onChange}
+                  value={title || ""}
+                />
+              </div>
               <div className='formWrap'>
                 <label className='label' htmlFor="id">관리번호</label>
                 <input
@@ -223,16 +252,8 @@ const App = (props) => {
                   value={leader || ""}
                 />
               </div>
-              <div className='formWrap'>
-                <label className='label' htmlFor="title">과제명</label>
-                <input
-                  name="title"
-                  placeholder="입력하세요"
-                  onChange={onChange}
-                  value={title || ""}
-                />
-              </div>
-              <div className='formWrap borderTop'>
+
+              <div className='formWrap spanN borderTop'>
                 <label className='label'>1차 완료평가연도</label>
                 <select onChange={(e) => { setStartcompyear(e.target.value) }} value={startcompyear ? startcompyear : "default"}>
                   <option value="default" disabled>선택하세요</option>
@@ -274,7 +295,7 @@ const App = (props) => {
                   ))}
                 </select>
               </div>
-              <div className='formWrap borderTop'>
+              <div className='formWrap spanN borderTop'>
                 <label className='label'>1차 성과평가연도</label>
                 <select onChange={(e) => { setStartyear(e.target.value) }} value={startyear ? startyear : "default"}>
                   <option value="default" disabled>선택하세요</option>
@@ -316,30 +337,16 @@ const App = (props) => {
                   ))}
                 </select>
               </div>
-              <div className='formWrap borderTop'>
+              <div className='formWrap spanN borderTop'>
                 <label className='label' htmlFor="result">재무성과(원)</label>
                 <input
                   name="result"
-                  placeholder="성과를 입력하세요"
+                  placeholder="입력하세요"
                   onChange={onChange}
                   value={result || ""}
                 />
               </div>
               <div className='formWrap borderTop'>
-                <label className='label'>사후관리상태</label>
-                <select onChange={(e) => { setColor(e.target.value) }} value={color ? color : "default"}>
-                  <option value="default" disabled>선택하세요</option>
-                  {colorArray.map((item) => (
-                    <option value={item} key={item}>
-                      {item}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <h3>다중입력</h3>
-            <div className='formGroup'>
-              <div className='formWrap'>
                 <label className='label' htmlFor="indi">관리지표</label>
                 <textarea
                   name="indi"
@@ -349,7 +356,7 @@ const App = (props) => {
                   rows={5}
                 ></textarea>
               </div>
-              <div className='formWrap'>
+              <div className='formWrap borderTop'>
                 <label className='label' htmlFor="unit">단위</label>
                 <textarea
                   name="unit"
@@ -359,7 +366,7 @@ const App = (props) => {
                   rows={5}
                 ></textarea>
               </div>
-              <div className='formWrap'>
+              <div className='formWrap borderTop'>
                 <label className='label' htmlFor="datay0">수치</label>
                 <textarea
                   name="datay0"
@@ -370,6 +377,17 @@ const App = (props) => {
                 ></textarea>
               </div>
               <div className='formWrap'>
+                <label className='label'>사후관리상태</label>
+                <select onChange={(e) => { setColor(e.target.value) }} value={color ? color : "default"}>
+                  <option value="default" disabled>선택하세요</option>
+                  {colorArray.map((item) => (
+                    <option value={item} key={item}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className='formWrap borderTop'>
                 <label className='label' htmlFor="datay1">Y+1</label>
                 <textarea
                   name="datay1"
@@ -422,9 +440,10 @@ const App = (props) => {
             </div>
           </div>
           <div className='controll'>
-            <button className={'button back'} onClick={() => { onBack() }}>목록</button>
-            {location.state && <button className={'button delete'} onClick={() => { onDelete() }}>삭제</button>}
-            {location.state ? <button className={'button'} onClick={() => { onUpdate() }}>수정</button> : <button className={'button'} disabled={!id} onClick={() => { onSave() }}>저장</button>}
+            <button className={'button back'} onClick={onBack}>이전</button>
+            {location.state && <button className={'button delete'} onClick={onDelete}>삭제</button>}
+            {location.state ? <button className={'button edit'} onClick={onUpdate}>수정</button> : <button className={'button'} disabled={!id} onClick={onSave}>저장</button>}
+            {location.state && <button className={'button detail'} onClick={onView}>출력</button>}
           </div>
         </div>
       </div>

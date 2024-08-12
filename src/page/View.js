@@ -20,7 +20,6 @@ const App = (props) => {
     const [startyear, setStartyear] = useState(null);
     const [startresult, setStartresult] = useState(null);
     const [endresult, setEndresult] = useState(null);
-    const [color, setColor] = useState(null);
 
     const tableRef = useRef();
 
@@ -58,7 +57,7 @@ const App = (props) => {
             tableLayout: "fixed",
             th: {
                 fontWeight: "600",
-                padding: "6px 4px",
+                padding: "16px",
                 height: "92px",
                 minHeight: "92px",
                 wordBreak: "keep-all",
@@ -82,7 +81,7 @@ const App = (props) => {
                 minHeight: "56px",
                 wordBreak: "keep-all",
                 textAlign: "left",
-                paddingLeft:"28px",
+                paddingLeft: "28px",
                 letterSpacing: "1.2pt",
             },
         }
@@ -110,7 +109,6 @@ const App = (props) => {
             setStartyear(data.STARTYEAR);
             setStartresult(data.STARTRESULT);
             setEndresult(data.ENDRESULT);
-            setColor(data.COLOR);
         }
     }, [data, memoizedInputs]);
 
@@ -120,19 +118,41 @@ const App = (props) => {
 
 
     const onBack = () => {
-        history.push('/result', { updated: false });
+        //history.push('/result', { updated: false });
+        history.goBack()
     }
 
     const onPrint = () => {
+        const style = document.createElement('style');
+        //style.type = 'text/css';
+        style.media = 'print';
+        style.innerHTML = `
+        body{
+          background: #fff;
+          padding: 10mm;
+        }
+        table {
+          height: calc(297mm - 20mm) !important;
+        }
+        @page {
+            size: portrait A4 !important;
+            margin: 0 !important;
+        }
+    `;
+        // head 태그에 스타일을 추가합니다.
+        document.head.appendChild(style);
         window.print();
+        // 인쇄 후 스타일 시트를 제거합니다.
+        document.head.removeChild(style);
     }
 
     return (
         <>
             <div className='order'>
                 <div className='users'>
-                    <div className='resultHead'>
-                        <h2 className='title'>등록내용</h2>
+                    <div className='controll'>
+                        <button className={'button back'} onClick={onBack}>이전</button>
+                        {!isMobile && <button className={'button'} onClick={onPrint}>인쇄</button>}
                     </div>
                     <div className='tableContents'>
                         <table ref={tableRef} style={style.table}>
@@ -198,11 +218,6 @@ const App = (props) => {
                             </tbody>
                         </table>
                     </div>
-
-                    <div className='controll'>
-                    <button className={'button back'} onClick={() => { onBack() }}>목록</button>
-                    <button className={'button'} onClick={() => { onPrint() }}>인쇄</button>
-                    </div>
                 </div>
             </div>
         </>
@@ -211,7 +226,7 @@ const App = (props) => {
 }
 
 App.defaultProps = {
-    
+
 };
 
 export default App;
