@@ -7,6 +7,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import 'moment/locale/ko';
 import context from '../component/Context';
 
+import logo from '../assets/logo.svg';
 
 const App = (props) => {
     const history = useHistory();
@@ -50,11 +51,18 @@ const App = (props) => {
         table: {
             width: isMobile ? "100%" : "210mm",
             height: isMobile ? "100%" : "297mm",
-            borderCollapse: "collapse",
+            borderCollapse: "separate",
+            borderSpacing: 0,
             border: "2px solid #000",
             backgroundColor: "#f5f5f7",
             fontSize: isMobile ? "14px" : "12pt",
             tableLayout: "fixed",
+            backgroundImage: "url("+logo+")",
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "center",
+            backgroundSize: "48%",
+            backgroundBlendMode: "luminosity",
+            /* filter: grayscale(100%)*/
             th: {
                 fontWeight: "600",
                 padding: "4px 16px",
@@ -68,50 +76,152 @@ const App = (props) => {
                 //borderBottom: isMobile ? "1px solid #d3d3d3" : "0.5pt solid #d3d3d3",
                 fontWeight: "600",
                 padding: "8px 21px",
-                height: "64px",
-                backgroundColor: "#fff",
+                height: "56px",
+                backgroundColor:  "rgba(255, 255, 255, 0.9)",
                 wordBreak: "keep-all",
                 textAlign: "left",
                 letterSpacing: "1.2pt",
+                borderRight: "1px solid rgba(0,0,0,0.3)",
+                borderLeft: "1px solid rgba(0,0,0,0.3)",
             },
-            tdT: {
-                borderTop: isMobile ? "2px double #d3d3d3" : "0.5pt double #d3d3d3",
+            tdML: {
+                //borderBottom: isMobile ? "1px solid #d3d3d3" : "0.5pt solid #d3d3d3",
                 fontWeight: "600",
                 padding: "8px 21px",
-                height: "64px",
-                backgroundColor: "#fff",
+                height: "56px",
+                backgroundColor:  "rgba(255, 255, 255, 0.9)",
                 wordBreak: "keep-all",
                 textAlign: "left",
                 letterSpacing: "1.2pt",
+                borderLeft: "1px solid rgba(0,0,0,0.3)",
+            },
+            tdMR: {
+                //borderBottom: isMobile ? "1px solid #d3d3d3" : "0.5pt solid #d3d3d3",
+                fontWeight: "600",
+                padding: "8px 21px",
+                height: "56px",
+                backgroundColor:  "rgba(255, 255, 255, 0.9)",
+                wordBreak: "keep-all",
+                textAlign: "left",
+                letterSpacing: "1.2pt",
+                borderRight: "1px solid rgba(0,0,0,0.3)",
+            },
+            tdT: {
+                //borderTop: isMobile ? "2px double #d3d3d3" : "0.5pt double #d3d3d3",
+                fontWeight: "600",
+                padding: "8px 21px",
+                height: "56px",
+                backgroundColor:  "rgba(255, 255, 255, 0.9)",
+                wordBreak: "keep-all",
+                textAlign: "left",
+                letterSpacing: "1.2pt",
+                borderRadius: "18px 18px 0 0",
+                borderTop: "1px solid rgba(0,0,0,0.3)",
+                borderRight: "1px solid rgba(0,0,0,0.3)",
+                borderLeft: "1px solid rgba(0,0,0,0.3)",
+            },
+            tdTL: {
+                //borderTop: isMobile ? "2px double #d3d3d3" : "0.5pt double #d3d3d3",
+                fontWeight: "600",
+                padding: "8px 21px",
+                height: "56px",
+                backgroundColor:  "rgba(255, 255, 255, 0.9)",
+                wordBreak: "keep-all",
+                textAlign: "left",
+                letterSpacing: "1.2pt",
+                borderRadius: "18px 0 0 0",
+                borderTop: "1px solid rgba(0,0,0,0.3)",
+                borderLeft: "1px solid rgba(0,0,0,0.3)",
+            },
+            tdTR: {
+                //borderTop: isMobile ? "2px double #d3d3d3" : "0.5pt double #d3d3d3",
+                fontWeight: "600",
+                padding: "8px 21px",
+                height: "56px",
+                backgroundColor:  "rgba(255, 255, 255, 0.9)",
+                wordBreak: "keep-all",
+                textAlign: "left",
+                letterSpacing: "1.2pt",
+                borderRadius: "0 18px 0 0",
+                borderTop: "1px solid rgba(0,0,0,0.3)",
+                borderRight: "1px solid rgba(0,0,0,0.3)",
+            },
+            tdBL: {
+                //borderTop: isMobile ? "2px double #d3d3d3" : "0.5pt double #d3d3d3",
+                fontWeight: "600",
+                padding: "8px 21px",
+                height: "56px",
+                backgroundColor:  "rgba(255, 255, 255, 0.9)",
+                wordBreak: "keep-all",
+                textAlign: "left",
+                letterSpacing: "1.2pt",
+                borderRadius: "0 0 0 18px",
+                borderBottom: "1px solid rgba(0,0,0,0.3)",
+                borderLeft: "1px solid rgba(0,0,0,0.3)",
+            },
+            tdBR: {
+                //borderTop: isMobile ? "2px double #d3d3d3" : "0.5pt double #d3d3d3",
+                fontWeight: "600",
+                padding: "8px 21px",
+                height: "56px",
+                backgroundColor:  "rgba(255, 255, 255, 0.9)",
+                wordBreak: "keep-all",
+                textAlign: "left",
+                letterSpacing: "1.2pt",
+                borderRadius: "0 0 18px 0",
+                borderBottom: "1px solid rgba(0,0,0,0.3)",
+                borderRight: "1px solid rgba(0,0,0,0.3)",
+            },
+            tdS: {
+                height: "24px"
             },
             tdL: {
-                borderRight: isMobile ? "2px double #d3d3d3" : "0.5pt double #d3d3d3",
+                //borderRight: isMobile ? "2px double #d3d3d3" : "0.5pt double #d3d3d3",
             },
             tdR: {
-                borderLeft: isMobile ? "2px double #d3d3d3" : "0.5pt double #d3d3d3",
+                //borderLeft: isMobile ? "2px double #d3d3d3" : "0.5pt double #d3d3d3",
             },
             tdB: {
-                borderBottom: isMobile ? "2px double #d3d3d3" : "0.5pt double #d3d3d3",
-                backgroundColor: "#fff",
+                //borderBottom: isMobile ? "2px double #d3d3d3" : "0.5pt double #d3d3d3",
+                backgroundColor:  "rgba(255, 255, 255, 0.9)",
             },
             tdU: {
                 fontWeight: "600",
                 padding: "8px 21px",
-                height: "64px",
-                backgroundColor: "#fff",
+                height: "56px",
+                backgroundColor:  "rgba(255, 255, 255, 0.9)",
                 wordBreak: "keep-all",
                 textAlign: "left",
                 letterSpacing: "1.2pt",
-                borderBottom: isMobile ? "2px double #d3d3d3" : "1pt double #efefef",
+                //borderBottom: isMobile ? "2px double #d3d3d3" : "1pt double #efefef",
+                borderRadius: "0 0 18px 18px",
+                borderBottom: "1px solid rgba(0,0,0,0.3)",
+                borderRight: "1px solid rgba(0,0,0,0.3)",
+                borderLeft: "1px solid rgba(0,0,0,0.3)",
+            },
+            tdZ: {
+                fontWeight: "600",
+                padding: "8px 21px",
+                backgroundColor:  "rgba(255, 255, 255, 0.9)",
+                wordBreak: "keep-all",
+                textAlign: "left",
+                letterSpacing: "1.2pt",
+                //borderBottom: isMobile ? "2px double #d3d3d3" : "1pt double #efefef",
+                borderRadius: "0 0 18px 18px",
+                borderBottom: "1px solid rgba(0,0,0,0.3)",
+                borderRight: "1px solid rgba(0,0,0,0.3)",
+                borderLeft: "1px solid rgba(0,0,0,0.3)",
             },
             tde: {
                 fontWeight: "600",
                 padding: "6px 42px",
-                height: "64px",
+                height: "54px",
                 wordBreak: "keep-all",
                 textAlign: "left",
                 letterSpacing: "1.2pt",
-                backgroundColor: "#fff",
+                backgroundColor:  "rgba(255, 255, 255, 0.9)",
+                borderRight: "1px solid rgba(0,0,0,0.3)",
+                borderLeft: "1px solid rgba(0,0,0,0.3)",
             },
             foot: {
                 height: isMobile ? "16px" : "24px",
@@ -146,6 +256,7 @@ const App = (props) => {
 
     useEffect(() => {
         !user ? history.push('/') : onLoad();
+        // eslint-disable-next-line
     }, []);
 
 
@@ -198,66 +309,71 @@ const App = (props) => {
                             </colgroup>
                             <thead>
                                 <tr>
-                                    <th style={style.table.th} colSpan={3}>과제명&nbsp;:&nbsp;{title}</th>
+                                    <th style={style.table.th} colSpan={4}>과제명&nbsp;:&nbsp;{title}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td style={style.table.tdL}></td><td style={style.table.tdT} colSpan={2}>■ 관리번호&nbsp;:&nbsp;{id}</td><td style={style.table.tdR}></td>
+                                    <td></td><td style={style.table.tdT} colSpan={2}>■ 관리번호&nbsp;:&nbsp;{id}</td><td></td>
                                 </tr>
                                 <tr>
-                                    <td style={style.table.tdL}></td><td style={style.table.td} colSpan={2}>■ 확인번호&nbsp;:&nbsp;{checknum}</td><td style={style.table.tdR}></td>
+                                    <td></td><td style={style.table.td} colSpan={2}>■ 확인번호&nbsp;:&nbsp;{checknum}</td><td></td>
                                 </tr>
                                 <tr>
-                                    <td style={style.table.tdL}></td><td style={style.table.tdU} colSpan={2}>■ 팀장&nbsp;:&nbsp;{leader}</td><td style={style.table.tdR}></td>
+                                    <td></td><td style={style.table.tdU} colSpan={2}>■ 팀장&nbsp;:&nbsp;{leader}</td><td></td>
+                                </tr>
+                                <tr>
+                                    <td style={style.table.tdS} colSpan={4}></td>
                                 </tr>
                                 {
                                     isMobile ?
                                         <>
                                             <tr>
-                                                <td style={style.table.tdL}></td><td style={style.table.td} colSpan={2}>■ 1차완료 평가연도&nbsp;:&nbsp;{startcompyear}</td><td style={style.table.tdR}></td>
+                                            <td></td><td style={style.table.tdT} colSpan={2}>■ 1차완료 평가연도&nbsp;:&nbsp;{startcompyear}</td><td></td>
                                             </tr>
                                             <tr>
-                                                <td style={style.table.tdL}></td><td style={style.table.td} colSpan={2}>■ 1차완료 평가결과&nbsp;:&nbsp;{startcompresult}</td><td style={style.table.tdR}></td>
+                                            <td></td><td style={style.table.td} colSpan={2}>■ 1차완료 평가결과&nbsp;:&nbsp;{startcompresult}</td><td></td>
                                             </tr>
                                             <tr>
-                                                <td style={style.table.tdL}></td><td style={style.table.td} colSpan={2}>■ 2차완료 평가연도&nbsp;:&nbsp;{endcompyear}</td><td style={style.table.tdR}></td>
+                                            <td></td><td style={style.table.td} colSpan={2}>■ 2차완료 평가연도&nbsp;:&nbsp;{endcompyear}</td><td></td>
                                             </tr>
                                             <tr>
-                                                <td style={style.table.tdL}></td><td style={style.table.td} colSpan={2}>■ 2차완료 평가결과&nbsp;:&nbsp;{endcompresult}</td><td style={style.table.tdR}></td>
+                                            <td></td><td style={style.table.td} colSpan={2}>■ 2차완료 평가결과&nbsp;:&nbsp;{endcompresult}</td><td></td>
                                             </tr>
                                             <tr>
-                                                <td style={style.table.tdL}></td><td style={style.table.td} colSpan={2}>■ 1차 성과 평가연도&nbsp;:&nbsp;{startyear}</td><td style={style.table.tdR}></td>
+                                            <td></td><td style={style.table.td} colSpan={2}>■ 1차 성과 평가연도&nbsp;:&nbsp;{startyear}</td><td></td>
                                             </tr>
                                             <tr>
-                                                <td style={style.table.tdL}></td><td style={style.table.td} colSpan={2}>■ 1차 성과 평가결과&nbsp;:&nbsp;{startresult}</td><td style={style.table.tdR}></td>
+                                            <td></td><td style={style.table.td} colSpan={2}>■ 1차 성과 평가결과&nbsp;:&nbsp;{startresult}</td><td></td>
                                             </tr>
                                             <tr>
-                                                <td style={style.table.tdL}></td><td style={style.table.td} colSpan={2}>■ 2차 성과 평가연도&nbsp;:&nbsp;{endyear}</td><td style={style.table.tdR}></td>
+                                            <td></td><td style={style.table.td} colSpan={2}>■ 2차 성과 평가연도&nbsp;:&nbsp;{endyear}</td><td></td>
                                             </tr>
                                             <tr>
-                                                <td style={style.table.tdL}></td><td style={style.table.tdU} colSpan={2}>■ 2차 성과 평가결과&nbsp;:&nbsp;{endresult}</td><td style={style.table.tdR}></td>
+                                            <td></td><td style={style.table.tdU} colSpan={2}>■ 2차 성과 평가결과&nbsp;:&nbsp;{endresult}</td><td></td>
                                             </tr>
                                         </> :
                                         <>
                                             <tr>
-                                                <td style={style.table.tdL}></td><td style={style.table.td}>■ 1차완료 평가연도&nbsp;:&nbsp;{startcompyear}</td><td style={style.table.td}>■ 1차완료 평가결과&nbsp;:&nbsp;{startcompresult}</td><td style={style.table.tdR}></td>
+                                                <td></td><td style={style.table.tdTL}>■ 1차완료 평가연도&nbsp;:&nbsp;{startcompyear}</td><td style={style.table.tdTR}>■ 1차완료 평가결과&nbsp;:&nbsp;{startcompresult}</td><td style={style.table.tdR}></td>
                                             </tr>
                                             <tr>
-                                                <td style={style.table.tdL}></td><td style={style.table.td}>■ 2차완료 평가연도&nbsp;:&nbsp;{endcompyear}</td><td style={style.table.td}>■ 2차완료 평가결과&nbsp;:&nbsp;{endcompresult}</td><td style={style.table.tdR}></td>
+                                                <td></td><td style={style.table.tdML}>■ 2차완료 평가연도&nbsp;:&nbsp;{endcompyear}</td><td style={style.table.tdMR}>■ 2차완료 평가결과&nbsp;:&nbsp;{endcompresult}</td><td style={style.table.tdR}></td>
                                             </tr>
                                             <tr>
-                                                <td style={style.table.tdL}></td><td style={style.table.td}>■ 1차 성과 평가연도&nbsp;:&nbsp;{startyear}</td><td style={style.table.td}>■ 1차 성과 평가결과&nbsp;:&nbsp;{startresult}</td><td style={style.table.tdR}></td>
+                                                <td></td><td style={style.table.tdML}>■ 1차 성과 평가연도&nbsp;:&nbsp;{startyear}</td><td style={style.table.tdMR}>■ 1차 성과 평가결과&nbsp;:&nbsp;{startresult}</td><td style={style.table.tdR}></td>
                                             </tr>
                                             <tr>
-                                                <td style={style.table.tdL}></td><td style={style.table.tdU}>■ 2차 성과 평가연도&nbsp;:&nbsp;{endyear}</td><td style={style.table.tdU}>■ 2차 성과 평가결과&nbsp;:&nbsp;{endresult}</td><td style={style.table.tdR}></td>
+                                                <td></td><td style={style.table.tdBL}>■ 2차 성과 평가연도&nbsp;:&nbsp;{endyear}</td><td style={style.table.tdBR}>■ 2차 성과 평가결과&nbsp;:&nbsp;{endresult}</td><td style={style.table.tdR}></td>
                                             </tr>
                                         </>
                                 }
-
+                                <tr>
+                                    <td style={style.table.tdS} colSpan={4}></td>
+                                </tr>
 
                                 <tr>
-                                    <td style={style.table.tdL}></td><td style={style.table.td} colSpan={2}>■ 재무성과(원)&nbsp;:&nbsp;{result}</td><td style={style.table.tdR}></td>
+                                    <td style={style.table.tdL}></td><td style={style.table.tdT} colSpan={2}>■ 재무성과(원)&nbsp;:&nbsp;{result}</td><td style={style.table.tdR}></td>
                                 </tr>
                                 <tr>
                                     <td style={style.table.tdL}></td><td style={style.table.td} colSpan={2}>■ 관리지표&nbsp;:&nbsp;{indi[0]}</td><td style={style.table.tdR}></td>
@@ -269,7 +385,7 @@ const App = (props) => {
                                     <td style={style.table.tdL}></td><td style={style.table.tde} colSpan={2}>○ 수치&nbsp;:&nbsp;{datay0[0]}</td><td style={style.table.tdR}></td>
                                 </tr>
                                 <tr>
-                                    <td style={style.table.tdL}></td><td style={style.table.tdB} colSpan={2}></td><td style={style.table.tdR}></td>
+                                    <td style={style.table.tdL}></td><td style={style.table.tdZ} colSpan={2}></td><td style={style.table.tdR}></td>
                                 </tr>
                                 <tr>
                                     <th colSpan={3} style={style.table.foot}></th>

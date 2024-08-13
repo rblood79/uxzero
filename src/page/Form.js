@@ -156,6 +156,7 @@ const App = (props) => {
 
   useEffect(() => {
     !user ? history.push('/') : onLoad();
+    // eslint-disable-next-line
   }, []);
 
   const onDelete = async () => {

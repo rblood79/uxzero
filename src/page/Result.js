@@ -169,8 +169,8 @@ const App = (props) => {
           <td style={style.table.td}>{d3Array[0]}</td>
           <td style={style.table.td}>{d4Array[0]}</td>
           <td style={style.table.td}>{d5Array[0]}</td>
-          <td className='editTd' onClick={() => { test(item) }}><i className="ri-edit-line"></i></td>
-          <td className='detailTd' onClick={() => { onView(item) }}><i className="ri-printer-line"></i></td>
+          <td className='editTd' onClick={() => { test(item) }}><i className="ri-edit-fill"></i></td>
+          <td className='detailTd' onClick={() => { onView(item) }}><i className="ri-printer-fill"></i></td>
         </tr>
         {indiArray.slice(1).map((indi, index) => (
           <tr key={`list${index + 1}`} onDoubleClick={() => !isMobile && test(item)}>

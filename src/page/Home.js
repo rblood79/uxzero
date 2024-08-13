@@ -67,7 +67,7 @@ const App = (props) => {
                 <input id="PW" className={'pw'} type={view ? 'text' : 'password'} maxLength={12} placeholder="비밀번호" autoComplete="off" onChange={({ target: { value } }) => {
                   setPw(value)
                 }} />
-                <button className='passView' onClick={() => { setView(view ? false : true) }}><i className={view ? "ri-eye-off-line" : "ri-eye-line"}></i></button>
+                <button className='passView' onClick={() => { setView(view ? false : true) }} title="pass view"><i className={view ? "ri-eye-off-line" : "ri-eye-line"}></i></button>
                 <span className={'vali'}>{number === null && pw === null ? '아이디와 비밀번호는 관리자에게 문의하세요' : number === 'fail' ? '올바른 아이디가 아닙니다' : pw === 'fail' ? '비밀번호를 입력하세요' : pw === 'same' && '비밀번호가 일치하지 않습니다'}</span>
               </div>
           </div>
