@@ -13,7 +13,7 @@ const App = (props) => {
   const history = useHistory();
   const state = useContext(context);
   //const location = useLocation();
-  const { user } = state;
+  const { user, year } = state;
   const [data, setData] = useState([]);
   const [result, setResult] = useState([]);
   const [startYear, setStartYear] = useState('all');
@@ -28,15 +28,39 @@ const App = (props) => {
   const [startResult2, setStartResult2] = useState('all');
   const [endResult2, setEndResult2] = useState('all');
 
-  const tableRef = useRef();
+  const tableRef = useRef(null);
 
-  const yearArray = ["2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030", "2031", "2032", "2033", "2034"];
+
   const startCompResultArray = ["완료", "조건부완료", "중단", "연장", "미평가"];
   const endCompResultArray = ["완료", "조건부완료", "중단", "연장", "1차완료", "미평가"];
 
   const startResultArray = ["인증", "인증(대상)", "인증(금상)", "인증(은상)", "인증(동상)", "인증(장려)", "미인증(중단)", "미인증(재도전)"];
   const endResultArray = ["인증", "인증(대상)", "인증(금상)", "인증(은상)", "인증(동상)", "인증(장려)", "미인증(중단)", "1차인증"];
 
+  const [minYear] = useState(year[0]);
+  const [maxYear] = useState(year[1]);
+
+  /*const getYearRange = (startYear, endYear) => {
+    const yearArray = [];
+    for (let year = startYear; year <= endYear; year++) {
+      yearArray.push(year.toString());
+    }
+    return yearArray;
+  };*/
+
+  const useYearRange = (startYear, endYear) => {
+    const getYearRange = useCallback(() => {
+      const yearArray = [];
+      for (let year = startYear; year <= endYear; year++) {
+        yearArray.push(year.toString());
+      }
+      return yearArray;
+    }, [startYear, endYear]);
+    // useMemo로 getYearRange의 결과를 메모이제이션
+    const years = useMemo(() => getYearRange(), [getYearRange]);
+
+    return years;
+  };
 
   const style = {
     table: {
@@ -145,7 +169,8 @@ const App = (props) => {
           <td style={style.table.td}>{d3Array[0]}</td>
           <td style={style.table.td}>{d4Array[0]}</td>
           <td style={style.table.td}>{d5Array[0]}</td>
-          <td className='delTd' onClick={() => { onView(item) }}><i className="ri-arrow-right-circle-fill"></i></td>
+          <td className='editTd' onClick={() => { test(item) }}><i className="ri-edit-line"></i></td>
+          <td className='detailTd' onClick={() => { onView(item) }}><i className="ri-printer-line"></i></td>
         </tr>
         {indiArray.slice(1).map((indi, index) => (
           <tr key={`list${index + 1}`} onDoubleClick={() => !isMobile && test(item)}>
@@ -157,6 +182,8 @@ const App = (props) => {
             <td style={style.table.td}>{d3Array[index + 1]}</td>
             <td style={style.table.td}>{d4Array[index + 1]}</td>
             <td style={style.table.td}>{d5Array[index + 1]}</td>
+            <td style={style.table.td} className='printHide'></td>
+            <td style={style.table.td} className='printHide'></td>
           </tr>
         ))}
       </>
@@ -206,7 +233,7 @@ const App = (props) => {
     // eslint-disable-next-line no-use-before-define
   }, [data, handleSearch])
 
-  const onDownload = async () => {
+  /*const onDownload = async () => {
     let xData = '<html xmlns:x="urn:schemas-microsoft-com:office:excel">';
     xData += '<head><meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8">';
     xData += '<xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>'
@@ -218,15 +245,66 @@ const App = (props) => {
     xData += tableRef.current.outerHTML;
     xData += '</body></html>';
 
-    let fileName = moment(new Date()).format("YYYYMMDD");
-    let blob = new Blob([xData], {
+    const fileName = moment(new Date()).format("YYYYMMDD");
+    const blob = new Blob([xData], {
       type: "application/vnd.ms-excel;charset=utf-8;"
     });
-    let a = document.createElement("a");
+    const a = document.createElement("a");
     a.href = window.URL.createObjectURL(blob);
     a.download = "과제관리" + fileName + ".xls";
     a.click();
-  };
+
+    xData = null;
+  };*/
+  const onDownload = useCallback(() => {
+    // 1. 테이블의 깊은 복사본 생성
+    const table = tableRef.current.cloneNode(true);
+
+    // 2. 복사본에서 불필요한 요소 제거
+    // <colgroup> 내의 마지막 두 개의 <col> 요소 삭제
+    const colgroup = table.querySelector('colgroup');
+    const cols = colgroup.querySelectorAll('col');
+    cols[cols.length - 2].remove();
+    cols[cols.length - 1].remove();
+
+    // `printHide`, `editTd`, `detailTd` 클래스의 요소 제거
+    table.querySelectorAll('.printHide').forEach(el => el.remove());
+    table.querySelectorAll('.editTd').forEach(el => el.remove());
+    table.querySelectorAll('.detailTd').forEach(el => el.remove());
+
+    // 3. 엑셀 데이터 생성
+    let xData = `
+        <html xmlns:x="urn:schemas-microsoft-com:office:excel">
+            <head>
+                <meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8">
+                <xml>
+                    <x:ExcelWorkbook>
+                        <x:ExcelWorksheets>
+                            <x:ExcelWorksheet>
+                                <x:Name>과제관리대장</x:Name>
+                                <x:WorksheetOptions>
+                                    <x:Panes></x:Panes>
+                                </x:WorksheetOptions>
+                            </x:ExcelWorksheet>
+                        </x:ExcelWorksheets>
+                    </x:ExcelWorkbook>
+                </xml>
+            </head>
+            <body>${table.outerHTML}</body>
+        </html>
+    `;
+
+    // 4. Blob을 이용해 엑셀 파일 다운로드
+    const fileName = moment(new Date()).format("YYYYMMDD");
+    const blob = new Blob([xData], { type: "application/vnd.ms-excel;charset=utf-8;" });
+    const a = document.createElement("a");
+    a.href = window.URL.createObjectURL(blob);
+    a.download = "과제관리" + fileName + ".xls";
+    a.click();
+
+    // 복구 작업 필요 없음
+
+  }, [tableRef]);
 
   const onLoad = useCallback(async () => {
     const q = query(props.manage, where("ID", "!=", ""), orderBy("ID", "desc"));
@@ -299,6 +377,17 @@ const App = (props) => {
   }, [memoizedResult]);
 
   const onPrint = () => {
+    // <colgroup> 내의 마지막 두 개의 <col> 요소를 선택합니다.
+    const table = tableRef.current;
+    const colgroup = table.querySelector('colgroup');
+    const cols = colgroup.querySelectorAll('col');
+    // 마지막 두 개의 <col> 요소의 원래 width를 저장해 둡니다.
+    const originalWidths = [cols[cols.length - 2].getAttribute('width'), cols[cols.length - 1].getAttribute('width')];
+
+    // 마지막 두 개의 <col> 요소의 width를 0px로 변경합니다.
+    cols[cols.length - 2].setAttribute('width', '0px');
+    cols[cols.length - 1].setAttribute('width', '0px');
+
     const style = document.createElement('style');
     style.media = 'print';
     style.innerHTML = `
@@ -324,13 +413,15 @@ const App = (props) => {
     window.print();
     // 인쇄 후 스타일 시트를 제거합니다.
     document.head.removeChild(style);
+    cols[cols.length - 2].setAttribute('width', originalWidths[0]);
+    cols[cols.length - 1].setAttribute('width', originalWidths[1]);
   }
 
   return (
     <div className='resultContainer'>
       <div className='users'>
         <div className='resultHead'>
-          <h2 className='title'>과제현황<span className='titleSub'>- 전체 {data.length} 중 {result.length}건</span></h2>
+          <h2 className='title'>과제등록현황<span className='titleSub'>- 전체 {data.length} 중 {result.length}건</span></h2>
           <div className='resultRight'>
           </div>
         </div>
@@ -362,20 +453,24 @@ const App = (props) => {
                 <label className='label' htmlFor='SY'>1차 완료평가연도</label>
                 <select id="SY" onChange={(e) => { setStartYear(e.target.value) }} value={startYear}>
                   <option value="all">전체</option>
-                  {yearArray.map((item) => (
-                    <option value={item} key={item}>
-                      {item}
-                    </option>
-                  ))}
+                  {
+                    useYearRange(minYear, maxYear).map((item) => (
+                      <option value={item} key={item}>
+                        {item}
+                      </option>
+                    ))
+                  }
                 </select>
                 <span className='space'>~</span>
                 <select id="EY" onChange={(e) => { setEndYear(e.target.value) }} value={endYear}>
                   <option value="all">전체</option>
-                  {yearArray.map((item) => (
-                    <option value={item} key={item}>
-                      {item}
-                    </option>
-                  ))}
+                  {
+                    useYearRange(startYear, maxYear).map((item) => (
+                      <option value={item} key={item}>
+                        {item}
+                      </option>
+                    ))
+                  }
                 </select>
               </div>
 
@@ -418,20 +513,24 @@ const App = (props) => {
                 <label className='label' htmlFor='SR'>1차 성과평가연도</label>
                 <select id="SR" onChange={(e) => { setStartResult(e.target.value) }} value={startResult}>
                   <option value="all">전체</option>
-                  {yearArray.map((item) => (
-                    <option value={item} key={item}>
-                      {item}
-                    </option>
-                  ))}
+                  {
+                    useYearRange(2020, 2030).map((item) => (
+                      <option value={item} key={item}>
+                        {item}
+                      </option>
+                    ))
+                  }
                 </select>
                 <span className='space'>~</span>
                 <select id="ER" onChange={(e) => { setEndResult(e.target.value) }} value={endResult}>
                   <option value="all">전체</option>
-                  {yearArray.map((item) => (
-                    <option value={item} key={item}>
-                      {item}
-                    </option>
-                  ))}
+                  {
+                    useYearRange(startResult, 2030).map((item) => (
+                      <option value={item} key={item}>
+                        {item}
+                      </option>
+                    ))
+                  }
                 </select>
               </div>
 
@@ -497,9 +596,9 @@ const App = (props) => {
             <table ref={tableRef} style={style.table}>
               <colgroup>
                 <col width="70px" />
-                <col width="110px" />
+                <col width="70px" />
                 <col width="50px" />
-                <col width="340px" />
+                <col width="220px" />
                 <col width="54px" />
                 <col width="70px" />
                 <col width="70px" />
@@ -510,7 +609,7 @@ const App = (props) => {
                 <col width="70px" />
                 <col width="70px" />
                 <col width="54px" />
-                <col width={isMobile ? "170px" : "auto"} />
+                <col width="132px" />
                 <col width="48px" />
                 <col width="54px" />
                 <col width="54px" />
@@ -518,7 +617,8 @@ const App = (props) => {
                 <col width="54px" />
                 <col width="54px" />
                 <col width="54px" />
-                <col width="0px" />
+                <col width={isMobile ? "54px" : "34px"} />
+                <col width={isMobile ? "54px" : "34px"} />
               </colgroup>
               <thead>
                 <tr>
@@ -547,7 +647,8 @@ const App = (props) => {
                   <th style={style.table.th}>Y+3</th>
                   <th style={style.table.th}>Y+4</th>
                   <th style={style.table.th}>Y+5</th>
-                  <th style={style.table.thE}></th>
+                  <th style={style.table.th} className='printHide'>수정</th>
+                  <th style={style.table.th} className='printHide'>출력</th>
                 </tr>
               </thead>
               <tbody>

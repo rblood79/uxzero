@@ -98,23 +98,38 @@
   width: 100%;
   overflow-x: auto;
   display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
 }
 
-.delTd {
-  position: absolute;
-  display: flex;
+.view .tableContents {
+  align-items: center;
+}
+
+.delTd, .editTd, .detailTd {
+  /*position: absolute;
+  display: flex;*/
   align-items: center;
   min-height: 51px;
-  padding-left: 4px;
+  padding-left: 2px;
   cursor: pointer;
+  border: 1px solid #d3d3d3;
 }
 
 .delTd i {
+  color:#4c4c4c;
+  font-size: 21px;
+}
+
+.editTd i {
+  color:#ffc107;
+  font-size: 21px;
+}
+
+.detailTd i {
   color:#09a5c5;
-  font-size: 24px;
+  font-size: 21px;
 }
 
 .input {
@@ -323,13 +338,14 @@
   padding-top: 16px;
 }
 
-.order {
+.order, .resultContainer, .view {
   width: 100%;
-    max-width: 1840px;
-    padding: 0 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  min-width: 1600px;
+  max-width: 1800px;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
 }
 
@@ -605,9 +621,10 @@
 }
 
 .nav.sub {
-  justify-content: space-between;
   width: 100%;
-  max-width: 1840px;
+  min-width: 1600px;
+  max-width: 1800px;
+  justify-content: space-between;
   padding: 0 16px;
 }
 
@@ -624,17 +641,25 @@
   border: 0;
   height: 48px !important;
   display: flex;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
+  gap: 8px;
   flex: 1;
   color: #a7a7a7;
   cursor: pointer;
   border-radius: 0;
 }
-
-.nav .navButton i {
+.nav .navButton i{
   font-size: 21px;
+}
+
+.nav .navButton span {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.nav .navButton i, .nav .navButton span {
   color: #a7a7a7;
 }
 
@@ -643,7 +668,7 @@
   background: #fff;
 }
 
-.nav .navButton.active i {
+.nav .navButton.active i, .nav .navButton.active span {
   color: #0367b8;
 }
 
@@ -659,13 +684,13 @@ tbody td {
   cursor: pointer;
 }
 
-tbody td:hover{
+/*tbody td:hover{
   background-color: #effdff !important;
 }
 
 tbody tr:hover td.delTd{
   background-color: transparent !important;
-}
+}*/
 
 .profile {
   display: flex;
@@ -776,15 +801,6 @@ tbody tr:hover td.delTd{
   visibility: hidden;
 }
 
-.resultContainer {
-  width: 100%;
-  max-width: 1840px;
-  padding: 0 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
 .addUser{
   display: flex;
   flex-direction: row;
@@ -852,7 +868,7 @@ tbody tr:hover td.delTd{
 .formWrap select {
   background-image: url("./assets/arrow-down-s-line.png");
   background-repeat: no-repeat;
-  background-position: calc(100% - 10px) center;
+  background-position: calc(100% - 4px) center;
 }
 
 .formWrap input:focus, .formWrap select:focus, .formWrap textarea:focus {
@@ -861,6 +877,7 @@ tbody tr:hover td.delTd{
 
 .formWrap textarea {
   line-height: 21px;
+  padding-top: 16px;
 }
 
 /*.normalBox {
@@ -955,6 +972,7 @@ tbody tr:hover td.delTd{
 
 .searchForm .label{
   justify-content: center;
+  border-top-width: 0;
 }
 
 .caption {
@@ -981,7 +999,7 @@ tbody tr:hover td.delTd{
     height: 100% !important;
     padding: 16px !important;
   }
-  .resultContainer, .order, .nav.sub{
+  .resultContainer, .order, .view, .nav.sub{
     min-width: 100% !important;
     max-width: 100% !important;
   }
@@ -1001,6 +1019,7 @@ tbody tr:hover td.delTd{
 
   .nav {
     flex-direction: column !important;
+    padding: 0 !important;
   }
 
   .navRes {
@@ -1024,29 +1043,20 @@ tbody tr:hover td.delTd{
 }
 
 @media print {
-  header, footer, .refresh, .delTd, .controll, .resultHead, .searchForm {
+  header, footer, .refresh, .delTd, .controll, .resultHead, .searchForm, .printHide, .editTd, .detailTd{
     display: none !important;
   }
   .caption {
     display:table-cell !important;
   }
-  .order, .resultContainer{
+  .order, .resultContainer, .view{
     padding: 0 !important;
-  }
-  .users {
-    margin: 0px !important;
-  }
-
-  .resultContainer{
     min-width: 100% !important;
     max-width: 100% !important;
   }
-
-  
-  .print-show { display:block;}
-  .print-hide {display:none;}
-
-  
+  .users {
+    margin: 0px !important;
+  }  
   
   html {margin:0cm;}
 

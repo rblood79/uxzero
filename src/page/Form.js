@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import React, { useContext, useState, useEffect, useMemo } from 'react';
+import React, { useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { useHistory, useLocation } from "react-router-dom";
 import { doc, deleteDoc, getDoc, setDoc } from 'firebase/firestore';
 import moment from "moment";
@@ -10,7 +10,7 @@ const App = (props) => {
   const history = useHistory();
   const state = useContext(context);
   const location = useLocation();
-  const { user } = state;
+  const { user, year } = state;
   const [data, setData] = useState(null);
   const [startcompyear, setStartcompyear] = useState(null);
   const [startcompresult, setStartcompresult] = useState(null);
@@ -20,7 +20,7 @@ const App = (props) => {
   const [endresult, setEndresult] = useState(null);
   const [color, setColor] = useState(null);
 
-  const [rowCount, setRowCount] = useState(10);
+  const [rowCount] = useState(5);
 
   const memoizedInputs = useMemo(() => ({
     id: data?.ID || "",
@@ -47,20 +47,20 @@ const App = (props) => {
   const onChange = (e) => {
     const { name, value } = e.target;
     const lines = value.split('\n');
-    
+
     if (lines.length <= 10) {
-        setInputs({
-            ...inputs,
-            [name]: value
-        });
-        //setRowCount(Math.max(rowCount,lines.length))
+      setInputs({
+        ...inputs,
+        [name]: value
+      });
+      //setRowCount(Math.max(rowCount,lines.length))
     } else {
-        // 10줄을 초과하는 경우 첫 10줄만 유지
-        const limitedValue = lines.slice(0, 10).join('\n');
-        setInputs({
-            ...inputs,
-            [name]: limitedValue
-        });
+      // 10줄을 초과하는 경우 첫 10줄만 유지
+      const limitedValue = lines.slice(0, 10).join('\n');
+      setInputs({
+        ...inputs,
+        [name]: limitedValue
+      });
     }
     /*setInputs({
       ...inputs,
@@ -72,8 +72,33 @@ const App = (props) => {
   const endCompResultArray = ["완료", "조건부완료", "중단", "연장", "1차완료", "미평가"];
   const startResultArray = ["인증", "인증(대상)", "인증(금상)", "인증(은상)", "인증(동상)", "인증(장려)", "미인증(중단)", "미인증(재도전)"];
   const endResultArray = ["인증", "인증(대상)", "인증(금상)", "인증(은상)", "인증(동상)", "인증(장려)", "미인증(중단)", "1차인증"];
-  const yearArray = ["2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030", "2031", "2032", "2033", "2034"];
   const colorArray = ["red", "green", "yellow"];
+
+  const [minYear] = useState(year[0]);
+  const [maxYear] = useState(year[1]);
+
+  /*const getYearRange = (startYear, endYear) => {
+    const yearArray = [];
+    // 시작 연도부터 종료 연도까지 반복문을 돌며 배열에 연도를 추가합니다.
+    for (let year = startYear; year <= endYear; year++) {
+      yearArray.push(year.toString());
+    }
+    return yearArray;
+  };*/
+
+  const useYearRange = (startYear, endYear) => {
+    const getYearRange = useCallback(() => {
+      const yearArray = [];
+      for (let year = startYear; year <= endYear; year++) {
+        yearArray.push(year.toString());
+      }
+      return yearArray;
+    }, [startYear, endYear]);
+    // useMemo로 getYearRange의 결과를 메모이제이션
+    const years = useMemo(() => getYearRange(), [getYearRange]);
+
+    return years;
+  };
 
   const onLoad = async () => {
     if (location.state) {
@@ -229,18 +254,18 @@ const App = (props) => {
                   value={title || ""}
                 />
               </div>
-              <div className='formWrap'>
+              <div className='formWrap borderTop'>
                 <label className='label' htmlFor="IDN">관리번호</label>
                 <input
                   id='IDN'
                   name="id"
-                  placeholder="입력하세요(등록후 변경 불가합니다)"
+                  placeholder="등록후 변경 불가"
                   onChange={onChange}
                   value={id || ""}
                   disabled={data}
                 />
               </div>
-              <div className='formWrap'>
+              <div className='formWrap borderTop'>
                 <label className='label' htmlFor="CN">확인번호</label>
                 <input
                   id='CN'
@@ -250,7 +275,7 @@ const App = (props) => {
                   value={checknum || ""}
                 />
               </div>
-              <div className='formWrap'>
+              <div className='formWrap borderTop'>
                 <label className='label' htmlFor="LD">팀장</label>
                 <input
                   id='LD'
@@ -265,11 +290,13 @@ const App = (props) => {
                 <label className='label' htmlFor='SCY'>1차 완료평가연도</label>
                 <select id="SCY" onChange={(e) => { setStartcompyear(e.target.value) }} value={startcompyear ? startcompyear : "default"}>
                   <option value="default" disabled>선택하세요</option>
-                  {yearArray.map((item) => (
-                    <option value={item} key={item}>
-                      {item}
-                    </option>
-                  ))}
+                  {
+                    useYearRange(minYear, maxYear).map((item) => (
+                      <option value={item} key={item}>
+                        {item}
+                      </option>
+                    ))
+                  }
                 </select>
               </div>
               <div className='formWrap borderTop'>
@@ -308,11 +335,13 @@ const App = (props) => {
                 <label className='label' htmlFor='SY'>1차 성과평가연도</label>
                 <select id="SY" onChange={(e) => { setStartyear(e.target.value) }} value={startyear ? startyear : "default"}>
                   <option value="default" disabled>선택하세요</option>
-                  {yearArray.map((item) => (
-                    <option value={item} key={item}>
-                      {item}
-                    </option>
-                  ))}
+                  {
+                    useYearRange(minYear, maxYear).map((item) => (
+                      <option value={item} key={item}>
+                        {item}
+                      </option>
+                    ))
+                  }
                 </select>
               </div>
               <div className='formWrap borderTop'>
@@ -331,7 +360,7 @@ const App = (props) => {
                 <input
                   id='EY'
                   name="endyear"
-                  placeholder="연도를 입력하세요"
+                  placeholder="입력하세요"
                   onChange={onChange}
                   value={endyear || ""}
                 />

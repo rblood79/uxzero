@@ -10,7 +10,7 @@ const App = (props) => {
   const [pw, setPw] = useState(null);
 
   const state = useContext(context);
-  const { setUser } = state;
+  const { setUser, setYear } = state;
   const [view, setView] = useState(false);
   const history = useHistory();
 
@@ -23,6 +23,7 @@ const App = (props) => {
     if (docSnap.exists()) {
       if (number === docSnap.data().adminID && pw === docSnap.data().adminPW) {
         setUser(number);
+        setYear(docSnap.data().year);
         history.push('/result')
       } else {
         setNumber(null)
@@ -38,7 +39,8 @@ const App = (props) => {
     setNumber(null)
     setPw(null)
     setUser(null)
-  }, [setUser])
+    setYear(null)
+  }, [setUser, setYear])
 
   return (
     <div className='container'>

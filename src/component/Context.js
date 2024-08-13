@@ -9,6 +9,7 @@ class UserProvider extends Component {
         filter: null,
         user: null,
         data: null,
+        year: [],
     };
     // Method to update state
     setTheme = async theme => {
@@ -25,11 +26,14 @@ class UserProvider extends Component {
     setUser = user => {
         this.setState(prevState => ({ user }));
     };
+    setYear = year => {
+        this.setState(prevState => ({ year }));
+    };
     //
     render() {
         const { children } = this.props;
-        const { url, theme, filter, user } = this.state;
-        const { setTheme, setFilter, setUser } = this;
+        const { url, theme, filter, user, year } = this.state;
+        const { setTheme, setFilter, setUser, setYear } = this;
 
         return (
             <UserContext.Provider
@@ -38,9 +42,11 @@ class UserProvider extends Component {
                     url,
                     filter,
                     user,
+                    year,
                     setTheme,
                     setFilter,
                     setUser,
+                    setYear
                 }}>
                 {children}
             </UserContext.Provider>

@@ -52,7 +52,7 @@ const App = (props) => {
             height: isMobile ? "100%" : "297mm",
             borderCollapse: "collapse",
             border: "2px solid #000",
-            backgroundColor: "#fff",
+            backgroundColor: "#f5f5f7",
             fontSize: isMobile ? "14px" : "12pt",
             tableLayout: "fixed",
             th: {
@@ -67,42 +67,53 @@ const App = (props) => {
             td: {
                 //borderBottom: isMobile ? "1px solid #d3d3d3" : "0.5pt solid #d3d3d3",
                 fontWeight: "600",
-                padding: "6px 16px",
-                height: "56px",
-                //minHeight: "56px",
+                padding: "8px 21px",
+                height: "64px",
+                backgroundColor: "#fff",
                 wordBreak: "keep-all",
                 textAlign: "left",
                 letterSpacing: "1.2pt",
             },
             tdT: {
-                borderTop: isMobile ? "2px solid #d3d3d3" : "1pt solid #d3d3d3",
+                borderTop: isMobile ? "2px double #d3d3d3" : "0.5pt double #d3d3d3",
                 fontWeight: "600",
-                padding: "6px 16px",
-                height: "56px",
-                //minHeight: "56px",
+                padding: "8px 21px",
+                height: "64px",
+                backgroundColor: "#fff",
                 wordBreak: "keep-all",
                 textAlign: "left",
                 letterSpacing: "1.2pt",
             },
             tdL: {
-                borderRight: isMobile ? "2px solid #d3d3d3" : "1pt solid #d3d3d3",
+                borderRight: isMobile ? "2px double #d3d3d3" : "0.5pt double #d3d3d3",
             },
             tdR: {
-                borderLeft: isMobile ? "2px solid #d3d3d3" : "1pt solid #d3d3d3",
+                borderLeft: isMobile ? "2px double #d3d3d3" : "0.5pt double #d3d3d3",
             },
             tdB: {
-                borderBottom: isMobile ? "2px solid #d3d3d3" : "1pt solid #d3d3d3",
+                borderBottom: isMobile ? "2px double #d3d3d3" : "0.5pt double #d3d3d3",
+                backgroundColor: "#fff",
+            },
+            tdU: {
+                fontWeight: "600",
+                padding: "8px 21px",
+                height: "64px",
+                backgroundColor: "#fff",
+                wordBreak: "keep-all",
+                textAlign: "left",
+                letterSpacing: "1.2pt",
+                borderBottom: isMobile ? "2px double #d3d3d3" : "1pt double #efefef",
             },
             tde: {
                 fontWeight: "600",
                 padding: "6px 42px",
-                height: "56px",
+                height: "64px",
                 wordBreak: "keep-all",
                 textAlign: "left",
-                paddingLeft: "28px",
                 letterSpacing: "1.2pt",
+                backgroundColor: "#fff",
             },
-            foot :{
+            foot: {
                 height: isMobile ? "16px" : "24px",
             }
         }
@@ -171,7 +182,7 @@ const App = (props) => {
 
     return (
         <>
-            <div className='order'>
+            <div className='view'>
                 <div className='users'>
                     <div className='controll'>
                         <button className={'button back'} onClick={onBack}>이전</button>
@@ -182,6 +193,7 @@ const App = (props) => {
                             <colgroup>
                                 <col width={isMobile ? "16px" : "24px"} />
                                 <col width="auto" />
+                                <col width="auto" />
                                 <col width={isMobile ? "16px" : "24px"} />
                             </colgroup>
                             <thead>
@@ -191,52 +203,73 @@ const App = (props) => {
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td style={style.table.tdL}></td><td style={style.table.tdT}>□ 관리번호&nbsp;:&nbsp;{id}</td><td style={style.table.tdR}></td>
+                                    <td style={style.table.tdL}></td><td style={style.table.tdT} colSpan={2}>■ 관리번호&nbsp;:&nbsp;{id}</td><td style={style.table.tdR}></td>
                                 </tr>
                                 <tr>
-                                    <td style={style.table.tdL}></td><td style={style.table.td}>□ 확인번호&nbsp;:&nbsp;{checknum}</td><td style={style.table.tdR}></td>
+                                    <td style={style.table.tdL}></td><td style={style.table.td} colSpan={2}>■ 확인번호&nbsp;:&nbsp;{checknum}</td><td style={style.table.tdR}></td>
                                 </tr>
                                 <tr>
-                                    <td style={style.table.tdL}></td><td style={style.table.td}>□ 팀장&nbsp;:&nbsp;{leader}</td><td style={style.table.tdR}></td>
+                                    <td style={style.table.tdL}></td><td style={style.table.tdU} colSpan={2}>■ 팀장&nbsp;:&nbsp;{leader}</td><td style={style.table.tdR}></td>
+                                </tr>
+                                {
+                                    isMobile ?
+                                        <>
+                                            <tr>
+                                                <td style={style.table.tdL}></td><td style={style.table.td} colSpan={2}>■ 1차완료 평가연도&nbsp;:&nbsp;{startcompyear}</td><td style={style.table.tdR}></td>
+                                            </tr>
+                                            <tr>
+                                                <td style={style.table.tdL}></td><td style={style.table.td} colSpan={2}>■ 1차완료 평가결과&nbsp;:&nbsp;{startcompresult}</td><td style={style.table.tdR}></td>
+                                            </tr>
+                                            <tr>
+                                                <td style={style.table.tdL}></td><td style={style.table.td} colSpan={2}>■ 2차완료 평가연도&nbsp;:&nbsp;{endcompyear}</td><td style={style.table.tdR}></td>
+                                            </tr>
+                                            <tr>
+                                                <td style={style.table.tdL}></td><td style={style.table.td} colSpan={2}>■ 2차완료 평가결과&nbsp;:&nbsp;{endcompresult}</td><td style={style.table.tdR}></td>
+                                            </tr>
+                                            <tr>
+                                                <td style={style.table.tdL}></td><td style={style.table.td} colSpan={2}>■ 1차 성과 평가연도&nbsp;:&nbsp;{startyear}</td><td style={style.table.tdR}></td>
+                                            </tr>
+                                            <tr>
+                                                <td style={style.table.tdL}></td><td style={style.table.td} colSpan={2}>■ 1차 성과 평가결과&nbsp;:&nbsp;{startresult}</td><td style={style.table.tdR}></td>
+                                            </tr>
+                                            <tr>
+                                                <td style={style.table.tdL}></td><td style={style.table.td} colSpan={2}>■ 2차 성과 평가연도&nbsp;:&nbsp;{endyear}</td><td style={style.table.tdR}></td>
+                                            </tr>
+                                            <tr>
+                                                <td style={style.table.tdL}></td><td style={style.table.tdU} colSpan={2}>■ 2차 성과 평가결과&nbsp;:&nbsp;{endresult}</td><td style={style.table.tdR}></td>
+                                            </tr>
+                                        </> :
+                                        <>
+                                            <tr>
+                                                <td style={style.table.tdL}></td><td style={style.table.td}>■ 1차완료 평가연도&nbsp;:&nbsp;{startcompyear}</td><td style={style.table.td}>■ 1차완료 평가결과&nbsp;:&nbsp;{startcompresult}</td><td style={style.table.tdR}></td>
+                                            </tr>
+                                            <tr>
+                                                <td style={style.table.tdL}></td><td style={style.table.td}>■ 2차완료 평가연도&nbsp;:&nbsp;{endcompyear}</td><td style={style.table.td}>■ 2차완료 평가결과&nbsp;:&nbsp;{endcompresult}</td><td style={style.table.tdR}></td>
+                                            </tr>
+                                            <tr>
+                                                <td style={style.table.tdL}></td><td style={style.table.td}>■ 1차 성과 평가연도&nbsp;:&nbsp;{startyear}</td><td style={style.table.td}>■ 1차 성과 평가결과&nbsp;:&nbsp;{startresult}</td><td style={style.table.tdR}></td>
+                                            </tr>
+                                            <tr>
+                                                <td style={style.table.tdL}></td><td style={style.table.tdU}>■ 2차 성과 평가연도&nbsp;:&nbsp;{endyear}</td><td style={style.table.tdU}>■ 2차 성과 평가결과&nbsp;:&nbsp;{endresult}</td><td style={style.table.tdR}></td>
+                                            </tr>
+                                        </>
+                                }
+
+
+                                <tr>
+                                    <td style={style.table.tdL}></td><td style={style.table.td} colSpan={2}>■ 재무성과(원)&nbsp;:&nbsp;{result}</td><td style={style.table.tdR}></td>
                                 </tr>
                                 <tr>
-                                    <td style={style.table.tdL}></td><td style={style.table.td}>□ 1차완료 평가연도&nbsp;:&nbsp;{startcompyear}</td><td style={style.table.tdR}></td>
+                                    <td style={style.table.tdL}></td><td style={style.table.td} colSpan={2}>■ 관리지표&nbsp;:&nbsp;{indi[0]}</td><td style={style.table.tdR}></td>
                                 </tr>
                                 <tr>
-                                    <td style={style.table.tdL}></td><td style={style.table.td}>□ 1차완료 평가결과&nbsp;:&nbsp;{startcompresult}</td><td style={style.table.tdR}></td>
+                                    <td style={style.table.tdL}></td><td style={style.table.tde} colSpan={2}>○ 단위&nbsp;:&nbsp;{unit[0]}</td><td style={style.table.tdR}></td>
                                 </tr>
                                 <tr>
-                                    <td style={style.table.tdL}></td><td style={style.table.td}>□ 2차완료 평가연도&nbsp;:&nbsp;{endcompyear}</td><td style={style.table.tdR}></td>
+                                    <td style={style.table.tdL}></td><td style={style.table.tde} colSpan={2}>○ 수치&nbsp;:&nbsp;{datay0[0]}</td><td style={style.table.tdR}></td>
                                 </tr>
                                 <tr>
-                                    <td style={style.table.tdL}></td><td style={style.table.td}>□ 2차완료 평가결과&nbsp;:&nbsp;{endcompresult}</td><td style={style.table.tdR}></td>
-                                </tr>
-                                <tr>
-                                    <td style={style.table.tdL}></td><td style={style.table.td}>□ 1차 성과 평가연도&nbsp;:&nbsp;{startyear}</td><td style={style.table.tdR}></td>
-                                </tr>
-                                <tr>
-                                    <td style={style.table.tdL}></td><td style={style.table.td}>□ 1차 성과 평가결과&nbsp;:&nbsp;{startresult}</td><td style={style.table.tdR}></td>
-                                </tr>
-                                <tr>
-                                    <td style={style.table.tdL}></td><td style={style.table.td}>□ 2차 성과 평가연도&nbsp;:&nbsp;{endyear}</td><td style={style.table.tdR}></td>
-                                </tr>
-                                <tr>
-                                    <td style={style.table.tdL}></td><td style={style.table.td}>□ 2차 성과 평가결과&nbsp;:&nbsp;{endresult}</td><td style={style.table.tdR}></td>
-                                </tr>
-                                <tr>
-                                    <td style={style.table.tdL}></td><td style={style.table.td}>□ 재무성과(원)&nbsp;:&nbsp;{result}</td><td style={style.table.tdR}></td>
-                                </tr>
-                                <tr>
-                                    <td style={style.table.tdL}></td><td style={style.table.td}>□ 관리지표&nbsp;:&nbsp;{indi[0]}</td><td style={style.table.tdR}></td>
-                                </tr>
-                                <tr>
-                                    <td style={style.table.tdL}></td><td style={style.table.tde}>○ 단위&nbsp;:&nbsp;{unit[0]}</td><td style={style.table.tdR}></td>
-                                </tr>
-                                <tr>
-                                    <td style={style.table.tdL}></td><td style={style.table.tde}>○ 수치&nbsp;:&nbsp;{datay0[0]}</td><td style={style.table.tdR}></td>
-                                </tr>
-                                <tr>
-                                    <td style={style.table.tdL}></td><td style={style.table.tdB}></td><td style={style.table.tdR}></td>
+                                    <td style={style.table.tdL}></td><td style={style.table.tdB} colSpan={2}></td><td style={style.table.tdR}></td>
                                 </tr>
                                 <tr>
                                     <th colSpan={3} style={style.table.foot}></th>
