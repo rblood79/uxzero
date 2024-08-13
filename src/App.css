@@ -560,10 +560,10 @@
   border-bottom: 0;
 }
 
-.label span:first-child::after {
+/*.label span:first-child::after {
   content: "·";
   padding: 0 8px;
-}
+}*/
 
 
 .resultHead {
@@ -830,6 +830,14 @@ tbody tr:hover td.delTd{
   width: 120px;
   background: #EFEFEF;
   font-size: 12px;
+
+  display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.label .red {
+  color: #f00;
 }
 
 .formGroup {

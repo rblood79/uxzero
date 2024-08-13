@@ -44,9 +44,13 @@ const App = (props) => {
   const [inputs, setInputs] = useState(memoizedInputs);
   const { id, checknum, leader, title, endcompyear, endyear, result, indi, unit, datay0, datay1, datay2, datay3, datay4, datay5 } = inputs;
 
+  const tempArr = (e) => {
+    return e.split('\n');
+  };
+
   const onChange = (e) => {
     const { name, value } = e.target;
-    const lines = value.split('\n');
+    const lines = tempArr(value)//value.split('\n');
 
     if (lines.length <= 10) {
       setInputs({
@@ -387,7 +391,7 @@ const App = (props) => {
                 />
               </div>
               <div className='formWrap borderTop'>
-                <label className='label' htmlFor="ID">관리지표</label>
+                <label className='label' htmlFor="ID">관리지표<span className='red'>{tempArr(indi).length > 1 && tempArr(indi).length + '건'}</span></label>
                 <textarea
                   id='ID'
                   name="indi"
@@ -398,7 +402,7 @@ const App = (props) => {
                 ></textarea>
               </div>
               <div className='formWrap borderTop'>
-                <label className='label' htmlFor="UN">단위</label>
+                <label className='label' htmlFor="UN">단위<span className='red'>{tempArr(unit).length > 1 && tempArr(unit).length + '건'}</span></label>
                 <textarea
                   id='UN'
                   name="unit"
@@ -409,7 +413,7 @@ const App = (props) => {
                 ></textarea>
               </div>
               <div className='formWrap borderTop'>
-                <label className='label' htmlFor="D0">수치</label>
+                <label className='label' htmlFor="D0">수치<span className='red'>{tempArr(datay0).length > 1 && tempArr(datay0).length + '건'}</span></label>
                 <textarea
                   id='D0'
                   name="datay0"
@@ -431,7 +435,7 @@ const App = (props) => {
                 </select>
               </div>
               <div className='formWrap borderTop'>
-                <label className='label' htmlFor="D1">Y+1</label>
+                <label className='label' htmlFor="D1">Y+1<span className='red'>{tempArr(datay1).length > 1 && tempArr(datay1).length + '건'}</span></label>
                 <textarea
                   id='D1'
                   name="datay1"
@@ -442,7 +446,7 @@ const App = (props) => {
                 ></textarea>
               </div>
               <div className='formWrap borderTop'>
-                <label className='label' htmlFor="D2">Y+2</label>
+                <label className='label' htmlFor="D2">Y+2<span className='red'>{tempArr(datay2).length > 1 && tempArr(datay2).length + '건'}</span></label>
                 <textarea
                   id='D2'
                   name="datay2"
@@ -453,7 +457,7 @@ const App = (props) => {
                 ></textarea>
               </div>
               <div className='formWrap borderTop'>
-                <label className='label' htmlFor="D3">Y+3</label>
+                <label className='label' htmlFor="D3">Y+3<span className='red'>{tempArr(datay3).length > 1 && tempArr(datay3).length + '건'}</span></label>
                 <textarea
                   id='D3'
                   name="datay3"
@@ -464,7 +468,7 @@ const App = (props) => {
                 ></textarea>
               </div>
               <div className='formWrap borderTop'>
-                <label className='label' htmlFor="D4">Y+4</label>
+                <label className='label' htmlFor="D4">Y+4<span className='red'>{tempArr(datay4).length > 1 && tempArr(datay4).length + '건'}</span></label>
                 <textarea
                   id='D4'
                   name="datay4"
@@ -475,7 +479,7 @@ const App = (props) => {
                 ></textarea>
               </div>
               <div className='formWrap borderTop'>
-                <label className='label' htmlFor="D5">Y+5</label>
+                <label className='label' htmlFor="D5">Y+5<span className='red'>{tempArr(datay5).length > 1 && tempArr(datay5).length + '건'}</span></label>
                 <textarea
                   id='D5'
                   name="datay5"
