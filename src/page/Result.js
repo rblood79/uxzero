@@ -146,7 +146,7 @@ const App = (props) => {
     const rspan = indiArray.length > 0 ? indiArray.length : 1;
     return (
       <>
-        <tr onDoubleClick={() => !isMobile && test(item)}>
+        <tr>
           <td rowSpan={rspan} style={style.table.td}>{item.ID}</td>
           <td rowSpan={rspan} style={style.table.tdB}>{item.CHECKNUM}</td>
           <td rowSpan={rspan} style={style.table.td}>{item.LEADER}</td>
@@ -169,11 +169,11 @@ const App = (props) => {
           <td style={style.table.td}>{d3Array[0]}</td>
           <td style={style.table.td}>{d4Array[0]}</td>
           <td style={style.table.td}>{d5Array[0]}</td>
-          <td className='editTd' onClick={() => { test(item) }}><i className="ri-edit-fill"></i></td>
-          <td className='detailTd' onClick={() => { onView(item) }}><i className="ri-printer-fill"></i></td>
+          <td className='editTd' onClick={() => onEdit(item)}><i className="ri-edit-fill"></i></td>
+          <td className='detailTd' onClick={() => onView(item)}><i className="ri-printer-fill"></i></td>
         </tr>
         {indiArray.slice(1).map((indi, index) => (
-          <tr key={`list${index + 1}`} onDoubleClick={() => !isMobile && test(item)}>
+          <tr key={`list${index + 1}`}>
             <td style={style.table.td}>{indi}</td>
             <td style={style.table.td}>{unitArray[index + 1]}</td>
             <td style={style.table.td}>{d0Array[index + 1]}</td>
@@ -182,15 +182,15 @@ const App = (props) => {
             <td style={style.table.td}>{d3Array[index + 1]}</td>
             <td style={style.table.td}>{d4Array[index + 1]}</td>
             <td style={style.table.td}>{d5Array[index + 1]}</td>
-            <td style={style.table.td} className='printHide'></td>
-            <td style={style.table.td} className='printHide'></td>
+            <td className='printHide bRight'></td>
+            <td className='printHide bRight'></td>
           </tr>
         ))}
       </>
     );
   };
 
-  const test = (e) => {
+  const onEdit = (e) => {
     history.push({
       pathname: '/form',
       state: { userCell: e.ID }
@@ -233,29 +233,7 @@ const App = (props) => {
     // eslint-disable-next-line no-use-before-define
   }, [data, handleSearch])
 
-  /*const onDownload = async () => {
-    let xData = '<html xmlns:x="urn:schemas-microsoft-com:office:excel">';
-    xData += '<head><meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8">';
-    xData += '<xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>'
-    xData += '<x:Name>과제관리대장</x:Name>';
-    xData += '<x:WorksheetOptions><x:Panes></x:Panes></x:WorksheetOptions></x:ExcelWorksheet>';
-    xData += '</x:ExcelWorksheets></x:ExcelWorkbook></xml>';
-    xData += '<style></style>';
-    xData += '</head><body>';
-    xData += tableRef.current.outerHTML;
-    xData += '</body></html>';
-
-    const fileName = moment(new Date()).format("YYYYMMDD");
-    const blob = new Blob([xData], {
-      type: "application/vnd.ms-excel;charset=utf-8;"
-    });
-    const a = document.createElement("a");
-    a.href = window.URL.createObjectURL(blob);
-    a.download = "과제관리" + fileName + ".xls";
-    a.click();
-
-    xData = null;
-  };*/
+  
   const onDownload = useCallback(() => {
     // 1. 테이블의 깊은 복사본 생성
     const table = tableRef.current.cloneNode(true);
@@ -429,16 +407,7 @@ const App = (props) => {
         <div>
           <div className='searchForm'>
             <div className='searchGroup'>
-              <div className='formWrap'>
-                <label className='label' htmlFor='RL'>팀장</label>
-                <input
-                  id="RL"
-                  name="regLeader"
-                  placeholder=""
-                  onChange={onChange}
-                  value={regLeader}
-                />
-              </div>
+              
               <div className='formWrap span2'>
                 <label className='label' htmlFor='RT'>과제명</label>
                 <input
@@ -449,6 +418,29 @@ const App = (props) => {
                   value={regTitle}
                 />
               </div>
+
+              <div className='formWrap'>
+                <label className='label' htmlFor='RL'>팀장</label>
+                <input
+                  id="RL"
+                  name="regLeader"
+                  placeholder=""
+                  onChange={onChange}
+                  value={regLeader}
+                />
+              </div>
+              
+              <div className='formWrap'>
+                <label className='label' htmlFor='CO'>사후관리상태</label>
+                <select id="CO" onChange={(e) => { setColor(e.target.value) }} value={regColor}>
+                  <option value="all">전체</option>
+                  <option value="red">red</option>
+                  <option value="green">green</option>
+                  <option value="yellow">yellow</option>
+                </select>
+              </div>
+              
+              
               <div className='formWrap'>
                 <label className='label' htmlFor='SY'>1차 완료평가연도</label>
                 <select id="SY" onChange={(e) => { setStartYear(e.target.value) }} value={startYear}>
@@ -486,7 +478,7 @@ const App = (props) => {
                 </select>
               </div>
 
-              <div className='formWrap borderTop'>
+              <div className='formWrap'>
                 <label className='label' htmlFor='RECY'>2차 완료평가연도</label>
                 <input
                   id='RECY'
@@ -497,7 +489,7 @@ const App = (props) => {
                 />
               </div>
 
-              <div className='formWrap borderTop'>
+              <div className='formWrap'>
                 <label className='label' htmlFor='ECR'>2차 완료평가결과</label>
                 <select id="ECR" onChange={(e) => { setEndcompresult(e.target.value) }} value={endcompresult}>
                   <option value="all">전체</option>
@@ -509,7 +501,7 @@ const App = (props) => {
                 </select>
               </div>
 
-              <div className='formWrap borderTop'>
+              <div className='formWrap borderBottom'>
                 <label className='label' htmlFor='SR'>1차 성과평가연도</label>
                 <select id="SR" onChange={(e) => { setStartResult(e.target.value) }} value={startResult}>
                   <option value="all">전체</option>
@@ -534,7 +526,7 @@ const App = (props) => {
                 </select>
               </div>
 
-              <div className='formWrap borderTop'>
+              <div className='formWrap borderBottom'>
                 <label className='label' htmlFor='SR2'>1차 성과평가결과</label>
                 <select id="SR2" onChange={(e) => { setStartResult2(e.target.value) }} value={startResult2}>
                   <option value="all">전체</option>
@@ -546,7 +538,7 @@ const App = (props) => {
                 </select>
               </div>
 
-              <div className='formWrap borderTop'>
+              <div className='formWrap borderBottom'>
                 <label className='label' htmlFor='REY'>2차 성과평가연도</label>
                 <input
                   id='REY'
@@ -557,7 +549,7 @@ const App = (props) => {
                 />
               </div>
 
-              <div className='formWrap borderTop'>
+              <div className='formWrap borderBottom'>
                 <label className='label' htmlFor='ER2'>2차 성과평가결과</label>
                 <select id="ER2" onChange={(e) => { setEndResult2(e.target.value) }} value={endResult2}>
                   <option value="all">전체</option>
@@ -569,15 +561,7 @@ const App = (props) => {
                 </select>
               </div>
 
-              <div className='formWrap borderTop'>
-                <label className='label' htmlFor='CO'>사후관리상태</label>
-                <select id="CO" onChange={(e) => { setColor(e.target.value) }} value={regColor}>
-                  <option value="all">전체</option>
-                  <option value="red">red</option>
-                  <option value="green">green</option>
-                  <option value="yellow">yellow</option>
-                </select>
-              </div>
+              
 
             </div>
           </div>
@@ -598,7 +582,7 @@ const App = (props) => {
                 <col width="70px" />
                 <col width="70px" />
                 <col width="50px" />
-                <col width="220px" />
+                <col width="304px" />
                 <col width="54px" />
                 <col width="70px" />
                 <col width="70px" />
@@ -609,7 +593,7 @@ const App = (props) => {
                 <col width="70px" />
                 <col width="70px" />
                 <col width="54px" />
-                <col width="132px" />
+                <col width="180px" />
                 <col width="48px" />
                 <col width="54px" />
                 <col width="54px" />

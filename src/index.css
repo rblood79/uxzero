@@ -7,11 +7,12 @@ html {
 
 body {
   margin: 0;
+  background-color: #f4f6f8;
+  color:#303038;
   font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   font-size: 14px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /*min-width: 1200px;*/
   min-height: 100%;
   height: 100%;
   overflow-y: scroll;
@@ -45,9 +46,9 @@ button {
   background-color: #0067B8;
   color: #fff;
   width: 100%;
-  height: 46px;
-  border-radius: 4px;
-  font-size: 16px;
+  height: 40px;
+  border-radius: .125rem;
+  font-size: 14px;
   font-weight: 600;
   display: flex;
   align-items: center;

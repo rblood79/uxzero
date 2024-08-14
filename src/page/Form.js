@@ -249,7 +249,7 @@ const App = (props) => {
           </div>
           <div className='formBody'>
             <div className='formGroup'>
-              <div className='formWrap'>
+              <div className='formWrap span2'>
                 <label className='label' htmlFor="TITL">과제명</label>
                 <input
                   id='TITL'
@@ -259,7 +259,7 @@ const App = (props) => {
                   value={title || ""}
                 />
               </div>
-              <div className='formWrap borderTop'>
+              <div className='formWrap'>
                 <label className='label' htmlFor="IDN">관리번호</label>
                 <input
                   id='IDN'
@@ -270,7 +270,7 @@ const App = (props) => {
                   disabled={data}
                 />
               </div>
-              <div className='formWrap borderTop'>
+              <div className='formWrap'>
                 <label className='label' htmlFor="CN">확인번호</label>
                 <input
                   id='CN'
@@ -280,7 +280,7 @@ const App = (props) => {
                   value={checknum || ""}
                 />
               </div>
-              <div className='formWrap borderTop'>
+              <div className='formWrap'>
                 <label className='label' htmlFor="LD">팀장</label>
                 <input
                   id='LD'
@@ -291,7 +291,7 @@ const App = (props) => {
                 />
               </div>
 
-              <div className='formWrap spanN borderTop'>
+              <div className='formWrap'>
                 <label className='label' htmlFor='SCY'>1차 완료평가연도</label>
                 <select id="SCY" onChange={(e) => { setStartcompyear(e.target.value) }} value={startcompyear ? startcompyear : "default"}>
                   <option value="default" disabled>선택하세요</option>
@@ -304,7 +304,7 @@ const App = (props) => {
                   }
                 </select>
               </div>
-              <div className='formWrap borderTop'>
+              <div className='formWrap'>
                 <label className='label' htmlFor='SCR'>1차 완료평가결과</label>
                 <select id="SCR" onChange={(e) => { setStartcompresult(e.target.value) }} value={startcompresult ? startcompresult : "default"}>
                   <option value="default" disabled>선택하세요</option>
@@ -315,7 +315,7 @@ const App = (props) => {
                   ))}
                 </select>
               </div>
-              <div className='formWrap borderTop'>
+              <div className='formWrap'>
                 <label className='label' htmlFor="ECY">2차 완료평가연도</label>
                 <input
                   id='ECY'
@@ -325,7 +325,7 @@ const App = (props) => {
                   value={endcompyear || ""}
                 />
               </div>
-              <div className='formWrap borderTop'>
+              <div className='formWrap'>
                 <label className='label' htmlFor='ECR'>2차 완료평가결과</label>
                 <select id="ECR" onChange={(e) => { setEndcompresult(e.target.value) }} value={endcompresult ? endcompresult : "default"}>
                   <option value="default" disabled>선택하세요</option>
@@ -336,7 +336,8 @@ const App = (props) => {
                   ))}
                 </select>
               </div>
-              <div className='formWrap spanN borderTop'>
+              <div className='formWrap empty'></div>
+              <div className='formWrap'>
                 <label className='label' htmlFor='SY'>1차 성과평가연도</label>
                 <select id="SY" onChange={(e) => { setStartyear(e.target.value) }} value={startyear ? startyear : "default"}>
                   <option value="default" disabled>선택하세요</option>
@@ -349,7 +350,7 @@ const App = (props) => {
                   }
                 </select>
               </div>
-              <div className='formWrap borderTop'>
+              <div className='formWrap'>
                 <label className='label' htmlFor='SR'>1차 성과평가결과</label>
                 <select id="SR" onChange={(e) => { setStartresult(e.target.value) }} value={startresult ? startresult : "default"}>
                   <option value="default" disabled>선택하세요</option>
@@ -360,7 +361,7 @@ const App = (props) => {
                   ))}
                 </select>
               </div>
-              <div className='formWrap borderTop'>
+              <div className='formWrap'>
                 <label className='label' htmlFor="EY">2차 성과평가연도</label>
                 <input
                   id='EY'
@@ -370,7 +371,7 @@ const App = (props) => {
                   value={endyear || ""}
                 />
               </div>
-              <div className='formWrap borderTop'>
+              <div className='formWrap'>
                 <label className='label' htmlFor='ER'>2차 성과평가결과</label>
                 <select id="ER" onChange={(e) => { setEndresult(e.target.value) }} value={endresult ? endresult : "default"}>
                   <option value="default" disabled>선택하세요</option>
@@ -381,7 +382,8 @@ const App = (props) => {
                   ))}
                 </select>
               </div>
-              <div className='formWrap spanN borderTop'>
+              <div className='formWrap empty'></div>
+              <div className='formWrap'>
                 <label className='label' htmlFor="RES">재무성과(원)</label>
                 <input
                   id='RES'
@@ -391,7 +393,7 @@ const App = (props) => {
                   value={result || ""}
                 />
               </div>
-              <div className='formWrap borderTop'>
+              <div className='formWrap'>
                 <label className='label' htmlFor="ID">관리지표<span className='red'>{tempArr(indi).length > 1 && tempArr(indi).length + '건'}</span></label>
                 <textarea
                   id='ID'
@@ -402,7 +404,7 @@ const App = (props) => {
                   rows={rowCount}
                 ></textarea>
               </div>
-              <div className='formWrap borderTop'>
+              <div className='formWrap'>
                 <label className='label' htmlFor="UN">단위<span className='red'>{tempArr(unit).length > 1 && tempArr(unit).length + '건'}</span></label>
                 <textarea
                   id='UN'
@@ -413,7 +415,7 @@ const App = (props) => {
                   rows={rowCount}
                 ></textarea>
               </div>
-              <div className='formWrap borderTop'>
+              <div className='formWrap'>
                 <label className='label' htmlFor="D0">수치<span className='red'>{tempArr(datay0).length > 1 && tempArr(datay0).length + '건'}</span></label>
                 <textarea
                   id='D0'
@@ -435,7 +437,7 @@ const App = (props) => {
                   ))}
                 </select>
               </div>
-              <div className='formWrap borderTop'>
+              <div className='formWrap borderBottom'>
                 <label className='label' htmlFor="D1">Y+1<span className='red'>{tempArr(datay1).length > 1 && tempArr(datay1).length + '건'}</span></label>
                 <textarea
                   id='D1'
@@ -446,7 +448,7 @@ const App = (props) => {
                   rows={rowCount}
                 ></textarea>
               </div>
-              <div className='formWrap borderTop'>
+              <div className='formWrap borderBottom'>
                 <label className='label' htmlFor="D2">Y+2<span className='red'>{tempArr(datay2).length > 1 && tempArr(datay2).length + '건'}</span></label>
                 <textarea
                   id='D2'
@@ -457,7 +459,7 @@ const App = (props) => {
                   rows={rowCount}
                 ></textarea>
               </div>
-              <div className='formWrap borderTop'>
+              <div className='formWrap borderBottom'>
                 <label className='label' htmlFor="D3">Y+3<span className='red'>{tempArr(datay3).length > 1 && tempArr(datay3).length + '건'}</span></label>
                 <textarea
                   id='D3'
@@ -468,7 +470,7 @@ const App = (props) => {
                   rows={5}
                 ></textarea>
               </div>
-              <div className='formWrap borderTop'>
+              <div className='formWrap borderBottom'>
                 <label className='label' htmlFor="D4">Y+4<span className='red'>{tempArr(datay4).length > 1 && tempArr(datay4).length + '건'}</span></label>
                 <textarea
                   id='D4'
@@ -479,7 +481,7 @@ const App = (props) => {
                   rows={rowCount}
                 ></textarea>
               </div>
-              <div className='formWrap borderTop'>
+              <div className='formWrap borderBottom'>
                 <label className='label' htmlFor="D5">Y+5<span className='red'>{tempArr(datay5).length > 1 && tempArr(datay5).length + '건'}</span></label>
                 <textarea
                   id='D5'

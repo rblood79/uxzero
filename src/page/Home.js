@@ -72,7 +72,7 @@ const App = (props) => {
               </div>
           </div>
           <div className='controll'>
-            <button className={'button'} onClick={() => {
+            <button className={'button sign'} onClick={() => {
               onCheck(number)
             }}>확인</button>
           </div>
