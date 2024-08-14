@@ -830,9 +830,12 @@ tbody tr:hover td.delTd{
 }
 
 
-.formWrap input,
+.formWrap input[type=text],
 .formWrap select,
-.formWrap textarea {
+.formWrap textarea,
+
+.formWrap input:not([type=radio]) 
+{
   appearance: none;
   -webkit-appearance: none;
 
@@ -846,6 +849,7 @@ tbody tr:hover td.delTd{
 
   outline: none;
 }
+
 
 .formWrap select {
   background-image: url("./assets/arrow-down-s-line.png");
@@ -904,7 +908,7 @@ tbody tr:hover td.delTd{
 }*/
 
 .formWrap select,
-.formWrap input,
+.formWrap input[type=text],
 .formWrap textarea {
   border-left-width: 0;
   border-right-width: 0;

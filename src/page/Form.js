@@ -252,6 +252,7 @@ const App = (props) => {
               <div className='formWrap span2'>
                 <label className='label' htmlFor="TITL">과제명</label>
                 <input
+                  type="text"
                   id='TITL'
                   name="title"
                   placeholder="입력하세요"
@@ -262,6 +263,7 @@ const App = (props) => {
               <div className='formWrap'>
                 <label className='label' htmlFor="IDN">관리번호</label>
                 <input
+                type="text"
                   id='IDN'
                   name="id"
                   placeholder="등록후 변경 불가"
@@ -273,6 +275,7 @@ const App = (props) => {
               <div className='formWrap'>
                 <label className='label' htmlFor="CN">확인번호</label>
                 <input
+                type="text"
                   id='CN'
                   name="checknum"
                   placeholder="입력하세요"
@@ -283,6 +286,7 @@ const App = (props) => {
               <div className='formWrap'>
                 <label className='label' htmlFor="LD">팀장</label>
                 <input
+                type="text"
                   id='LD'
                   name="leader"
                   placeholder="입력하세요"
@@ -318,6 +322,7 @@ const App = (props) => {
               <div className='formWrap'>
                 <label className='label' htmlFor="ECY">2차 완료평가연도</label>
                 <input
+                type="text"
                   id='ECY'
                   name="endcompyear"
                   placeholder="입력하세요"
@@ -364,6 +369,7 @@ const App = (props) => {
               <div className='formWrap'>
                 <label className='label' htmlFor="EY">2차 성과평가연도</label>
                 <input
+                type="text"
                   id='EY'
                   name="endyear"
                   placeholder="입력하세요"
@@ -386,6 +392,7 @@ const App = (props) => {
               <div className='formWrap'>
                 <label className='label' htmlFor="RES">재무성과(원)</label>
                 <input
+                type="text"
                   id='RES'
                   name="result"
                   placeholder="입력하세요"

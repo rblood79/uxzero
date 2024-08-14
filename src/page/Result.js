@@ -411,6 +411,7 @@ const App = (props) => {
               <div className='formWrap span2'>
                 <label className='label' htmlFor='RT'>과제명</label>
                 <input
+                  type='text'
                   id='RT'
                   name="regTitle"
                   placeholder=""
@@ -422,6 +423,7 @@ const App = (props) => {
               <div className='formWrap'>
                 <label className='label' htmlFor='RL'>팀장</label>
                 <input
+                  type='text'
                   id="RL"
                   name="regLeader"
                   placeholder=""
@@ -432,12 +434,17 @@ const App = (props) => {
               
               <div className='formWrap'>
                 <label className='label' htmlFor='CO'>사후관리상태</label>
-                <select id="CO" onChange={(e) => { setColor(e.target.value) }} value={regColor}>
+                {/*<select id="CO" onChange={(e) => { setColor(e.target.value) }} value={regColor}>
                   <option value="all">전체</option>
                   <option value="red">red</option>
                   <option value="green">green</option>
                   <option value="yellow">yellow</option>
-                </select>
+                </select>*/}
+                <input type='radio' name='color' id='AC' value='all' onChange={({ target: { value } }) => setColor(value)} /><label htmlFor='AC' className='radioColor all'></label>
+                <input type='radio' name='color' id='RC' value='red' onChange={({ target: { value } }) => setColor(value)} /><label htmlFor='RC' className='radioColor red'></label>
+                <input type='radio' name='color' id='GC' value='green' onChange={({ target: { value } }) => setColor(value)} /><label htmlFor='GC' className='radioColor green'></label>
+                <input type='radio' name='color' id='YC' value='yellow' onChange={({ target: { value } }) => setColor(value)} /><label htmlFor='YC' className='radioColor yellow'></label>
+                
               </div>
               
               
@@ -481,6 +488,7 @@ const App = (props) => {
               <div className='formWrap'>
                 <label className='label' htmlFor='RECY'>2차 완료평가연도</label>
                 <input
+                  type='text'
                   id='RECY'
                   name="regEndCompYear"
                   placeholder=""
@@ -541,6 +549,7 @@ const App = (props) => {
               <div className='formWrap borderBottom'>
                 <label className='label' htmlFor='REY'>2차 성과평가연도</label>
                 <input
+                  type='text'
                   id='REY'
                   name="regEndYear"
                   placeholder=""
