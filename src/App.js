@@ -1,7 +1,7 @@
 
 import './App.css';
 import { isMobile } from 'react-device-detect';
-import { Route,} from "react-router-dom";
+import { Route, } from "react-router-dom";
 
 import React, { useContext, useEffect } from 'react';
 import context from './component/Context';
@@ -9,9 +9,9 @@ import context from './component/Context';
 import Head from './component/Head';
 import Foot from './component/Foot';
 
-import Home from './page/Home';
+import Sign from './page/Sign';
 import Form from './page/Form';
-import Result from './page/Result';
+import List from './page/List';
 import View from './page/View';
 
 // Import the functions you need from the SDKs you need
@@ -36,14 +36,19 @@ const App = (props) => {
     //console.log(props.location.pathname)
   }, [])
   return (
-    <div className={isMobile ? "App mobile" : "App"} style={{ height: props.location.pathname === '/' && '100%', backgroundColor:  props.location.pathname === '/main' && '#0078D7'}}>
-      {user && <Head path={props.location.pathname}/>}
-      <main className='main'>
-        <Route exact path="/" render={() => <Home manage={manageRef}/>} />
-        <Route path="/form" render={() => <Form manage={manageRef}/>} />
-        <Route path="/result" render={() => <Result manage={manageRef}/>} />
-        <Route path="/view" render={() => <View manage={manageRef}/>} />
-      </main>
+    <div className={isMobile ? "App mobile" : "App"} style={{ height: props.location.pathname === '/' && '100%', backgroundColor: props.location.pathname === '/main' && '#0078D7' }}>
+      {
+        !user ?
+          <Route exact path="/" render={() => <Sign manage={manageRef} />} /> :
+          <>
+            <Head path={props.location.pathname} />
+            <main className='main'>
+              <Route exact path="/" render={() => <List manage={manageRef} />} />
+              <Route path="/form" render={() => <Form manage={manageRef}/>} />
+              <Route path="/view" render={() => <View manage={manageRef}/>} />
+            </main>
+          </>
+      }
       <Foot />
     </div>
   );

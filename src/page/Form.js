@@ -123,12 +123,12 @@ const App = (props) => {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         //console.log(data,'//' ,docSnap.data())
-        !_.isEqual(data, docSnap.data()) && history.push('/result', { updated: true });
+        !_.isEqual(data, docSnap.data()) && history.push('/', { updated: true });
       } else {
         console.log('fail');
       }
     } else {
-      history.push('/result', { updated: true });
+      history.push('/', { updated: true });
     }
   };
 
@@ -138,7 +138,7 @@ const App = (props) => {
     if (docSnap.exists()) {
       console.log('아직있음');
     } else {
-      history.push('/result', { updated: true });
+      history.push('/', { updated: true });
     }
   };
 
@@ -167,7 +167,7 @@ const App = (props) => {
   };
 
   const onBack = () => {
-    history.goBack();//push('/result', { updated: false });
+    history.goBack();
   }
 
   const onView = () => {

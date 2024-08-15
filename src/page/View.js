@@ -237,7 +237,6 @@ const App = (props) => {
 
 
     const onBack = () => {
-        //history.push('/result', { updated: false });
         history.goBack()
     }
 

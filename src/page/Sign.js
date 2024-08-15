@@ -24,23 +24,40 @@ const App = (props) => {
       if (number === docSnap.data().adminID && pw === docSnap.data().adminPW) {
         setUser(number);
         setYear(docSnap.data().year);
-        history.push('/result')
+
+        // localStorage에 사용자 정보 저장
+        localStorage.setItem('user', number);
+        localStorage.setItem('year', docSnap.data().year);
+
+        history.push('/');
       } else {
-        setNumber(null)
-        setPw(null)
+        setNumber(null);
+        setPw(null);
       }
     } else {
       //setNumber('접속이 원활하지 않습니다')
     }
   }
-  
 
-  useEffect(() => {
+  /*useEffect(() => {
     setNumber(null)
     setPw(null)
     setUser(null)
-    setYear(null)
-  }, [setUser, setYear])
+    setYear([])
+  }, [setUser, setYear])*/
+  useEffect(() => {
+    // localStorage에서 사용자 정보 불러오기
+    const storedUser = localStorage.getItem('user');
+    const storedYear = localStorage.getItem('year');
+    
+    if (storedUser && storedYear) {
+      setUser(storedUser);
+      setYear(storedYear);
+    } else {
+      setUser(null);
+      setYear([]);
+    }
+  }, [setUser, setYear]);
 
   return (
     <div className='container'>
@@ -55,8 +72,8 @@ const App = (props) => {
           </div>
         </div>
         <div>
-          <form onSubmit={(e)=>{e.preventDefault()}}>
-          <div className='armyWrap'>
+          <form onSubmit={(e) => { e.preventDefault() }}>
+            <div className='armyWrap'>
               <div className={'input'}>
                 <input id="ID" className={'id'} type='text' maxLength={12} placeholder="아이디" onChange={({ target: { value } }) => {
                   setNumber(value)
@@ -69,12 +86,12 @@ const App = (props) => {
                 <button className='passView' onClick={() => { setView(view ? false : true) }} title="pass view"><i className={view ? "ri-eye-off-line" : "ri-eye-line"}></i></button>
                 <span className={'vali'}>{number === null && pw === null ? '아이디와 비밀번호는 관리자에게 문의하세요' : number === 'fail' ? '올바른 아이디가 아닙니다' : pw === 'fail' ? '비밀번호를 입력하세요' : pw === 'same' && '비밀번호가 일치하지 않습니다'}</span>
               </div>
-          </div>
-          <div className='controll'>
-            <button className={'button sign'} onClick={() => {
-              onCheck(number)
-            }}>확인</button>
-          </div>
+            </div>
+            <div className='controll'>
+              <button className={'button sign'} onClick={() => {
+                onCheck(number)
+              }}>확인</button>
+            </div>
           </form>
         </div>
       </div>
