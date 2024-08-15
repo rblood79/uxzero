@@ -79,8 +79,8 @@ const App = (props) => {
   const endResultArray = ["인증", "인증(대상)", "인증(금상)", "인증(은상)", "인증(동상)", "인증(장려)", "미인증(중단)", "1차인증"];
   const colorArray = ["red", "green", "yellow"];
 
-  const [minYear] = useState(year[0] || "2014");
-  const [maxYear] = useState(year[1] || "2034");
+  const [minYear] = useState(year.min);
+  const [maxYear] = useState(year.max);
 
   /*const getYearRange = (startYear, endYear) => {
     const yearArray = [];
@@ -264,7 +264,7 @@ const App = (props) => {
               <div className='formWrap'>
                 <label className='label' htmlFor="IDN">관리번호</label>
                 <input
-                type="text"
+                  type="text"
                   id='IDN'
                   name="id"
                   placeholder="등록후 변경 불가"
@@ -276,7 +276,7 @@ const App = (props) => {
               <div className='formWrap'>
                 <label className='label' htmlFor="CN">확인번호</label>
                 <input
-                type="text"
+                  type="text"
                   id='CN'
                   name="checknum"
                   placeholder="입력하세요"
@@ -287,7 +287,7 @@ const App = (props) => {
               <div className='formWrap'>
                 <label className='label' htmlFor="LD">팀장</label>
                 <input
-                type="text"
+                  type="text"
                   id='LD'
                   name="leader"
                   placeholder="입력하세요"
@@ -323,7 +323,7 @@ const App = (props) => {
               <div className='formWrap'>
                 <label className='label' htmlFor="ECY">2차 완료평가연도</label>
                 <input
-                type="text"
+                  type="text"
                   id='ECY'
                   name="endcompyear"
                   placeholder="입력하세요"
@@ -370,7 +370,7 @@ const App = (props) => {
               <div className='formWrap'>
                 <label className='label' htmlFor="EY">2차 성과평가연도</label>
                 <input
-                type="text"
+                  type="text"
                   id='EY'
                   name="endyear"
                   placeholder="입력하세요"
@@ -393,7 +393,7 @@ const App = (props) => {
               <div className='formWrap'>
                 <label className='label' htmlFor="RES">재무성과(원)</label>
                 <input
-                type="text"
+                  type="text"
                   id='RES'
                   name="result"
                   placeholder="입력하세요"
@@ -435,8 +435,8 @@ const App = (props) => {
                 ></textarea>
               </div>
               <div className='formWrap'>
-                <label className='label' htmlFor='CO'>사후관리상태</label>
-                
+                <div className='label' htmlFor='CO'>사후관리상태</div>
+
                 <div className='radioGroup'>
                   {colorArray.map((item, index) => (
                     <div key={item + index}><input type='radio' name='color' id={item + index} value={item} onChange={onChange} checked={color === item} /><label htmlFor={item + index} className={'radioColor ' + item}></label></div>

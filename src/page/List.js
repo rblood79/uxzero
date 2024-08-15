@@ -39,8 +39,8 @@ const App = (props) => {
 
   const colorArray = ["all", "red", "green", "yellow"];
 
-  const [minYear] = useState(year[0] || "2014");
-  const [maxYear] = useState(year[1] || "2034");
+  const [minYear] = useState(year.min);
+  const [maxYear] = useState(year.max);
 
   /*const getYearRange = (startYear, endYear) => {
     const yearArray = [];
@@ -436,7 +436,7 @@ const App = (props) => {
               </div>
 
               <div className='formWrap'>
-                <label className='label'>사후관리상태</label>
+                <div className='label'>사후관리상태</div>
                 <div className='radioGroup'>
                   {colorArray.map((item, index) => (
                     <div key={item + index}><input type='radio' name='regColor' id={item + index} value={item} onChange={onChange} checked={regColor === item} /><label htmlFor={item + index} className={'radioColor ' + item}></label></div>
@@ -511,7 +511,7 @@ const App = (props) => {
                 <select id="SR" onChange={(e) => { setStartResult(e.target.value) }} value={startResult}>
                   <option value="all">전체</option>
                   {
-                    useYearRange(2020, 2030).map((item) => (
+                    useYearRange(minYear, maxYear).map((item) => (
                       <option value={item} key={item}>
                         {item}
                       </option>
@@ -522,7 +522,7 @@ const App = (props) => {
                 <select id="ER" onChange={(e) => { setEndResult(e.target.value) }} value={endResult}>
                   <option value="all">전체</option>
                   {
-                    useYearRange(startResult, 2030).map((item) => (
+                    useYearRange(startResult, maxYear).map((item) => (
                       <option value={item} key={item}>
                         {item}
                       </option>

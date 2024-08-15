@@ -36,10 +36,10 @@ const App = (props) => {
     //console.log(props.location.pathname)
   }, [])
   return (
-    <div className={isMobile ? "App mobile" : "App"} style={{ height: props.location.pathname === '/' && '100%', backgroundColor: props.location.pathname === '/main' && '#0078D7' }}>
+    <div className={isMobile ? "App mobile" : "App"}>
       {
         !user ?
-          <Route exact path="/" render={() => <Sign manage={manageRef} />} /> :
+          <Route path="/" render={() => <Sign manage={manageRef} />} /> :
           <>
             <Head path={props.location.pathname} />
             <main className='main'>

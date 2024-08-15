@@ -6,8 +6,8 @@ import context from '../component/Context';
 import mnd from '../assets/logo.svg';
 
 const App = (props) => {
-  const [number, setNumber] = useState(null);
-  const [pw, setPw] = useState(null);
+  //const [number, setNumber] = useState("");
+  //const [pw, setPw] = useState("");
 
   const state = useContext(context);
   const { setUser, setYear } = state;
@@ -27,37 +27,47 @@ const App = (props) => {
 
         // localStorage에 사용자 정보 저장
         localStorage.setItem('user', number);
-        localStorage.setItem('year', docSnap.data().year);
+        localStorage.setItem("year", JSON.stringify(docSnap.data().year));
 
         history.push('/');
       } else {
-        setNumber(null);
-        setPw(null);
+        setInputs({
+          number: '', pw: ''
+        })
       }
     } else {
       //setNumber('접속이 원활하지 않습니다')
     }
   }
 
-  /*useEffect(() => {
-    setNumber(null)
-    setPw(null)
-    setUser(null)
-    setYear([])
-  }, [setUser, setYear])*/
   useEffect(() => {
     // localStorage에서 사용자 정보 불러오기
     const storedUser = localStorage.getItem('user');
-    const storedYear = localStorage.getItem('year');
-    
+    const storedYear = JSON.parse(localStorage.getItem('year'));
+
     if (storedUser && storedYear) {
       setUser(storedUser);
       setYear(storedYear);
     } else {
       setUser(null);
-      setYear([]);
+      setYear(null);
     }
   }, [setUser, setYear]);
+
+  const [inputs, setInputs] = useState({
+    number: "",
+    pw: "",
+  });
+  const { number, pw } = inputs;
+  //const [regColor, setColor] = useState('all');
+
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    setInputs({
+      ...inputs,
+      [name]: value || "",
+    });
+  };
 
   return (
     <div className='container'>
@@ -75,16 +85,33 @@ const App = (props) => {
           <form onSubmit={(e) => { e.preventDefault() }}>
             <div className='armyWrap'>
               <div className={'input'}>
-                <input id="ID" className={'id'} type='text' maxLength={12} placeholder="아이디" onChange={({ target: { value } }) => {
-                  setNumber(value)
-                }} />
+                
+                <input
+                  className={'id'}
+                  type="text"
+                  id='number'
+                  name="number"
+                  maxLength={12}
+                  placeholder="아이디"
+                  onChange={onChange}
+                  value={number || ""}
+                />
               </div>
               <div className={'input'}>
-                <input id="PW" className={'pw'} type={view ? 'text' : 'password'} maxLength={12} placeholder="비밀번호" autoComplete="off" onChange={({ target: { value } }) => {
-                  setPw(value)
-                }} />
+                
+                <input
+                  className={'pw'}
+                  type={view ? 'text' : 'password'}
+                  id='pw'
+                  name="pw"
+                  maxLength={12}
+                  placeholder="비밀번호"
+                  onChange={onChange}
+                  autoComplete="off"
+                  value={pw || ""}
+                />
                 <button className='passView' onClick={() => { setView(view ? false : true) }} title="pass view"><i className={view ? "ri-eye-off-line" : "ri-eye-line"}></i></button>
-                <span className={'vali'}>{number === null && pw === null ? '아이디와 비밀번호는 관리자에게 문의하세요' : number === 'fail' ? '올바른 아이디가 아닙니다' : pw === 'fail' ? '비밀번호를 입력하세요' : pw === 'same' && '비밀번호가 일치하지 않습니다'}</span>
+                <span className={'vali'}>{number === "" && pw === "" ? '아이디와 비밀번호는 관리자에게 문의하세요' : number === 'fail' ? '올바른 아이디가 아닙니다' : pw === 'fail' ? '비밀번호를 입력하세요' : pw === 'same' && '비밀번호가 일치하지 않습니다'}</span>
               </div>
             </div>
             <div className='controll'>
