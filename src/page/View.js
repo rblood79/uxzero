@@ -61,7 +61,7 @@ const App = (props) => {
             backgroundImage: "url(" + logo + ")",
             backgroundRepeat: "no-repeat",
             backgroundPosition: "center",
-            backgroundSize: "48%",
+            backgroundSize: "36%",
             backgroundBlendMode: "luminosity",
             /* filter: grayscale(100%)*/
             th: {

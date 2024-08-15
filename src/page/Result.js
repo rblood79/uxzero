@@ -37,8 +37,10 @@ const App = (props) => {
   const startResultArray = ["인증", "인증(대상)", "인증(금상)", "인증(은상)", "인증(동상)", "인증(장려)", "미인증(중단)", "미인증(재도전)"];
   const endResultArray = ["인증", "인증(대상)", "인증(금상)", "인증(은상)", "인증(동상)", "인증(장려)", "미인증(중단)", "1차인증"];
 
-  const [minYear] = useState(year[0]);
-  const [maxYear] = useState(year[1]);
+  const colorArray = ["all", "red", "green", "yellow"];
+
+  const [minYear] = useState(year[0] || "2014");
+  const [maxYear] = useState(year[1] || "2034");
 
   /*const getYearRange = (startYear, endYear) => {
     const yearArray = [];
@@ -233,7 +235,7 @@ const App = (props) => {
     // eslint-disable-next-line no-use-before-define
   }, [data, handleSearch])
 
-  
+
   const onDownload = useCallback(() => {
     // 1. 테이블의 깊은 복사본 생성
     const table = tableRef.current.cloneNode(true);
@@ -317,9 +319,10 @@ const App = (props) => {
     regLeader: "",
     regEndCompYear: "",
     regEndYear: "",
+    regColor: "all",
   });
-  const { regNum, regTitle, regLeader, regEndCompYear, regEndYear } = inputs;
-  const [regColor, setColor] = useState('all');
+  const { regNum, regTitle, regLeader, regEndCompYear, regEndYear, regColor } = inputs;
+  //const [regColor, setColor] = useState('all');
 
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -407,7 +410,7 @@ const App = (props) => {
         <div>
           <div className='searchForm'>
             <div className='searchGroup'>
-              
+
               <div className='formWrap span2'>
                 <label className='label' htmlFor='RT'>과제명</label>
                 <input
@@ -431,23 +434,17 @@ const App = (props) => {
                   value={regLeader}
                 />
               </div>
-              
+
               <div className='formWrap'>
-                <label className='label' htmlFor='CO'>사후관리상태</label>
-                {/*<select id="CO" onChange={(e) => { setColor(e.target.value) }} value={regColor}>
-                  <option value="all">전체</option>
-                  <option value="red">red</option>
-                  <option value="green">green</option>
-                  <option value="yellow">yellow</option>
-                </select>*/}
-                <input type='radio' name='color' id='AC' value='all' onChange={({ target: { value } }) => setColor(value)} /><label htmlFor='AC' className='radioColor all'></label>
-                <input type='radio' name='color' id='RC' value='red' onChange={({ target: { value } }) => setColor(value)} /><label htmlFor='RC' className='radioColor red'></label>
-                <input type='radio' name='color' id='GC' value='green' onChange={({ target: { value } }) => setColor(value)} /><label htmlFor='GC' className='radioColor green'></label>
-                <input type='radio' name='color' id='YC' value='yellow' onChange={({ target: { value } }) => setColor(value)} /><label htmlFor='YC' className='radioColor yellow'></label>
-                
+                <label className='label'>사후관리상태</label>
+                <div className='radioGroup'>
+                  {colorArray.map((item, index) => (
+                    <div key={item + index}><input type='radio' name='regColor' id={item + index} value={item} onChange={onChange} checked={regColor === item} /><label htmlFor={item + index} className={'radioColor ' + item}></label></div>
+                  ))}
+                </div>
               </div>
-              
-              
+
+
               <div className='formWrap'>
                 <label className='label' htmlFor='SY'>1차 완료평가연도</label>
                 <select id="SY" onChange={(e) => { setStartYear(e.target.value) }} value={startYear}>
@@ -570,7 +567,7 @@ const App = (props) => {
                 </select>
               </div>
 
-              
+
 
             </div>
           </div>

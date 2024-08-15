@@ -18,7 +18,7 @@ const App = (props) => {
   const [startyear, setStartyear] = useState(null);
   const [startresult, setStartresult] = useState(null);
   const [endresult, setEndresult] = useState(null);
-  const [color, setColor] = useState(null);
+  //const [color, setColor] = useState(null);
 
   const [rowCount] = useState(5);
 
@@ -38,11 +38,12 @@ const App = (props) => {
     datay3: data?.DATAY3 || "",
     datay4: data?.DATAY4 || "",
     datay5: data?.DATAY5 || "",
+    color: data?.COLOR || "",
 
   }), [data]);
 
   const [inputs, setInputs] = useState(memoizedInputs);
-  const { id, checknum, leader, title, endcompyear, endyear, result, indi, unit, datay0, datay1, datay2, datay3, datay4, datay5 } = inputs;
+  const { id, checknum, leader, title, endcompyear, endyear, result, indi, unit, datay0, datay1, datay2, datay3, datay4, datay5, color } = inputs;
 
   const tempArr = (e) => {
     return e.split('\n');
@@ -78,8 +79,8 @@ const App = (props) => {
   const endResultArray = ["인증", "인증(대상)", "인증(금상)", "인증(은상)", "인증(동상)", "인증(장려)", "미인증(중단)", "1차인증"];
   const colorArray = ["red", "green", "yellow"];
 
-  const [minYear] = useState(year[0]);
-  const [maxYear] = useState(year[1]);
+  const [minYear] = useState(year[0] || "2014");
+  const [maxYear] = useState(year[1] || "2034");
 
   /*const getYearRange = (startYear, endYear) => {
     const yearArray = [];
@@ -150,7 +151,7 @@ const App = (props) => {
       setStartyear(data.STARTYEAR);
       setStartresult(data.STARTRESULT);
       setEndresult(data.ENDRESULT);
-      setColor(data.COLOR);
+      //setColor(data.COLOR);
     }
   }, [data, memoizedInputs]);
 
@@ -435,14 +436,12 @@ const App = (props) => {
               </div>
               <div className='formWrap'>
                 <label className='label' htmlFor='CO'>사후관리상태</label>
-                <select id="CO" onChange={(e) => { setColor(e.target.value) }} value={color ? color : "default"}>
-                  <option value="default" disabled>선택하세요</option>
-                  {colorArray.map((item) => (
-                    <option value={item} key={item}>
-                      {item}
-                    </option>
+                
+                <div className='radioGroup'>
+                  {colorArray.map((item, index) => (
+                    <div key={item + index}><input type='radio' name='color' id={item + index} value={item} onChange={onChange} checked={color === item} /><label htmlFor={item + index} className={'radioColor ' + item}></label></div>
                   ))}
-                </select>
+                </div>
               </div>
               <div className='formWrap borderBottom'>
                 <label className='label' htmlFor="D1">Y+1<span className='red'>{tempArr(datay1).length > 1 && tempArr(datay1).length + '건'}</span></label>

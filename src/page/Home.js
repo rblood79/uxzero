@@ -58,7 +58,6 @@ const App = (props) => {
           <form onSubmit={(e)=>{e.preventDefault()}}>
           <div className='armyWrap'>
               <div className={'input'}>
-                
                 <input id="ID" className={'id'} type='text' maxLength={12} placeholder="아이디" onChange={({ target: { value } }) => {
                   setNumber(value)
                 }} />
