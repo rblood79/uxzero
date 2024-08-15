@@ -80,6 +80,24 @@ const App = (props) => {
         textAlign: "center",
         height: "96px",
       },
+      w70: {
+        width: "70px"
+      },
+      w50: {
+        width: "50px"
+      },
+      w48: {
+        width: "48px"
+      },
+      w54: {
+        width: "54px"
+      },
+      w180: {
+        width: "180px"
+      },
+      w304: {
+        width: "304px"
+      },
       th: {
         background: "#efefef",
         border: isMobile ? "1px solid #d3d3d3" : "0.5pt solid #d3d3d3",
@@ -149,41 +167,41 @@ const App = (props) => {
     return (
       <>
         <tr>
-          <td rowSpan={rspan} style={style.table.td}>{item.ID}</td>
-          <td rowSpan={rspan} style={style.table.tdB}>{item.CHECKNUM}</td>
-          <td rowSpan={rspan} style={style.table.td}>{item.LEADER}</td>
-          <td rowSpan={rspan} style={style.table.td}>{item.TITLE}</td>
-          <td rowSpan={rspan} style={style.table.td}>{item.STARTCOMPYEAR}</td>
-          <td rowSpan={rspan} style={style.table.td}>{item.STARTCOMPRESULT}</td>
-          <td rowSpan={rspan} style={style.table.td}>{item.ENDCOMPYEAR}</td>
-          <td rowSpan={rspan} style={style.table.td}>{item.ENDCOMPRESULT}</td>
-          <td rowSpan={rspan} style={style.table.td}>{item.STARTYEAR}</td>
-          <td rowSpan={rspan} style={style.table.td}>{item.STARTRESULT}</td>
-          <td rowSpan={rspan} style={style.table.td}>{item.ENDYEAR}</td>
-          <td rowSpan={rspan} style={style.table.td}>{item.ENDRESULT}</td>
-          <td rowSpan={rspan} style={style.table.td}>{item.RESULT}</td>
-          <td rowSpan={rspan} style={item.COLOR === 'red' ? style.table.tdRed : item.COLOR === 'green' ? style.table.tdGreen : item.COLOR === 'yellow' ? style.table.tdYellow : style.table.tdNormal}></td>
-          <td style={style.table.td}>{indiArray[0]}</td>
-          <td style={style.table.td}>{unitArray[0]}</td>
-          <td style={style.table.td}>{d0Array[0]}</td>
-          <td style={style.table.td}>{d1Array[0]}</td>
-          <td style={style.table.td}>{d2Array[0]}</td>
-          <td style={style.table.td}>{d3Array[0]}</td>
-          <td style={style.table.td}>{d4Array[0]}</td>
-          <td style={style.table.td}>{d5Array[0]}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{item.ID}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.tdB, style.table.w70)}>{item.CHECKNUM}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w50)}>{item.LEADER}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w304)}>{item.TITLE}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w54)}>{item.STARTCOMPYEAR}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{item.STARTCOMPRESULT}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{item.ENDCOMPYEAR}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{item.ENDCOMPRESULT}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w54)}>{item.STARTYEAR}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{item.STARTRESULT}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{item.ENDYEAR}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{item.ENDRESULT}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{item.RESULT}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.w54, item.COLOR === 'red' ? style.table.tdRed : item.COLOR === 'green' ? style.table.tdGreen : item.COLOR === 'yellow' ? style.table.tdYellow : style.table.tdNormal)}></td>
+          <td style={Object.assign({}, style.table.td, style.table.w180)}>{indiArray[0]}</td>
+          <td style={Object.assign({}, style.table.td, style.table.w48)}>{unitArray[0]}</td>
+          <td style={Object.assign({}, style.table.td, style.table.w54)}>{d0Array[0]}</td>
+          <td style={Object.assign({}, style.table.td, style.table.w54)}>{d1Array[0]}</td>
+          <td style={Object.assign({}, style.table.td, style.table.w54)}>{d2Array[0]}</td>
+          <td style={Object.assign({}, style.table.td, style.table.w54)}>{d3Array[0]}</td>
+          <td style={Object.assign({}, style.table.td, style.table.w54)}>{d4Array[0]}</td>
+          <td style={Object.assign({}, style.table.td, style.table.w54)}>{d5Array[0]}</td>
           <td className='editTd' onClick={() => onEdit(item)}><i className="ri-edit-fill"></i></td>
           <td className='detailTd' onClick={() => onView(item)}><i className="ri-printer-fill"></i></td>
         </tr>
         {indiArray.slice(1).map((indi, index) => (
           <tr key={`list${index + 1}`}>
-            <td style={style.table.td}>{indi}</td>
-            <td style={style.table.td}>{unitArray[index + 1]}</td>
-            <td style={style.table.td}>{d0Array[index + 1]}</td>
-            <td style={style.table.td}>{d1Array[index + 1]}</td>
-            <td style={style.table.td}>{d2Array[index + 1]}</td>
-            <td style={style.table.td}>{d3Array[index + 1]}</td>
-            <td style={style.table.td}>{d4Array[index + 1]}</td>
-            <td style={style.table.td}>{d5Array[index + 1]}</td>
+            <td style={Object.assign({}, style.table.td, style.table.w180)}>{indi}</td>
+            <td style={Object.assign({}, style.table.td, style.table.w48)}>{unitArray[index + 1]}</td>
+            <td style={Object.assign({}, style.table.td, style.table.w54)}>{d0Array[index + 1]}</td>
+            <td style={Object.assign({}, style.table.td, style.table.w54)}>{d1Array[index + 1]}</td>
+            <td style={Object.assign({}, style.table.td, style.table.w54)}>{d2Array[index + 1]}</td>
+            <td style={Object.assign({}, style.table.td, style.table.w54)}>{d3Array[index + 1]}</td>
+            <td style={Object.assign({}, style.table.td, style.table.w54)}>{d4Array[index + 1]}</td>
+            <td style={Object.assign({}, style.table.td, style.table.w54)}>{d5Array[index + 1]}</td>
             <td className='printHide bRight'></td>
             <td className='printHide bRight'></td>
           </tr>
@@ -273,7 +291,7 @@ const App = (props) => {
             <body>${table.outerHTML}</body>
         </html>
     `;
-
+    //console.log(table.outerHTML)
     // 4. Blob을 이용해 엑셀 파일 다운로드
     const fileName = moment(new Date()).format("YYYYMMDD");
     const blob = new Blob([xData], { type: "application/vnd.ms-excel;charset=utf-8;" });
@@ -615,28 +633,28 @@ const App = (props) => {
                   <td colSpan="22" style={style.table.caption} className='caption'>과제관리대장</td>
                 </tr>
                 <tr>
-                  <th style={style.table.th}>관리번호</th>
-                  <th style={style.table.th}>확인번호</th>
-                  <th style={style.table.th}>팀장</th>
-                  <th style={style.table.th}>과제명</th>
-                  <th style={style.table.th}>1차완료<br />평가연도</th>
-                  <th style={style.table.th}>1차완료<br />평가결과</th>
-                  <th style={style.table.th}>2차완료<br />평가연도</th>
-                  <th style={style.table.th}>2차완료<br />평가결과</th>
-                  <th style={style.table.th}>1차성과<br />평가연도</th>
-                  <th style={style.table.th}>1차성과<br />평가결과</th>
-                  <th style={style.table.th}>2차성과<br />평가연도</th>
-                  <th style={style.table.th}>2차성과<br />평가결과</th>
-                  <th style={style.table.th}>재무성과<br />(원)</th>
-                  <th style={style.table.th}>사후<br />관리상태</th>
-                  <th style={style.table.th}>관리지표</th>
-                  <th style={style.table.th}>단위</th>
-                  <th style={style.table.th}>수치</th>
-                  <th style={style.table.th}>Y+1</th>
-                  <th style={style.table.th}>Y+2</th>
-                  <th style={style.table.th}>Y+3</th>
-                  <th style={style.table.th}>Y+4</th>
-                  <th style={style.table.th}>Y+5</th>
+                  <th style={Object.assign({}, style.table.th, style.table.w70)}>관리번호</th>
+                  <th style={Object.assign({}, style.table.th, style.table.w70)}>확인번호</th>
+                  <th style={Object.assign({}, style.table.th, style.table.w50)}>팀장</th>
+                  <th style={Object.assign({}, style.table.th, style.table.w304)}>과제명</th>
+                  <th style={Object.assign({}, style.table.th, style.table.w54)}>1차완료<br />평가연도</th>
+                  <th style={Object.assign({}, style.table.th, style.table.w70)}>1차완료<br />평가결과</th>
+                  <th style={Object.assign({}, style.table.th, style.table.w70)}>2차완료<br />평가연도</th>
+                  <th style={Object.assign({}, style.table.th, style.table.w70)}>2차완료<br />평가결과</th>
+                  <th style={Object.assign({}, style.table.th, style.table.w54)}>1차성과<br />평가연도</th>
+                  <th style={Object.assign({}, style.table.th, style.table.w70)}>1차성과<br />평가결과</th>
+                  <th style={Object.assign({}, style.table.th, style.table.w70)}>2차성과<br />평가연도</th>
+                  <th style={Object.assign({}, style.table.th, style.table.w70)}>2차성과<br />평가결과</th>
+                  <th style={Object.assign({}, style.table.th, style.table.w70)}>재무성과<br />(원)</th>
+                  <th style={Object.assign({}, style.table.th, style.table.w54)}>사후<br />관리상태</th>
+                  <th style={Object.assign({}, style.table.th, style.table.w180)}>관리지표</th>
+                  <th style={Object.assign({}, style.table.th, style.table.w48)}>단위</th>
+                  <th style={Object.assign({}, style.table.th, style.table.w54)}>수치</th>
+                  <th style={Object.assign({}, style.table.th, style.table.w54)}>Y+1</th>
+                  <th style={Object.assign({}, style.table.th, style.table.w54)}>Y+2</th>
+                  <th style={Object.assign({}, style.table.th, style.table.w54)}>Y+3</th>
+                  <th style={Object.assign({}, style.table.th, style.table.w54)}>Y+4</th>
+                  <th style={Object.assign({}, style.table.th, style.table.w54)}>Y+5</th>
                   <th style={style.table.th} className='printHide'>수정</th>
                   <th style={style.table.th} className='printHide'>출력</th>
                 </tr>
