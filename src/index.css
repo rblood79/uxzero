@@ -68,6 +68,7 @@ label {
   background-color: #efefef;
   color: #999;
   text-shadow: none;
+  pointer-events: none;
 }
 
 .button:focus {

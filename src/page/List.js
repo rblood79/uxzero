@@ -3,16 +3,16 @@ import _ from 'lodash';
 import 'remixicon/fonts/remixicon.css'
 import React, { useState, useEffect, useContext, useRef, useCallback, useMemo } from 'react';
 import context from '../component/Context';
-import { useHistory } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 import { isMobile } from 'react-device-detect';
 import { query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import moment from "moment";
 
 
 const App = (props) => {
-  const history = useHistory();
   const state = useContext(context);
-  //const location = useLocation();
+  const location = useLocation();
+  const history = useHistory();
   const { user, year } = state;
   const [data, setData] = useState([]);
   const [result, setResult] = useState([]);
@@ -217,27 +217,66 @@ const App = (props) => {
     });
   };
 
+  //, , , , startResult, endResult, startResult2, endResult2
+
   const onView = (e) => {
     history.push({
       pathname: '/view',
-      state: { userCell: e.ID }
+      state: {
+        userCell: e.ID,
+        searchState: {
+          regTitle: regTitle,
+          regLeader: regLeader,
+          regEndCompYear: regEndCompYear,
+          regEndYear: regEndYear,
+          regColor: regColor,
+          startYear: startYear,
+          endYear: endYear,
+          startcompresult: startcompresult,
+          endcompresult: endcompresult,
+          startResult: startResult,
+          endResult: endResult,
+          startResult2: startResult2,
+          endResult2: endResult2,
+        }
+      }
     });
   };
 
+  useEffect(() => {
+    if (location.state && location.state.searchState) {
+      const { searchState } = location.state;
+      // searchState를 통해 필요한 상태를 복원
+      console.log(searchState)
+      setInputs({
+        regTitle: searchState.regTitle,
+        regLeader: searchState.regLeader,
+        regEndCompYear: searchState.regEndCompYear,
+        regEndYear: searchState.regEndYear,
+        regColor: searchState.regColor,
+      })
+      setStartYear(searchState.startYear)
+      setEndYear(searchState.endYear)
+      setStartcompresult(searchState.startcompresult)
+      setEndcompresult(searchState.endcompresult)
+      setStartResult(searchState.startResult)
+      setEndResult(searchState.endResult)
+      setStartResult2(searchState.startResult2)
+      setEndResult2(searchState.endResult2)
+      // 여기서 searchState.regColor 등을 복원해서 사용할 수 있음
+    }
+
+    data && handleSearch();
+
+    history.replace();
+    // eslint-disable-next-line no-use-before-define
+  }, [data, handleSearch, history, location.state])
+
   /*const onDelete = async (id) => {
     await deleteDoc(doc(props.manage, id));
-    onCheck(id);
-  };
 
-  const onCheck = async (id) => {
-    const docRef = doc(props.manage, id);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      console.log('Document still exists!');
-    } else {
-      onLoad();
-    }
-  };*/
+  };
+  */
 
   /*const onReset = () => {
     setInputs({
@@ -246,13 +285,6 @@ const App = (props) => {
     setColor('all');
     setResult(data);
   }*/
-
-
-  useEffect(() => {
-    data && handleSearch();
-    // eslint-disable-next-line no-use-before-define
-  }, [data, handleSearch])
-
 
   const onDownload = useCallback(() => {
     // 1. 테이블의 깊은 복사본 생성
@@ -584,8 +616,6 @@ const App = (props) => {
                   ))}
                 </select>
               </div>
-
-
 
             </div>
           </div>

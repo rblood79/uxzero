@@ -10,9 +10,10 @@ import context from '../component/Context';
 import logo from '../assets/logo.svg';
 
 const App = (props) => {
-    const history = useHistory();
+
     const state = useContext(context);
     const location = useLocation();
+    const history = useHistory();
     const { user } = state;
     const [data, setData] = useState(null);
     const [startcompyear, setStartcompyear] = useState(null);
@@ -66,7 +67,7 @@ const App = (props) => {
             /* filter: grayscale(100%)*/
             th: {
                 fontWeight: "600",
-                padding: "4px 16px",
+                padding: "4px 8px",
                 height: "68px",
                 wordBreak: "keep-all",
                 fontSize: isMobile ? "14px" : "14pt",
@@ -74,7 +75,7 @@ const App = (props) => {
                 textUnderlineOffset: "4px",
             },
             td: {
-                padding: "0px 21px",
+                padding: "0px 16px",
                 height: tempHeight,
                 backgroundColor: "rgba(255, 255, 255, 0.9)",
                 wordBreak: "keep-all",
@@ -84,7 +85,7 @@ const App = (props) => {
                 borderLeft: "1px solid rgba(0,0,0,0.16)",
             },
             tdML: {
-                padding: "0px 21px",
+                padding: "0px 16px",
                 height: tempHeight,
                 backgroundColor: "rgba(255, 255, 255, 0.9)",
                 wordBreak: "keep-all",
@@ -93,7 +94,7 @@ const App = (props) => {
                 borderLeft: "1px solid rgba(0,0,0,0.16)",
             },
             tdMR: {
-                padding: "0px 21px",
+                padding: "0px 16px",
                 height: tempHeight,
                 backgroundColor: "rgba(255, 255, 255, 0.9)",
                 wordBreak: "keep-all",
@@ -102,58 +103,58 @@ const App = (props) => {
                 borderRight: "1px solid rgba(0,0,0,0.16)",
             },
             tdT: {
-                padding: "0px 21px",
+                padding: "0px 16px",
                 height: tempHeight,
                 backgroundColor: "rgba(255, 255, 255, 0.9)",
                 wordBreak: "keep-all",
                 textAlign: "left",
                 letterSpacing: "1.2pt",
-                borderRadius: "16px 16px 0 0",
+                borderRadius: "8px 8px 0 0",
                 borderTop: "1px solid rgba(0,0,0,0.16)",
                 borderRight: "1px solid rgba(0,0,0,0.16)",
                 borderLeft: "1px solid rgba(0,0,0,0.16)",
             },
             tdTL: {
-                padding: "0px 21px",
+                padding: "0px 16px",
                 height: tempHeight,
                 backgroundColor: "rgba(255, 255, 255, 0.9)",
                 wordBreak: "keep-all",
                 textAlign: "left",
                 letterSpacing: "1.2pt",
-                borderRadius: "16px 0 0 0",
+                borderRadius: "8px 0 0 0",
                 borderTop: "1px solid rgba(0,0,0,0.16)",
                 borderLeft: "1px solid rgba(0,0,0,0.16)",
             },
             tdTR: {
-                padding: "0px 21px",
+                padding: "0px 16px",
                 height: tempHeight,
                 backgroundColor: "rgba(255, 255, 255, 0.9)",
                 wordBreak: "keep-all",
                 textAlign: "left",
                 letterSpacing: "1.2pt",
-                borderRadius: "0 16px 0 0",
+                borderRadius: "0 8px 0 0",
                 borderTop: "1px solid rgba(0,0,0,0.16)",
                 borderRight: "1px solid rgba(0,0,0,0.16)",
             },
             tdBL: {
-                padding: "0px 21px",
+                padding: "0px 16px",
                 height: tempHeight,
                 backgroundColor: "rgba(255, 255, 255, 0.9)",
                 wordBreak: "keep-all",
                 textAlign: "left",
                 letterSpacing: "1.2pt",
-                borderRadius: "0 0 0 16px",
+                borderRadius: "0 0 0 8px",
                 borderBottom: "1px solid rgba(0,0,0,0.16)",
                 borderLeft: "1px solid rgba(0,0,0,0.16)",
             },
             tdBR: {
-                padding: "0px 21px",
+                padding: "0px 16px",
                 height: tempHeight,
                 backgroundColor: "rgba(255, 255, 255, 0.9)",
                 wordBreak: "keep-all",
                 textAlign: "left",
                 letterSpacing: "1.2pt",
-                borderRadius: "0 0 16px 0",
+                borderRadius: "0 0 8px 0",
                 borderBottom: "1px solid rgba(0,0,0,0.16)",
                 borderRight: "1px solid rgba(0,0,0,0.16)",
             },
@@ -165,32 +166,32 @@ const App = (props) => {
                 backgroundColor: "rgba(255, 255, 255, 0.9)",
             },
             tdU: {
-                padding: "0px 21px",
+                padding: "0px 16px",
                 height: tempHeight,
                 backgroundColor: "rgba(255, 255, 255, 0.9)",
                 wordBreak: "keep-all",
                 textAlign: "left",
                 letterSpacing: "1.2pt",
                 //borderBottom: isMobile ? "2px double #d3d3d3" : "1pt double #efefef",
-                borderRadius: "0 0 16px 16px",
+                borderRadius: "0 0 8px 8px",
                 borderBottom: "1px solid rgba(0,0,0,0.16)",
                 borderRight: "1px solid rgba(0,0,0,0.16)",
                 borderLeft: "1px solid rgba(0,0,0,0.16)",
             },
             tdZ: {
-                padding: "16px 21px",
+                padding: "8px 21px",
                 backgroundColor: "rgba(255, 255, 255, 0.9)",
                 wordBreak: "keep-all",
                 textAlign: "left",
                 letterSpacing: "1.2pt",
                 //borderBottom: isMobile ? "2px double #d3d3d3" : "1pt double #efefef",
-                borderRadius: "0 0 16px 16px",
+                borderRadius: "0 0 8px 8px",
                 borderBottom: "1px solid rgba(0,0,0,0.16)",
                 borderRight: "1px solid rgba(0,0,0,0.16)",
                 borderLeft: "1px solid rgba(0,0,0,0.16)",
             },
             tde: {
-                padding: "6px 42px",
+                padding: "6px 36px",
                 height: tempHeight,
                 wordBreak: "keep-all",
                 textAlign: "left",
@@ -237,7 +238,11 @@ const App = (props) => {
 
 
     const onBack = () => {
-        history.goBack()
+        //history.goBack()
+        history.push({
+            pathname: '/',
+            state: location.state
+        });
     }
 
     const onPrint = () => {

@@ -262,7 +262,7 @@ const App = (props) => {
                 />
               </div>
               <div className='formWrap'>
-                <label className='label' htmlFor="IDN">관리번호</label>
+                <label className='label' htmlFor="IDN">관리번호(필수)</label>
                 <input
                   type="text"
                   id='IDN'
