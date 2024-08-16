@@ -490,7 +490,9 @@ const App = (props) => {
 
                 <div className='radioGroup'>
                   {colorArray.map((item, index) => (
-                    <div key={item + index}><input type='radio' name='color' id={item + index} value={item} onChange={onChange} checked={color === item} /><label htmlFor={item + index} className={'radioColor ' + item}></label></div>
+                    <div key={item + index}>
+                      <label htmlFor={item + index} className={'radioColor ' + item}></label><input type='radio' name='color' id={item + index} value={item} onChange={onChange} checked={color === item} placeholder={item}/>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -563,6 +565,6 @@ const App = (props) => {
   );
 }
 
-App.defaultProps = {};
+//App.defaultProps = {};
 
 export default App;

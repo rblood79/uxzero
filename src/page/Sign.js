@@ -126,6 +126,6 @@ const App = (props) => {
   );
 }
 
-App.defaultProps = {};
+//App.defaultProps = {};
 
 export default App;

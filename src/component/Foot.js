@@ -9,9 +9,6 @@ const App = (props) => {
     );
   }
   
-  App.defaultProps = {
-    topNum: null,
-    type: 'list',
-  };
+  //App.defaultProps = {};
   
   export default App;
