@@ -1,6 +1,5 @@
-
 import _ from 'lodash';
-import 'remixicon/fonts/remixicon.css'
+import 'remixicon/fonts/remixicon.css';
 import React, { useState, useEffect, useContext, useRef, useCallback, useMemo } from 'react';
 import context from '../component/Context';
 import { useLocation, useHistory } from "react-router-dom";
@@ -8,65 +7,44 @@ import { isMobile } from 'react-device-detect';
 import { onSnapshot, query, orderBy, where } from 'firebase/firestore';
 import moment from "moment";
 
-
 const App = (props) => {
   const state = useContext(context);
   const location = useLocation();
   const history = useHistory();
   const { year } = state;
+
   const [data, setData] = useState([]);
   const [result, setResult] = useState([]);
-  const [startYear, setStartYear] = useState('all');
-  const [endYear, setEndYear] = useState('all');
+  const [filters, setFilters] = useState({
+    startYear: 'all',
+    endYear: 'all',
+    startcompresult: 'all',
+    endcompresult: 'all',
+    startResult: 'all',
+    endResult: 'all',
+    startResult2: 'all',
+    endResult2: 'all',
+    regNum: '',
+    regTitle: '',
+    regLeader: '',
+    regEndCompYear: '',
+    regEndYear: '',
+    regColor: 'all'
+  });
 
-  const [startcompresult, setStartcompresult] = useState('all');
-  const [endcompresult, setEndcompresult] = useState('all');
-
-  const [startResult, setStartResult] = useState('all');
-  const [endResult, setEndResult] = useState('all');
-
-  const [startResult2, setStartResult2] = useState('all');
-  const [endResult2, setEndResult2] = useState('all');
+  const { startYear, endYear, startcompresult, endcompresult, startResult, endResult, startResult2, endResult2, regNum, regTitle, regLeader, regEndCompYear, regEndYear, regColor } = filters;
 
   const tableRef = useRef(null);
 
-
   const startCompResultArray = ["완료", "조건부완료", "중단", "연장", "미평가"];
   const endCompResultArray = ["완료", "조건부완료", "중단", "연장", "1차완료", "미평가"];
-
   const startResultArray = ["인증", "인증(대상)", "인증(금상)", "인증(은상)", "인증(동상)", "인증(장려)", "미인증(중단)", "미인증(재도전)"];
   const endResultArray = ["인증", "인증(대상)", "인증(금상)", "인증(은상)", "인증(동상)", "인증(장려)", "미인증(중단)", "1차인증"];
-
   const colorArray = ["all", "red", "green", "yellow"];
 
-  const [minYear] = useState(year.min);
-  const [maxYear] = useState(year.max);
-  const [colCount] = useState(year.count);
-
-  /*const getYearRange = (startYear, endYear) => {
-    const yearArray = [];
-    for (let year = startYear; year <= endYear; year++) {
-      yearArray.push(year.toString());
-    }
-    return yearArray;
-  };*/
-
-  const useYearRange = (startYear, endYear) => {
-    /*const getYearRange = useCallback(() => {
-      const yearArray = [];
-      for (let year = startYear; year <= endYear; year++) {
-        yearArray.push(year.toString());
-      }
-      return yearArray;
-    }, [startYear, endYear]);
-    const years = useMemo(() => getYearRange(), [getYearRange]);
-    return years;*/
-    const yearArray = [];
-    for (let year = startYear; year <= endYear; year++) {
-      yearArray.push(year.toString());
-    }
-    return yearArray;
-  };
+  const minYear = year.min;
+  const maxYear = year.max;
+  const colCount = year.count;
 
   const style = {
     table: {
@@ -156,175 +134,55 @@ const App = (props) => {
     }
   };
 
-  const ItemList = (props) => {
-    const item = props.data;
-
-    const indiArray = item.INDI ? item.INDI.split('\n').slice(0, colCount) : [];
-    const unitArray = item.UNIT ? item.UNIT.split('\n') : [];
-    const d0Array = item.DATAY0 ? item.DATAY0.split('\n') : [];
-    const d1Array = item.DATAY1 ? item.DATAY1.split('\n') : [];
-    const d2Array = item.DATAY2 ? item.DATAY2.split('\n') : [];
-    const d3Array = item.DATAY3 ? item.DATAY3.split('\n') : [];
-    const d4Array = item.DATAY4 ? item.DATAY4.split('\n') : [];
-    const d5Array = item.DATAY5 ? item.DATAY5.split('\n') : [];
-
-    const rspan = indiArray.length > 0 ? indiArray.length : 1;
-
-    return (
-      <>
-        <tr>
-          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{item.ID}</td>
-          <td rowSpan={rspan} style={Object.assign({}, style.table.tdB, style.table.w70)}>{item.CHECKNUM}</td>
-          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w50)}>{item.LEADER}</td>
-          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w304)}>{item.TITLE}</td>
-          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w54)}>{item.STARTCOMPYEAR}</td>
-          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{item.STARTCOMPRESULT}</td>
-          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{item.ENDCOMPYEAR}</td>
-          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{item.ENDCOMPRESULT}</td>
-          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w54)}>{item.STARTYEAR}</td>
-          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{item.STARTRESULT}</td>
-          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{item.ENDYEAR}</td>
-          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{item.ENDRESULT}</td>
-          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{item.RESULT}</td>
-          <td rowSpan={rspan} style={Object.assign({}, style.table.w54, item.COLOR === 'red' ? style.table.tdRed : item.COLOR === 'green' ? style.table.tdGreen : item.COLOR === 'yellow' ? style.table.tdYellow : style.table.tdNormal)}></td>
-          <td style={Object.assign({}, style.table.td, style.table.w180)}>{indiArray[0]}</td>
-          <td style={Object.assign({}, style.table.td, style.table.w48)}>{unitArray[0]}</td>
-          <td style={Object.assign({}, style.table.td, style.table.w54)}>{d0Array[0]}</td>
-          <td style={Object.assign({}, style.table.td, style.table.w54)}>{d1Array[0]}</td>
-          <td style={Object.assign({}, style.table.td, style.table.w54)}>{d2Array[0]}</td>
-          <td style={Object.assign({}, style.table.td, style.table.w54)}>{d3Array[0]}</td>
-          <td style={Object.assign({}, style.table.td, style.table.w54)}>{d4Array[0]}</td>
-          <td style={Object.assign({}, style.table.td, style.table.w54)}>{d5Array[0]}</td>
-          <td className='editTd' onClick={() => onEdit(item)}><i className="ri-edit-fill"></i></td>
-          <td className='detailTd' onClick={() => onView(item)}><i className="ri-printer-fill"></i></td>
-        </tr>
-        {indiArray.slice(1).map((indi, index) => (
-          <tr key={`list${index + 1}`}>
-            <td style={Object.assign({}, style.table.td, style.table.w180)}>{indi}</td>
-            <td style={Object.assign({}, style.table.td, style.table.w48)}>{unitArray[index + 1]}</td>
-            <td style={Object.assign({}, style.table.td, style.table.w54)}>{d0Array[index + 1]}</td>
-            <td style={Object.assign({}, style.table.td, style.table.w54)}>{d1Array[index + 1]}</td>
-            <td style={Object.assign({}, style.table.td, style.table.w54)}>{d2Array[index + 1]}</td>
-            <td style={Object.assign({}, style.table.td, style.table.w54)}>{d3Array[index + 1]}</td>
-            <td style={Object.assign({}, style.table.td, style.table.w54)}>{d4Array[index + 1]}</td>
-            <td style={Object.assign({}, style.table.td, style.table.w54)}>{d5Array[index + 1]}</td>
-            <td className='printHide bRight'></td>
-            <td className='printHide bRight'></td>
-          </tr>
-        ))}
-      </>
-    );
-  };
-
-  const onEdit = (e) => {
-    history.push({
-      pathname: '/form',
-      state: {
-        from: location.pathname,
-        userCell: e.ID,
-        searchState: {
-          regTitle: regTitle,
-          regLeader: regLeader,
-          regEndCompYear: regEndCompYear,
-          regEndYear: regEndYear,
-          regColor: regColor,
-          startYear: startYear,
-          endYear: endYear,
-          startcompresult: startcompresult,
-          endcompresult: endcompresult,
-          startResult: startResult,
-          endResult: endResult,
-          startResult2: startResult2,
-          endResult2: endResult2,
-        }
-      }
-    });
-  };
-
-  const onView = (e) => {
-    history.push({
-      pathname: '/view',
-      state: {
-        from: location.pathname,
-        userCell: e.ID,
-        searchState: {
-          regTitle: regTitle,
-          regLeader: regLeader,
-          regEndCompYear: regEndCompYear,
-          regEndYear: regEndYear,
-          regColor: regColor,
-          startYear: startYear,
-          endYear: endYear,
-          startcompresult: startcompresult,
-          endcompresult: endcompresult,
-          startResult: startResult,
-          endResult: endResult,
-          startResult2: startResult2,
-          endResult2: endResult2,
-        }
-      }
-    });
-  };
-
-  useEffect(() => {
-    if (location.state && location.state.searchState) {
-      const { searchState } = location.state;
-      // searchState를 통해 필요한 상태를 복원
-      setInputs({
-        regTitle: searchState.regTitle,
-        regLeader: searchState.regLeader,
-        regEndCompYear: searchState.regEndCompYear,
-        regEndYear: searchState.regEndYear,
-        regColor: searchState.regColor,
-      })
-      setStartYear(searchState.startYear)
-      setEndYear(searchState.endYear)
-      setStartcompresult(searchState.startcompresult)
-      setEndcompresult(searchState.endcompresult)
-      setStartResult(searchState.startResult)
-      setEndResult(searchState.endResult)
-      setStartResult2(searchState.startResult2)
-      setEndResult2(searchState.endResult2)
-      // 여기서 searchState.regColor 등을 복원해서 사용할 수 있음
+  const useYearRange = useCallback((start, end) => {
+    const yearArray = [];
+    for (let year = start; year <= end; year++) {
+      yearArray.push(year.toString());
     }
+    return yearArray;
+  }, []);
 
-    data && handleSearch();
+  const handleFilterChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  }, []);
 
-    history.replace();
-    // eslint-disable-next-line no-use-before-define
-  }, [data, handleSearch, history, location.state])
+  const memoizedResult = useMemo(() => {
+    return _.filter(data, function (o) {
+      const isNumMatch = !regNum || o.ID.includes(regNum);
+      const isTitleMatch = !regTitle || o.TITLE.includes(regTitle);
+      const isEndCompYearMatch = !regEndCompYear || o.ENDCOMPYEAR.includes(regEndCompYear);
+      const isLeaderMatch = !regLeader || o.LEADER.includes(regLeader);
+      const isColorMatch = regColor === 'all' || o.COLOR === regColor;
+      const isDateMatch = (startYear === 'all' || (o.STARTCOMPYEAR >= startYear && o.STARTCOMPYEAR <= endYear)) && (endYear === 'all' || (o.STARTCOMPYEAR <= endYear));
+      const isStartCompResultMatch = startcompresult === 'all' || o.STARTCOMPRESULT === startcompresult;
+      const isEndCompResultMatch = endcompresult === 'all' || o.ENDCOMPRESULT === endcompresult;
+      const isDateMatch2 = (startResult === 'all' || (o.STARTYEAR >= startResult && o.STARTYEAR <= endResult)) && (endResult === 'all' || (o.STARTYEAR <= endResult));
+      const isStartResultMatch = startResult2 === 'all' || o.STARTRESULT === startResult2;
+      const isEndYearMatch = !regEndYear || o.ENDYEAR.includes(regEndYear);
+      const isEndResultMatch = endResult2 === 'all' || o.ENDRESULT === endResult2;
 
-  /*const onDelete = async (id) => {
-    await deleteDoc(doc(props.manage, id));
+      return isNumMatch && isTitleMatch && isLeaderMatch && isColorMatch && isEndCompYearMatch && isDateMatch && isStartCompResultMatch && isEndCompResultMatch && isDateMatch2 && isStartResultMatch && isEndYearMatch && isEndResultMatch;
+    });
+  }, [data, regNum, regTitle, regEndCompYear, regLeader, regColor, startYear, endYear, startcompresult, endcompresult, startResult, endResult, startResult2, regEndYear, endResult2]);
 
-  };
-  */
-
-  /*const onReset = () => {
-    setInputs({
-      regNum: '', regTitle: '', regLeader: '', regIndi: ''
-    })
-    setColor('all');
-    setResult(data);
-  }*/
+  const handleSearch = useCallback(() => {
+    setResult(memoizedResult);
+  }, [memoizedResult]);
 
   const onDownload = useCallback(() => {
-    // 1. 테이블의 깊은 복사본 생성
     const table = tableRef.current.cloneNode(true);
-
-    // 2. 복사본에서 불필요한 요소 제거
-    // <colgroup> 내의 마지막 두 개의 <col> 요소 삭제
     const colgroup = table.querySelector('colgroup');
     const cols = colgroup.querySelectorAll('col');
     cols[cols.length - 2].remove();
     cols[cols.length - 1].remove();
-
-    // `printHide`, `editTd`, `detailTd` 클래스의 요소 제거
     table.querySelectorAll('.printHide').forEach(el => el.remove());
     table.querySelectorAll('.editTd').forEach(el => el.remove());
     table.querySelectorAll('.detailTd').forEach(el => el.remove());
 
-    // 3. 엑셀 데이터 생성
     let xData = `
         <html xmlns:x="urn:schemas-microsoft-com:office:excel">
             <head>
@@ -345,57 +203,29 @@ const App = (props) => {
             <body>${table.outerHTML}</body>
         </html>
     `;
-    //console.log(table.outerHTML)
-    // 4. Blob을 이용해 엑셀 파일 다운로드
+
     const fileName = moment(new Date()).format("YYYYMMDD");
     const blob = new Blob([xData], { type: "application/vnd.ms-excel;charset=utf-8;" });
     const a = document.createElement("a");
     a.href = window.URL.createObjectURL(blob);
     a.download = "과제관리" + fileName + ".xls";
     a.click();
-
-    // 복구 작업 필요 없음
-
   }, [tableRef]);
 
-  /*const onLoad = useCallback(async () => {
-    const q = query(props.manage, where("ID", "!=", ""), orderBy("ID", "desc"));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const manageDoc = [];
-      querySnapshot.forEach((doc) => {
-        manageDoc.push({ ...doc.data(), id: doc.id });
-      });
-      setData(manageDoc);
-    });
-
-    // 컴포넌트 언마운트 시 리스너 해제
-    return () => unsubscribe();
-  }, [props.manage]);*/
-
-  // onLoad 함수는 useCallback을 사용해 메모이제이션합니다.
   const onLoad = useCallback(() => {
     const q = query(props.manage, where("ID", "!=", ""), orderBy("ID", "desc"));
-
-    // onSnapshot을 이용해 데이터 구독을 설정합니다.
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const manageDoc = [];
       querySnapshot.forEach((doc) => {
         manageDoc.push({ ...doc.data(), id: doc.id });
       });
-
-      // 데이터가 로드되면 상태를 업데이트합니다.
       setData(manageDoc);
     });
-
-    // 컴포넌트가 언마운트될 때 구독을 해제합니다.
     return unsubscribe;
   }, [props.manage]);
 
-
-  // useEffect 훅을 이용해 컴포넌트가 마운트될 때 onLoad 함수를 호출하고, 컴포넌트가 언마운트될 때 구독을 해제합니다.
   useEffect(() => {
     const unsubscribe = onLoad();
-
     return () => {
       if (unsubscribe) {
         unsubscribe();
@@ -403,60 +233,61 @@ const App = (props) => {
     };
   }, [onLoad]);
 
+  useEffect(() => {
+    // location.state에 searchState가 있을 경우 상태를 복원
+    if (location.state && location.state.searchState) {
+      const { searchState } = location.state;
+      setFilters({
+        startYear: searchState.startYear || 'all',
+        endYear: searchState.endYear || 'all',
+        startcompresult: searchState.startcompresult || 'all',
+        endcompresult: searchState.endcompresult || 'all',
+        startResult: searchState.startResult || 'all',
+        endResult: searchState.endResult || 'all',
+        startResult2: searchState.startResult2 || 'all',
+        endResult2: searchState.endResult2 || 'all',
+        regNum: searchState.regNum || '',
+        regTitle: searchState.regTitle || '',
+        regLeader: searchState.regLeader || '',
+        regEndCompYear: searchState.regEndCompYear || '',
+        regEndYear: searchState.regEndYear || '',
+        regColor: searchState.regColor || 'all'
+      });
+    }
 
-  const [inputs, setInputs] = useState({
-    regNum: "",
-    regTitle: "",
-    regLeader: "",
-    regEndCompYear: "",
-    regEndYear: "",
-    regColor: "all",
-  });
-  const { regNum, regTitle, regLeader, regEndCompYear, regEndYear, regColor } = inputs;
-  //const [regColor, setColor] = useState('all');
+    // 데이터가 있을 경우에만 handleSearch 호출
+    data.length > 0 ? handleSearch() : onLoad();
 
-  const onChange = (e) => {
-    const { name, value } = e.target;
-    setInputs({
-      ...inputs,
-      [name]: value || "",
+    // history의 상태를 초기화
+    history.replace();
+    // useEffect 종속성 배열
+  }, [data.length, handleSearch, history, location.state, onLoad]);
+
+  const resetFilters = useCallback(() => {
+    setFilters({
+      startYear: 'all',
+      endYear: 'all',
+      startcompresult: 'all',
+      endcompresult: 'all',
+      startResult: 'all',
+      endResult: 'all',
+      startResult2: 'all',
+      endResult2: 'all',
+      regNum: '',
+      regTitle: '',
+      regLeader: '',
+      regEndCompYear: '',
+      regEndYear: '',
+      regColor: 'all'
     });
-  };
-
-  const memoizedResult = useMemo(() => {
-    return _.filter(data, function (o) {
-      const isNumMatch = !regNum || o.ID.includes(regNum);
-      const isTitleMatch = !regTitle || o.TITLE.includes(regTitle);
-      const isEndCompYearMatch = !regEndCompYear || o.ENDCOMPYEAR.includes(regEndCompYear);
-      const isLeaderMatch = !regLeader || o.LEADER.includes(regLeader);
-      const isColorMatch = regColor === 'all' || o.COLOR === regColor;
-      const isDateMatch = (startYear === 'all' || (o.STARTCOMPYEAR >= startYear && o.STARTCOMPYEAR <= endYear)) && (endYear === 'all' || (o.STARTCOMPYEAR <= endYear));
-      const isStartCompResultMatch = startcompresult === 'all' || o.STARTCOMPRESULT === startcompresult;
-      const isEndCompResultMatch = endcompresult === 'all' || o.ENDCOMPRESULT === endcompresult;
-      const isDateMatch2 = (startResult === 'all' || (o.STARTYEAR >= startResult && o.STARTYEAR <= endResult)) && (endResult === 'all' || (o.STARTYEAR <= endResult));
-
-      const isStartResultMatch = startResult2 === 'all' || o.STARTRESULT === startResult2;
-      const isEndYearMatch = !regEndYear || o.ENDYEAR.includes(regEndYear);
-
-      const isEndResultMatch = endResult2 === 'all' || o.ENDRESULT === endResult2;
-
-      return isNumMatch && isTitleMatch && isLeaderMatch && isColorMatch && isEndCompYearMatch && isDateMatch && isStartCompResultMatch && isEndCompResultMatch && isDateMatch2 && isStartResultMatch && isEndYearMatch && isEndResultMatch;
-    });
-  }, [data, regNum, regTitle, regEndCompYear, regLeader, regColor, startYear, endYear, startcompresult, endcompresult, startResult, endResult, startResult2, regEndYear, endResult2]);
-
-  const handleSearch = useCallback(() => {
-    setResult(memoizedResult);
-  }, [memoizedResult]);
+  }, []);
 
   const onPrint = () => {
-    // <colgroup> 내의 마지막 두 개의 <col> 요소를 선택합니다.
     const table = tableRef.current;
     const colgroup = table.querySelector('colgroup');
     const cols = colgroup.querySelectorAll('col');
-    // 마지막 두 개의 <col> 요소의 원래 width를 저장해 둡니다.
     const originalWidths = [cols[cols.length - 2].getAttribute('width'), cols[cols.length - 1].getAttribute('width')];
 
-    // 마지막 두 개의 <col> 요소의 width를 0px로 변경합니다.
     cols[cols.length - 2].setAttribute('width', '0px');
     cols[cols.length - 1].setAttribute('width', '0px');
 
@@ -480,28 +311,112 @@ const App = (props) => {
             margin: 10mm !important;
         }
     `;
-    // head 태그에 스타일을 추가합니다.
+
     document.head.appendChild(style);
     window.print();
-    // 인쇄 후 스타일 시트를 제거합니다.
     document.head.removeChild(style);
+
     cols[cols.length - 2].setAttribute('width', originalWidths[0]);
     cols[cols.length - 1].setAttribute('width', originalWidths[1]);
   }
+
+  const onEdit = useCallback((item) => {
+    history.push({
+      pathname: '/write',
+      state: {
+        from: location.pathname,
+        userCell: item.ID,
+        searchState: { ...filters }
+      }
+    });
+  }, [history, location.pathname, filters]);
+
+  const onView = useCallback((item) => {
+    history.push({
+      pathname: '/view',
+      state: {
+        from: location.pathname,
+        userCell: item.ID,
+        searchState: { ...filters }
+      }
+    });
+  }, [history, location.pathname, filters]);
+
+
+  const ItemList = useCallback(({ data }) => {
+    const indiArray = data.INDI ? data.INDI.split('\n').slice(0, colCount) : [];
+    const unitArray = data.UNIT ? data.UNIT.split('\n') : [];
+    const d0Array = data.DATAY0 ? data.DATAY0.split('\n') : [];
+    const d1Array = data.DATAY1 ? data.DATAY1.split('\n') : [];
+    const d2Array = data.DATAY2 ? data.DATAY2.split('\n') : [];
+    const d3Array = data.DATAY3 ? data.DATAY3.split('\n') : [];
+    const d4Array = data.DATAY4 ? data.DATAY4.split('\n') : [];
+    const d5Array = data.DATAY5 ? data.DATAY5.split('\n') : [];
+    const rspan = indiArray.length > 0 ? indiArray.length : 1;
+
+    return (
+      <>
+        <tr>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{data.ID}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.tdB, style.table.w70)}>{data.CHECKNUM}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w50)}>{data.LEADER}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w304)}>{data.TITLE}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w54)}>{data.STARTCOMPYEAR}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{data.STARTCOMPRESULT}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{data.ENDCOMPYEAR}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{data.ENDCOMPRESULT}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w54)}>{data.STARTYEAR}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{data.STARTRESULT}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{data.ENDYEAR}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{data.ENDRESULT}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{data.RESULT}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.w54,
+            data.COLOR === 'red'
+              ? style.table.tdRed
+              : data.COLOR === 'green'
+                ? style.table.tdGreen
+                : data.COLOR === 'yellow'
+                  ? style.table.tdYellow
+                  : style.table.tdNormal)}></td>
+          <td style={Object.assign({}, style.table.td, style.table.w180)}>{indiArray[0]}</td>
+          <td style={Object.assign({}, style.table.td, style.table.w48)}>{unitArray[0]}</td>
+          <td style={Object.assign({}, style.table.td, style.table.w54)}>{d0Array[0]}</td>
+          <td style={Object.assign({}, style.table.td, style.table.w54)}>{d1Array[0]}</td>
+          <td style={Object.assign({}, style.table.td, style.table.w54)}>{d2Array[0]}</td>
+          <td style={Object.assign({}, style.table.td, style.table.w54)}>{d3Array[0]}</td>
+          <td style={Object.assign({}, style.table.td, style.table.w54)}>{d4Array[0]}</td>
+          <td style={Object.assign({}, style.table.td, style.table.w54)}>{d5Array[0]}</td>
+          <td className='editTd' onClick={() => onEdit(data)}><i className="ri-edit-fill"></i></td>
+          <td className='detailTd' onClick={() => onView(data)}><i className="ri-printer-fill"></i></td>
+        </tr>
+        {indiArray.slice(1).map((indi, index) => (
+          <tr key={`list${index + 1}`}>
+            <td style={Object.assign({}, style.table.td, style.table.w180)}>{indi}</td>
+            <td style={Object.assign({}, style.table.td, style.table.w48)}>{unitArray[index + 1]}</td>
+            <td style={Object.assign({}, style.table.td, style.table.w54)}>{d0Array[index + 1]}</td>
+            <td style={Object.assign({}, style.table.td, style.table.w54)}>{d1Array[index + 1]}</td>
+            <td style={Object.assign({}, style.table.td, style.table.w54)}>{d2Array[index + 1]}</td>
+            <td style={Object.assign({}, style.table.td, style.table.w54)}>{d3Array[index + 1]}</td>
+            <td style={Object.assign({}, style.table.td, style.table.w54)}>{d4Array[index + 1]}</td>
+            <td style={Object.assign({}, style.table.td, style.table.w54)}>{d5Array[index + 1]}</td>
+            <td className='printHide bRight'></td>
+            <td className='printHide bRight'></td>
+          </tr>
+        ))}
+      </>
+    );
+  }, [colCount, onEdit, onView, style.table.td, style.table.tdB, style.table.tdGreen, style.table.tdNormal, style.table.tdRed, style.table.tdYellow, style.table.w180, style.table.w304, style.table.w48, style.table.w50, style.table.w54, style.table.w70]);
 
   return (
     <div className='resultContainer'>
       <div className='users'>
         <div className='resultHead'>
           <h2 className='title'>과제등록현황<span className='titleSub'>- 전체 {data.length} 중 {result.length}건</span></h2>
-          <div className='resultRight'>
-          </div>
+          <div className='resultRight'></div>
         </div>
-
         <div>
           <div className='searchForm'>
             <div className='searchGroup'>
-
               <div className='formWrap span2'>
                 <label className='label' htmlFor='RT'>과제명</label>
                 <input
@@ -509,11 +424,10 @@ const App = (props) => {
                   id='RT'
                   name="regTitle"
                   placeholder=""
-                  onChange={onChange}
+                  onChange={handleFilterChange}
                   value={regTitle}
                 />
               </div>
-
               <div className='formWrap'>
                 <label className='label' htmlFor='RL'>팀장</label>
                 <input
@@ -521,58 +435,43 @@ const App = (props) => {
                   id="RL"
                   name="regLeader"
                   placeholder=""
-                  onChange={onChange}
+                  onChange={handleFilterChange}
                   value={regLeader}
                 />
               </div>
-
               <div className='formWrap'>
                 <div className='label'>사후관리상태</div>
                 <div className='radioGroup'>
                   {colorArray.map((item, index) => (
-                    <div key={item + index}><input type='radio' name='regColor' id={item + index} value={item} onChange={onChange} checked={regColor === item} /><label htmlFor={item + index} className={'radioColor ' + item}></label></div>
+                    <div key={item + index}><input type='radio' name='regColor' id={item + index} value={item} onChange={handleFilterChange} checked={regColor === item} /><label htmlFor={item + index} className={'radioColor ' + item}></label></div>
                   ))}
                 </div>
               </div>
-
-
               <div className='formWrap'>
                 <label className='label' htmlFor='SY'>1차 완료평가연도</label>
-                <select id="SY" onChange={(e) => { setStartYear(e.target.value) }} value={startYear}>
+                <select id="SY" name="startYear" onChange={handleFilterChange} value={startYear}>
                   <option value="all">전체</option>
-                  {
-                    useYearRange(minYear, maxYear).map((item) => (
-                      <option value={item} key={item}>
-                        {item}
-                      </option>
-                    ))
-                  }
+                  {useYearRange(minYear, maxYear).map((item) => (
+                    <option value={item} key={item}>{item}</option>
+                  ))}
                 </select>
                 <span className='space'>~</span>
-                <select id="EY" onChange={(e) => { setEndYear(e.target.value) }} value={endYear}>
+                <select id="EY" name="endYear" onChange={handleFilterChange} value={endYear}>
                   <option value="all">전체</option>
-                  {
-                    useYearRange(startYear, maxYear).map((item) => (
-                      <option value={item} key={item}>
-                        {item}
-                      </option>
-                    ))
-                  }
-                </select>
-              </div>
-
-              <div className='formWrap'>
-                <label className='label' htmlFor='SCR'>1차 완료평가결과</label>
-                <select id="SCR" onChange={(e) => { setStartcompresult(e.target.value) }} value={startcompresult}>
-                  <option value="all">전체</option>
-                  {startCompResultArray.map((item) => (
-                    <option value={item} key={item}>
-                      {item}
-                    </option>
+                  {useYearRange(startYear, maxYear).map((item) => (
+                    <option value={item} key={item}>{item}</option>
                   ))}
                 </select>
               </div>
-
+              <div className='formWrap'>
+                <label className='label' htmlFor='SCR'>1차 완료평가결과</label>
+                <select id="SCR" name="startcompresult" onChange={handleFilterChange} value={startcompresult}>
+                  <option value="all">전체</option>
+                  {startCompResultArray.map((item) => (
+                    <option value={item} key={item}>{item}</option>
+                  ))}
+                </select>
+              </div>
               <div className='formWrap'>
                 <label className='label' htmlFor='RECY'>2차 완료평가연도</label>
                 <input
@@ -580,60 +479,44 @@ const App = (props) => {
                   id='RECY'
                   name="regEndCompYear"
                   placeholder=""
-                  onChange={onChange}
+                  onChange={handleFilterChange}
                   value={regEndCompYear}
                 />
               </div>
-
               <div className='formWrap'>
                 <label className='label' htmlFor='ECR'>2차 완료평가결과</label>
-                <select id="ECR" onChange={(e) => { setEndcompresult(e.target.value) }} value={endcompresult}>
+                <select id="ECR" name="endcompresult" onChange={handleFilterChange} value={endcompresult}>
                   <option value="all">전체</option>
                   {endCompResultArray.map((item) => (
-                    <option value={item} key={item}>
-                      {item}
-                    </option>
+                    <option value={item} key={item}>{item}</option>
                   ))}
                 </select>
               </div>
-
               <div className='formWrap borderBottom'>
                 <label className='label' htmlFor='SR'>1차 성과평가연도</label>
-                <select id="SR" onChange={(e) => { setStartResult(e.target.value) }} value={startResult}>
+                <select id="SR" name="startResult" onChange={handleFilterChange} value={startResult}>
                   <option value="all">전체</option>
-                  {
-                    useYearRange(minYear, maxYear).map((item) => (
-                      <option value={item} key={item}>
-                        {item}
-                      </option>
-                    ))
-                  }
+                  {useYearRange(minYear, maxYear).map((item) => (
+                    <option value={item} key={item}>{item}</option>
+                  ))}
                 </select>
                 <span className='space'>~</span>
-                <select id="ER" onChange={(e) => { setEndResult(e.target.value) }} value={endResult}>
+                <select id="ER" name="endResult" onChange={handleFilterChange} value={endResult}>
                   <option value="all">전체</option>
-                  {
-                    useYearRange(startResult, maxYear).map((item) => (
-                      <option value={item} key={item}>
-                        {item}
-                      </option>
-                    ))
-                  }
-                </select>
-              </div>
-
-              <div className='formWrap borderBottom'>
-                <label className='label' htmlFor='SR2'>1차 성과평가결과</label>
-                <select id="SR2" onChange={(e) => { setStartResult2(e.target.value) }} value={startResult2}>
-                  <option value="all">전체</option>
-                  {startResultArray.map((item) => (
-                    <option value={item} key={item}>
-                      {item}
-                    </option>
+                  {useYearRange(startResult, maxYear).map((item) => (
+                    <option value={item} key={item}>{item}</option>
                   ))}
                 </select>
               </div>
-
+              <div className='formWrap borderBottom'>
+                <label className='label' htmlFor='SR2'>1차 성과평가결과</label>
+                <select id="SR2" name="startResult2" onChange={handleFilterChange} value={startResult2}>
+                  <option value="all">전체</option>
+                  {startResultArray.map((item) => (
+                    <option value={item} key={item}>{item}</option>
+                  ))}
+                </select>
+              </div>
               <div className='formWrap borderBottom'>
                 <label className='label' htmlFor='REY'>2차 성과평가연도</label>
                 <input
@@ -641,35 +524,30 @@ const App = (props) => {
                   id='REY'
                   name="regEndYear"
                   placeholder=""
-                  onChange={onChange}
+                  onChange={handleFilterChange}
                   value={regEndYear}
                 />
               </div>
-
               <div className='formWrap borderBottom'>
                 <label className='label' htmlFor='ER2'>2차 성과평가결과</label>
-                <select id="ER2" onChange={(e) => { setEndResult2(e.target.value) }} value={endResult2}>
+                <select id="ER2" name="endResult2" onChange={handleFilterChange} value={endResult2}>
                   <option value="all">전체</option>
                   {endResultArray.map((item) => (
-                    <option value={item} key={item}>
-                      {item}
-                    </option>
+                    <option value={item} key={item}>{item}</option>
                   ))}
                 </select>
               </div>
-
             </div>
           </div>
           <div className='controll'>
-            <button className="button search" onClick={handleSearch}>검색</button>
-            {/*<button className="refresh" onClick={onReset}><i className="ri-refresh-line"></i></button>*/}
-            {
-              !isMobile &&
+            <button className="button search" onClick={resetFilters} title="검색 조건 초기화">초기화</button>
+            {/*<button className="button search" onClick={handleSearch}>검색</button>*/}
+            {!isMobile && (
               <>
-                <button className="button excel" onClick={onDownload}>엑셀다운</button>
-                <button className="button print" onClick={onPrint}>인쇄</button>
+                <button className="button excel" onClick={onDownload} title="Excel다운로드">엑셀다운</button>
+                <button className="button print" onClick={onPrint} title="관리대장인쇄">인쇄</button>
               </>
-            }
+            )}
           </div>
           <div className='tableContents'>
             <table ref={tableRef} style={style.table}>
@@ -731,11 +609,9 @@ const App = (props) => {
                 </tr>
               </thead>
               <tbody>
-                {
-                  result.length > 0 ? result.map((item) => (
-                    <ItemList key={item.ID + item.DATE} data={item} />
-                  )) : <tr><td colSpan="22" style={style.table.tdE}>자료가 없습니다</td></tr>
-                }
+                {result.length > 0 ? result.map((item) => (
+                  <ItemList key={item.ID + item.DATE} data={item} />
+                )) : <tr><td colSpan="22" style={style.table.tdE}>자료가 없습니다</td></tr>}
               </tbody>
             </table>
           </div>
@@ -744,7 +620,5 @@ const App = (props) => {
     </div>
   );
 }
-
-//App.defaultProps = {};
 
 export default App;

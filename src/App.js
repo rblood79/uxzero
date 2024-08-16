@@ -10,7 +10,7 @@ import Head from './component/Head';
 import Foot from './component/Foot';
 
 import Sign from './page/Sign';
-import Form from './page/Form';
+import Write from './page/Write';
 import List from './page/List';
 import View from './page/View';
 
@@ -44,7 +44,7 @@ const App = (props) => {
             <Head path={props.location.pathname} />
             <main className='main'>
               <Route exact path="/" render={() => <List manage={manageRef} />} />
-              <Route path="/form" render={() => <Form manage={manageRef}/>} />
+              <Route path="/write" render={() => <Write manage={manageRef}/>} />
               <Route path="/view" render={() => <View manage={manageRef}/>} />
             </main>
           </>
