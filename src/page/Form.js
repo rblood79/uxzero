@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React, { useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { useHistory, useLocation } from "react-router-dom";
-import { doc, deleteDoc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, deleteDoc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import moment from "moment";
 import 'moment/locale/ko';
 import context from '../component/Context';
@@ -10,7 +10,7 @@ const App = (props) => {
   const history = useHistory();
   const state = useContext(context);
   const location = useLocation();
-  const { user, year } = state;
+  const { year } = state;
   const [data, setData] = useState(null);
   const [startcompyear, setStartcompyear] = useState(null);
   const [startcompresult, setStartcompresult] = useState(null);
@@ -19,6 +19,10 @@ const App = (props) => {
   const [startresult, setStartresult] = useState(null);
   const [endresult, setEndresult] = useState(null);
   //const [color, setColor] = useState(null);
+
+  const [minYear] = useState(year.min);
+  const [maxYear] = useState(year.max);
+  const [colCount] = useState(year.count);
 
   const [rowCount] = useState(5);
 
@@ -49,29 +53,41 @@ const App = (props) => {
     return e.split('\n');
   };
 
-  const onChange = (e) => {
+  /*const onChange = (e) => {
     const { name, value } = e.target;
-    const lines = tempArr(value)//value.split('\n');
+    const lines = tempArr(value);
 
-    if (lines.length <= 10) {
+    if (lines.length <= colCount) {
       setInputs({
         ...inputs,
         [name]: value
       });
-      //setRowCount(Math.max(rowCount,lines.length))
     } else {
       // 10줄을 초과하는 경우 첫 10줄만 유지
-      const limitedValue = lines.slice(0, 10).join('\n');
+      const limitedValue = lines.slice(0, colCount).join('\n');
       setInputs({
         ...inputs,
         [name]: limitedValue
       });
     }
-    /*setInputs({
-      ...inputs,
-      [name]: value || "",
-    });*/
-  };
+  };*/
+  const onChange = useCallback((e) => {
+    const { name, value } = e.target;
+    const lines = tempArr(value);
+
+    if (lines.length <= colCount) {
+      setInputs(prevInputs => ({
+        ...prevInputs,
+        [name]: value
+      }));
+    } else {
+      const limitedValue = lines.slice(0, colCount).join('\n');
+      setInputs(prevInputs => ({
+        ...prevInputs,
+        [name]: limitedValue
+      }));
+    }
+  }, [colCount]);
 
   const startCompResultArray = ["완료", "조건부완료", "중단", "연장", "미평가"];
   const endCompResultArray = ["완료", "조건부완료", "중단", "연장", "1차완료", "미평가"];
@@ -79,8 +95,7 @@ const App = (props) => {
   const endResultArray = ["인증", "인증(대상)", "인증(금상)", "인증(은상)", "인증(동상)", "인증(장려)", "미인증(중단)", "1차인증"];
   const colorArray = ["red", "green", "yellow"];
 
-  const [minYear] = useState(year.min);
-  const [maxYear] = useState(year.max);
+
 
   /*const getYearRange = (startYear, endYear) => {
     const yearArray = [];
@@ -92,20 +107,14 @@ const App = (props) => {
   };*/
 
   const useYearRange = (startYear, endYear) => {
-    const getYearRange = useCallback(() => {
-      const yearArray = [];
-      for (let year = startYear; year <= endYear; year++) {
-        yearArray.push(year.toString());
-      }
-      return yearArray;
-    }, [startYear, endYear]);
-    // useMemo로 getYearRange의 결과를 메모이제이션
-    const years = useMemo(() => getYearRange(), [getYearRange]);
-
-    return years;
+    const yearArray = [];
+    for (let year = startYear; year <= endYear; year++) {
+      yearArray.push(year.toString());
+    }
+    return yearArray;
   };
 
-  const onLoad = async () => {
+  /*const onLoad = async () => {
     if (location.state) {
       const docRef = doc(props.manage, location.state.userCell);
       const docSnap = await getDoc(docRef);
@@ -115,15 +124,19 @@ const App = (props) => {
         console.log("No such document!");
       }
     }
-  };
+  };*/
 
   const onSucsses = async (id) => {
     if (location.state) {
       const docRef = doc(props.manage, location.state.userCell);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        //console.log(data,'//' ,docSnap.data())
-        !_.isEqual(data, docSnap.data()) && history.push('/', { updated: true });
+        !_.isEqual(data, docSnap.data()) &&
+          history.push({
+            pathname: '/',
+            state: location.state,
+            updated: true
+          });
       } else {
         console.log('fail');
       }
@@ -136,9 +149,13 @@ const App = (props) => {
     const docRef = doc(props.manage, id);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-      console.log('아직있음');
+      //console.log('아직있음');
     } else {
-      history.push('/', { updated: true });
+      history.push({
+        pathname: '/',
+        state: location.state,
+        updated: true
+      });
     }
   };
 
@@ -151,29 +168,62 @@ const App = (props) => {
       setStartyear(data.STARTYEAR);
       setStartresult(data.STARTRESULT);
       setEndresult(data.ENDRESULT);
-      //setColor(data.COLOR);
     }
   }, [data, memoizedInputs]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     !user ? history.push('/') : onLoad();
     // eslint-disable-next-line
-  }, []);
+  }, []);*/
+
+  useEffect(() => {
+    let isMounted = true; // 컴포넌트가 마운트된 상태를 추적하는 플래그
+
+    const onLoad = async () => {
+      if (location.state) {
+        const docRef = doc(props.manage, location.state.userCell);
+        const docSnap = await getDoc(docRef);
+        if (isMounted) { // 컴포넌트가 마운트되어 있는지 확인
+          if (docSnap.exists()) {
+            setData(docSnap.data());
+          } else {
+            console.log("No such document!");
+          }
+        }
+      }
+    };
+
+    onLoad();
+
+    return () => {
+      isMounted = false; // 컴포넌트가 언마운트되면 플래그를 false로 설정
+    };
+  }, [location.state, props.manage]);
 
   const onDelete = async () => {
-    if (location.state) {
+    /*if (location.state) {
       await deleteDoc(doc(props.manage, location.state.userCell), deleteCheck(location.state.userCell));
-    }
+    }*/
+
+    location.state && window.confirm(title + " 과제를 삭제하시겠습니까?") && await deleteDoc(doc(props.manage, location.state.userCell), deleteCheck(location.state.userCell))
   };
 
   const onBack = () => {
-    history.goBack();
+    //history.goBack();
+    history.push({
+      pathname: '/',
+      state: location.state
+    });
   }
 
   const onView = () => {
     history.push({
       pathname: '/view',
-      state: { userCell: id }
+      state: {
+        from: location.pathname,
+        userCell: location.state.userCell,
+        searchState: location.state.searchState
+      }
     });
   };
 
@@ -210,10 +260,10 @@ const App = (props) => {
       }, onSucsses(id));
     }
   };
-
+  
   const onUpdate = async () => {
-    //await updateDoc(doc(props.manage, id), {
-    await setDoc(doc(props.manage, id), {
+    await updateDoc(doc(props.manage, id), {
+    //await setDoc(doc(props.manage, id), {
       ID: id,
       CHECKNUM: checknum,
       LEADER: leader,
@@ -271,6 +321,7 @@ const App = (props) => {
                   onChange={onChange}
                   value={id || ""}
                   disabled={data}
+                  className='uniq'
                 />
               </div>
               <div className='formWrap'>

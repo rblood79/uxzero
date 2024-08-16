@@ -5,7 +5,7 @@ import React, { useState, useEffect, useContext, useRef, useCallback, useMemo } 
 import context from '../component/Context';
 import { useLocation, useHistory } from "react-router-dom";
 import { isMobile } from 'react-device-detect';
-import { query, where, orderBy, onSnapshot } from 'firebase/firestore';
+import { onSnapshot, query, orderBy, where } from 'firebase/firestore';
 import moment from "moment";
 
 
@@ -13,7 +13,7 @@ const App = (props) => {
   const state = useContext(context);
   const location = useLocation();
   const history = useHistory();
-  const { user, year } = state;
+  const { year } = state;
   const [data, setData] = useState([]);
   const [result, setResult] = useState([]);
   const [startYear, setStartYear] = useState('all');
@@ -41,6 +41,7 @@ const App = (props) => {
 
   const [minYear] = useState(year.min);
   const [maxYear] = useState(year.max);
+  const [colCount] = useState(year.count);
 
   /*const getYearRange = (startYear, endYear) => {
     const yearArray = [];
@@ -51,17 +52,20 @@ const App = (props) => {
   };*/
 
   const useYearRange = (startYear, endYear) => {
-    const getYearRange = useCallback(() => {
+    /*const getYearRange = useCallback(() => {
       const yearArray = [];
       for (let year = startYear; year <= endYear; year++) {
         yearArray.push(year.toString());
       }
       return yearArray;
     }, [startYear, endYear]);
-    // useMemo로 getYearRange의 결과를 메모이제이션
     const years = useMemo(() => getYearRange(), [getYearRange]);
-
-    return years;
+    return years;*/
+    const yearArray = [];
+    for (let year = startYear; year <= endYear; year++) {
+      yearArray.push(year.toString());
+    }
+    return yearArray;
   };
 
   const style = {
@@ -154,7 +158,8 @@ const App = (props) => {
 
   const ItemList = (props) => {
     const item = props.data;
-    const indiArray = item.INDI ? item.INDI.split('\n').slice(0, 10) : [];
+
+    const indiArray = item.INDI ? item.INDI.split('\n').slice(0, colCount) : [];
     const unitArray = item.UNIT ? item.UNIT.split('\n') : [];
     const d0Array = item.DATAY0 ? item.DATAY0.split('\n') : [];
     const d1Array = item.DATAY1 ? item.DATAY1.split('\n') : [];
@@ -164,6 +169,7 @@ const App = (props) => {
     const d5Array = item.DATAY5 ? item.DATAY5.split('\n') : [];
 
     const rspan = indiArray.length > 0 ? indiArray.length : 1;
+
     return (
       <>
         <tr>
@@ -213,16 +219,33 @@ const App = (props) => {
   const onEdit = (e) => {
     history.push({
       pathname: '/form',
-      state: { userCell: e.ID }
+      state: {
+        from: location.pathname,
+        userCell: e.ID,
+        searchState: {
+          regTitle: regTitle,
+          regLeader: regLeader,
+          regEndCompYear: regEndCompYear,
+          regEndYear: regEndYear,
+          regColor: regColor,
+          startYear: startYear,
+          endYear: endYear,
+          startcompresult: startcompresult,
+          endcompresult: endcompresult,
+          startResult: startResult,
+          endResult: endResult,
+          startResult2: startResult2,
+          endResult2: endResult2,
+        }
+      }
     });
   };
-
-  //, , , , startResult, endResult, startResult2, endResult2
 
   const onView = (e) => {
     history.push({
       pathname: '/view',
       state: {
+        from: location.pathname,
         userCell: e.ID,
         searchState: {
           regTitle: regTitle,
@@ -247,7 +270,6 @@ const App = (props) => {
     if (location.state && location.state.searchState) {
       const { searchState } = location.state;
       // searchState를 통해 필요한 상태를 복원
-      console.log(searchState)
       setInputs({
         regTitle: searchState.regTitle,
         regLeader: searchState.regLeader,
@@ -336,7 +358,7 @@ const App = (props) => {
 
   }, [tableRef]);
 
-  const onLoad = useCallback(async () => {
+  /*const onLoad = useCallback(async () => {
     const q = query(props.manage, where("ID", "!=", ""), orderBy("ID", "desc"));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const manageDoc = [];
@@ -348,19 +370,38 @@ const App = (props) => {
 
     // 컴포넌트 언마운트 시 리스너 해제
     return () => unsubscribe();
+  }, [props.manage]);*/
+
+  // onLoad 함수는 useCallback을 사용해 메모이제이션합니다.
+  const onLoad = useCallback(() => {
+    const q = query(props.manage, where("ID", "!=", ""), orderBy("ID", "desc"));
+
+    // onSnapshot을 이용해 데이터 구독을 설정합니다.
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const manageDoc = [];
+      querySnapshot.forEach((doc) => {
+        manageDoc.push({ ...doc.data(), id: doc.id });
+      });
+
+      // 데이터가 로드되면 상태를 업데이트합니다.
+      setData(manageDoc);
+    });
+
+    // 컴포넌트가 언마운트될 때 구독을 해제합니다.
+    return unsubscribe;
   }, [props.manage]);
 
 
+  // useEffect 훅을 이용해 컴포넌트가 마운트될 때 onLoad 함수를 호출하고, 컴포넌트가 언마운트될 때 구독을 해제합니다.
   useEffect(() => {
-    if (!user) {
-      history.push('/');
-    } else {
-      const unsubscribe = onLoad();
-      if (typeof unsubscribe === 'function') {
-        return () => unsubscribe();  // Clean up on unmount
+    const unsubscribe = onLoad();
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
       }
-    }
-  }, [history, onLoad, user]);
+    };
+  }, [onLoad]);
 
 
   const [inputs, setInputs] = useState({

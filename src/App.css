@@ -1059,8 +1059,22 @@ label.radioColor.yellow {
   background-size: cover;
 }
 
+/* transition start */
+.tr-enter {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
 
+.tr-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+}
 
+input[type=text].uniq:disabled {
+  background-color: #efefef79;
+}
+/* transition end */
 
 @media (max-width: 459.9px) {
 
