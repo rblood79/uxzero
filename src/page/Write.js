@@ -215,7 +215,7 @@ const App = (props) => {
         <div className='formBody'>
           <div className='formGroup'>
             <div className='formWrap span2'>
-              <label className='label' htmlFor="TITL">과제명</label>
+              <label className='label' htmlFor="TITL">과제명({data ? '변경불가' : '필수'})</label>
               <input
                 type="text"
                 id='TITL'
@@ -223,10 +223,12 @@ const App = (props) => {
                 placeholder="입력하세요"
                 onChange={handleInputChange}
                 value={title}
+                disabled={data}
+                className='uniq'
               />
             </div>
             <div className='formWrap'>
-              <label className='label' htmlFor="IDN">관리번호(필수)</label>
+              <label className='label' htmlFor="IDN">관리번호({data ? '변경불가' : '필수'})</label>
               <input
                 type="text"
                 id='IDN'
@@ -462,7 +464,7 @@ const App = (props) => {
         <div className='controll'>
           <button className={'button back'} onClick={onBack}>이전</button>
           {location.state && <button className={'button delete'} onClick={onDelete}>삭제</button>}
-          {location.state ? <button className={'button edit'} onClick={onUpdate}>수정</button> : <button className={'button'} disabled={!id} onClick={onSave}>저장</button>}
+          {location.state ? <button className={'button edit'} onClick={onUpdate}>수정</button> : <button className={'button'} disabled={!title || !id} onClick={onSave}>저장</button>}
           {location.state && <button className={'button detail'} onClick={onView}>출력</button>}
         </div>
       </div>

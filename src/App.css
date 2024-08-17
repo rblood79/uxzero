@@ -750,6 +750,11 @@ tbody tr:hover td.delTd{
   color: #c9c9c9;
 }
 
+.uniq:disabled {
+  pointer-events: none;
+  background-color: #f8f8f8 !important;
+}
+
 .mainComment {
   display: flex;
   flex-direction: column;
