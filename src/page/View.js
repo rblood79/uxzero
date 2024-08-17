@@ -78,6 +78,21 @@ const App = (props) => {
         borderRight: "1px solid rgba(0,0,0,0.16)",
         borderLeft: "1px solid rgba(0,0,0,0.16)",
       },
+      tdT: {
+        borderRadius: "8px 8px 0 0",
+        borderTop: "1px solid rgba(0,0,0,0.16)",
+      },
+      tdU: {
+        padding: "0px 16px",
+        height: tempHeight,
+        backgroundColor: "rgba(255, 255, 255, 0.9)",
+        wordBreak: "keep-all",
+        textAlign: "left",
+        letterSpacing: "1.2pt",
+
+        borderRadius: "0 0 8px 8px",
+        borderBottom: "1px solid rgba(0,0,0,0.16)",
+      },
       tdML: {
         padding: "0px 16px",
         height: tempHeight,
@@ -85,6 +100,7 @@ const App = (props) => {
         wordBreak: "keep-all",
         textAlign: "left",
         letterSpacing: "1.2pt",
+        
         borderLeft: "1px solid rgba(0,0,0,0.16)",
       },
       tdMR: {
@@ -94,19 +110,8 @@ const App = (props) => {
         wordBreak: "keep-all",
         textAlign: "left",
         letterSpacing: "1.2pt",
+        
         borderRight: "1px solid rgba(0,0,0,0.16)",
-      },
-      tdT: {
-        padding: "0px 16px",
-        height: tempHeight,
-        backgroundColor: "rgba(255, 255, 255, 0.9)",
-        wordBreak: "keep-all",
-        textAlign: "left",
-        letterSpacing: "1.2pt",
-        borderRadius: "8px 8px 0 0",
-        borderTop: "1px solid rgba(0,0,0,0.16)",
-        borderRight: "1px solid rgba(0,0,0,0.16)",
-        borderLeft: "1px solid rgba(0,0,0,0.16)",
       },
       tdTL: {
         padding: "0px 16px",
@@ -115,6 +120,7 @@ const App = (props) => {
         wordBreak: "keep-all",
         textAlign: "left",
         letterSpacing: "1.2pt",
+
         borderRadius: "8px 0 0 0",
         borderTop: "1px solid rgba(0,0,0,0.16)",
         borderLeft: "1px solid rgba(0,0,0,0.16)",
@@ -126,6 +132,7 @@ const App = (props) => {
         wordBreak: "keep-all",
         textAlign: "left",
         letterSpacing: "1.2pt",
+
         borderRadius: "0 8px 0 0",
         borderTop: "1px solid rgba(0,0,0,0.16)",
         borderRight: "1px solid rgba(0,0,0,0.16)",
@@ -137,6 +144,7 @@ const App = (props) => {
         wordBreak: "keep-all",
         textAlign: "left",
         letterSpacing: "1.2pt",
+
         borderRadius: "0 0 0 8px",
         borderBottom: "1px solid rgba(0,0,0,0.16)",
         borderLeft: "1px solid rgba(0,0,0,0.16)",
@@ -148,6 +156,7 @@ const App = (props) => {
         wordBreak: "keep-all",
         textAlign: "left",
         letterSpacing: "1.2pt",
+
         borderRadius: "0 0 8px 0",
         borderBottom: "1px solid rgba(0,0,0,0.16)",
         borderRight: "1px solid rgba(0,0,0,0.16)",
@@ -157,18 +166,6 @@ const App = (props) => {
       },
       tdB: {
         backgroundColor: "rgba(255, 255, 255, 0.9)",
-      },
-      tdU: {
-        padding: "0px 16px",
-        height: tempHeight,
-        backgroundColor: "rgba(255, 255, 255, 0.9)",
-        wordBreak: "keep-all",
-        textAlign: "left",
-        letterSpacing: "1.2pt",
-        borderRadius: "0 0 8px 8px",
-        borderBottom: "1px solid rgba(0,0,0,0.16)",
-        borderRight: "1px solid rgba(0,0,0,0.16)",
-        borderLeft: "1px solid rgba(0,0,0,0.16)",
       },
       tdZ: {
         padding: "8px 21px",
@@ -280,13 +277,13 @@ const App = (props) => {
             </thead>
             <tbody>
               <tr>
-                <td></td><td style={style.table.tdT} colSpan={2}>■ 관리번호&nbsp;:&nbsp;{id}</td><td></td>
+                <td></td><td style={Object.assign({}, style.table.td, style.table.tdT)} colSpan={2}>■ 관리번호&nbsp;:&nbsp;{id}</td><td></td>
               </tr>
               <tr>
                 <td></td><td style={style.table.td} colSpan={2}>■ 확인번호&nbsp;:&nbsp;{checknum}</td><td></td>
               </tr>
               <tr>
-                <td></td><td style={style.table.tdU} colSpan={2}>■ 팀장&nbsp;:&nbsp;{leader}</td><td></td>
+                <td></td><td style={Object.assign({}, style.table.td, style.table.tdU)} colSpan={2}>■ 팀장&nbsp;:&nbsp;{leader}</td><td></td>
               </tr>
               <tr>
                 <td style={style.table.tdS} colSpan={4}></td>
@@ -294,7 +291,7 @@ const App = (props) => {
               {isMobile ? (
                 <>
                   <tr>
-                    <td></td><td style={style.table.tdT} colSpan={2}>■ 1차완료 평가연도&nbsp;:&nbsp;{startcompyear}</td><td></td>
+                    <td></td><td style={Object.assign({}, style.table.td, style.table.tdT)} colSpan={2}>■ 1차완료 평가연도&nbsp;:&nbsp;{startcompyear}</td><td></td>
                   </tr>
                   <tr>
                     <td></td><td style={style.table.td} colSpan={2}>■ 1차완료 평가결과&nbsp;:&nbsp;{startcompresult}</td><td></td>
@@ -315,22 +312,22 @@ const App = (props) => {
                     <td></td><td style={style.table.td} colSpan={2}>■ 2차 성과 평가연도&nbsp;:&nbsp;{endyear}</td><td></td>
                   </tr>
                   <tr>
-                    <td></td><td style={style.table.tdU} colSpan={2}>■ 2차 성과 평가결과&nbsp;:&nbsp;{endresult}</td><td></td>
+                    <td></td><td style={Object.assign({}, style.table.td, style.table.tdU)} colSpan={2}>■ 2차 성과 평가결과&nbsp;:&nbsp;{endresult}</td><td></td>
                   </tr>
                 </>
               ) : (
                 <>
                   <tr>
-                    <td></td><td style={style.table.tdTL}>■ 1차완료 평가연도&nbsp;:&nbsp;{startcompyear}</td><td style={style.table.tdTR}>■ 1차완료 평가결과&nbsp;:&nbsp;{startcompresult}</td><td></td>
+                    <td></td><td style={Object.assign({}, style.table.tdTL)}>■ 1차완료 평가연도&nbsp;:&nbsp;{startcompyear}</td><td style={Object.assign({}, style.table.tdTR)}>■ 1차완료 평가결과&nbsp;:&nbsp;{startcompresult}</td><td></td>
                   </tr>
                   <tr>
-                    <td></td><td style={style.table.tdML}>■ 2차완료 평가연도&nbsp;:&nbsp;{endcompyear}</td><td style={style.table.tdMR}>■ 2차완료 평가결과&nbsp;:&nbsp;{endcompresult}</td><td></td>
+                    <td></td><td style={Object.assign({}, style.table.tdML)}>■ 2차완료 평가연도&nbsp;:&nbsp;{endcompyear}</td><td style={Object.assign({}, style.table.tdMR)}>■ 2차완료 평가결과&nbsp;:&nbsp;{endcompresult}</td><td></td>
                   </tr>
                   <tr>
-                    <td></td><td style={style.table.tdML}>■ 1차 성과 평가연도&nbsp;:&nbsp;{startyear}</td><td style={style.table.tdMR}>■ 1차 성과 평가결과&nbsp;:&nbsp;{startresult}</td><td></td>
+                    <td></td><td style={Object.assign({}, style.table.tdML)}>■ 1차 성과 평가연도&nbsp;:&nbsp;{startyear}</td><td style={Object.assign({}, style.table.tdMR)}>■ 1차 성과 평가결과&nbsp;:&nbsp;{startresult}</td><td></td>
                   </tr>
                   <tr>
-                    <td></td><td style={style.table.tdBL}>■ 2차 성과 평가연도&nbsp;:&nbsp;{endyear}</td><td style={style.table.tdBR}>■ 2차 성과 평가결과&nbsp;:&nbsp;{endresult}</td><td></td>
+                    <td></td><td style={Object.assign({}, style.table.tdBL)}>■ 2차 성과 평가연도&nbsp;:&nbsp;{endyear}</td><td style={Object.assign({}, style.table.tdBR)}>■ 2차 성과 평가결과&nbsp;:&nbsp;{endresult}</td><td></td>
                   </tr>
                 </>
               )}
@@ -338,7 +335,7 @@ const App = (props) => {
                 <td style={style.table.tdS} colSpan={4}></td>
               </tr>
               <tr>
-                <td></td><td style={style.table.tdT} colSpan={2}>■ 재무성과(원)&nbsp;:&nbsp;{result}</td><td></td>
+                <td></td><td style={Object.assign({}, style.table.td, style.table.tdT)} colSpan={2}>■ 재무성과(원)&nbsp;:&nbsp;{result}</td><td></td>
               </tr>
               <tr>
                 <td></td><td style={style.table.td} colSpan={2}>■ 관리지표&nbsp;:&nbsp;{indi[0]}</td><td></td>

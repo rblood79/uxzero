@@ -34,6 +34,21 @@ const App = (props) => {
 
   const { startYear, endYear, startcompresult, endcompresult, startResult, endResult, startResult2, endResult2, regNum, regTitle, regLeader, regEndCompYear, regEndYear, regColor } = filters;
 
+  // 필터 중 하나라도 활성화되었는지 확인하는 유틸리티 함수
+  const isFilterActive = () => {
+    return [
+      regNum, regTitle, regEndCompYear, regLeader, regEndYear,
+      startYear !== 'all', endYear !== 'all',
+      startcompresult !== 'all', endcompresult !== 'all',
+      startResult !== 'all', endResult !== 'all',
+      startResult2 !== 'all', endResult2 !== 'all',
+      regColor !== 'all'
+    ].some(value => value && value !== '');
+  };
+
+  // 필터가 활성화되었는지 확인
+  const filterActive = useMemo(isFilterActive, [endResult, endResult2, endYear, endcompresult, regColor, regEndCompYear, regEndYear, regLeader, regNum, regTitle, startResult, startResult2, startYear, startcompresult]);
+
   const tableRef = useRef(null);
 
   const startCompResultArray = ["완료", "조건부완료", "중단", "연장", "미평가"];
@@ -256,7 +271,14 @@ const App = (props) => {
     }
 
     // 데이터가 있을 경우에만 handleSearch 호출
-    data.length > 0 ? handleSearch() : onLoad();
+    //data.length > 0 ? handleSearch() : onLoad();
+    if(data.length > 0){
+      //console.log('A')
+      handleSearch();
+    }else{
+      //console.log('B')
+      onLoad();
+    }
 
     // history의 상태를 초기화
     history.replace();
@@ -540,7 +562,7 @@ const App = (props) => {
             </div>
           </div>
           <div className='controll'>
-            <button className="button search" onClick={resetFilters} title="검색 조건 초기화">초기화</button>
+            <button className="button search" onClick={resetFilters} title="검색 조건 초기화" disabled={!filterActive}>초기화</button>
             {/*<button className="button search" onClick={handleSearch}>검색</button>*/}
             {!isMobile && (
               <>
@@ -578,7 +600,7 @@ const App = (props) => {
                 <col width={isMobile ? "54px" : "34px"} />
               </colgroup>
               <thead>
-                <tr>
+                <tr className='hidePrint'>
                   <td colSpan="22" style={style.table.caption} className='caption'>과제관리대장</td>
                 </tr>
                 <tr>
