@@ -478,6 +478,11 @@
   margin-top: 16px;
 }
 
+.formBody+.controll{
+  margin-bottom: 0px;
+}
+
+
 .controll .button {
   width: 120px;
 }
@@ -559,7 +564,7 @@
 .total,
 .users {
   margin-top: 48px;
-  margin-bottom: 48px;
+  margin-bottom: 16px;
   width: 100%;
 }
 
@@ -1150,7 +1155,6 @@ select:-moz-focusring {
   .total,
   .users {
     margin-top: 16px !important;
-    margin-bottom: 16px !important;
   }
 
   .nav {
