@@ -102,8 +102,10 @@ const App = (props) => {
         padding: "6px 4px",
         height: "51px",
         minHeight: "51px",
+        borderBottom: isMobile ? "1px solid #ccc" : "0.5pt solid #ccc",
         wordBreak: "keep-all",
-        borderBottom: isMobile ? "1px solid #ccc" : "0.5pt solid #ccc"
+        whiteSpace: "normal",
+        overflowWrap: "anywhere",
       },
       thE: {
         width: isMobile ? "0pt" : "0.5pt",
@@ -118,17 +120,10 @@ const App = (props) => {
         padding: "6px 4px",
         height: "51px",
         minHeight: "51px",
+        textAlign: "center",
         wordBreak: "keep-all",
-        textAlign: "center",
-      },
-      tdB: {
-        border: isMobile ? "1px solid #d3d3d3" : "0.5pt solid #d3d3d3",
-        fontWeight: "400",
-        padding: "6px 4px",
-        height: "51px",
-        minHeight: "51px",
-        wordBreak: "break-all",
-        textAlign: "center",
+        whiteSpace: "normal",
+        overflowWrap: "anywhere",
       },
       tdRed: {
         background: "#D01414",
@@ -380,7 +375,7 @@ const App = (props) => {
       <>
         <tr>
           <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{data.ID}</td>
-          <td rowSpan={rspan} style={Object.assign({}, style.table.tdB, style.table.w70)}>{data.CHECKNUM}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{data.CHECKNUM}</td>
           <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w50)}>{data.LEADER}</td>
           <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w304)}>{data.TITLE}</td>
           <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w54)}>{data.STARTCOMPYEAR}</td>
@@ -427,7 +422,7 @@ const App = (props) => {
         ))}
       </>
     );
-  }, [colCount, onEdit, onView, style.table.td, style.table.tdB, style.table.tdGreen, style.table.tdNormal, style.table.tdRed, style.table.tdYellow, style.table.w180, style.table.w304, style.table.w48, style.table.w50, style.table.w54, style.table.w70]);
+  }, [colCount, onEdit, onView, style.table.td, style.table.tdGreen, style.table.tdNormal, style.table.tdRed, style.table.tdYellow, style.table.w180, style.table.w304, style.table.w48, style.table.w50, style.table.w54, style.table.w70]);
 
   return (
     <div className='resultContainer'>
@@ -599,6 +594,7 @@ const App = (props) => {
                 <col width={isMobile ? "54px" : "34px"} />
                 <col width={isMobile ? "54px" : "34px"} />
               </colgroup>
+              
               <thead>
                 <tr className='hidePrint'>
                   <td colSpan="22" style={style.table.caption} className='caption'>과제관리대장</td>
@@ -633,7 +629,7 @@ const App = (props) => {
               <tbody>
                 {result.length > 0 ? result.map((item) => (
                   <ItemList key={item.ID + item.DATE} data={item} />
-                )) : <tr><td colSpan="22" style={style.table.tdE}>자료가 없습니다</td></tr>}
+                )) : <tr><td colSpan="24" style={style.table.tdE}>자료가 없습니다</td></tr>}
               </tbody>
             </table>
           </div>
