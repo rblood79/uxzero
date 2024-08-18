@@ -53,8 +53,8 @@ const App = (props) => {
 
   const startCompResultArray = ["완료", "조건부완료", "중단", "연장", "미평가"];
   const endCompResultArray = ["완료", "조건부완료", "중단", "연장", "1차완료", "미평가"];
-  const startResultArray = ["인증", "인증(대상)", "인증(금상)", "인증(은상)", "인증(동상)", "인증(장려)", "미인증(중단)", "미인증(재도전)"];
-  const endResultArray = ["인증", "인증(대상)", "인증(금상)", "인증(은상)", "인증(동상)", "인증(장려)", "미인증(중단)", "1차인증"];
+  const startResultArray = ["인증", "인증 (대상)", "인증 (금상)", "인증 (은상)", "인증 (동상)", "인증 (장려)", "미인증 (중단)", "미인증 (재도전)"];
+  const endResultArray = ["인증", "인증 (대상)", "인증 (금상)", "인증 (은상)", "인증 (동상)", "인증 (장려)", "미인증 (중단)", "1차인증"];
   const colorArray = ["all", "red", "green", "yellow"];
 
   const minYear = year.min;
@@ -267,16 +267,15 @@ const App = (props) => {
 
     // 데이터가 있을 경우에만 handleSearch 호출
     //data.length > 0 ? handleSearch() : onLoad();
-    if(data.length > 0){
-      //console.log('A')
+    if (data.length > 0) {
       handleSearch();
-    }else{
-      //console.log('B')
+      // history의 상태를 초기화
+      history.replace();
+    } else {
       onLoad();
     }
 
-    // history의 상태를 초기화
-    history.replace();
+
     // useEffect 종속성 배열
   }, [data.length, handleSearch, history, location.state, onLoad]);
 
@@ -556,6 +555,7 @@ const App = (props) => {
               </div>
             </div>
           </div>
+
           <div className='controll'>
             <button className="button search" onClick={resetFilters} title="검색 조건 초기화" disabled={!filterActive}>초기화</button>
             {/*<button className="button search" onClick={handleSearch}>검색</button>*/}
@@ -594,7 +594,7 @@ const App = (props) => {
                 <col width={isMobile ? "54px" : "34px"} />
                 <col width={isMobile ? "54px" : "34px"} />
               </colgroup>
-              
+
               <thead>
                 <tr className='hidePrint'>
                   <td colSpan="22" style={style.table.caption} className='caption'>과제관리대장</td>

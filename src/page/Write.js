@@ -315,7 +315,7 @@ const App = (props) => {
               <label className='label' htmlFor='SR'>1차 성과평가결과</label>
               <select id="SR" onChange={(e) => setStartresult(e.target.value)} value={startresult || "default"}>
                 <option value="default" disabled>선택하세요</option>
-                {["인증", "인증(대상)", "인증(금상)", "인증(은상)", "인증(동상)", "인증(장려)", "미인증(중단)", "미인증(재도전)"].map((item) => (
+                {["인증", "인증 (대상)", "인증 (금상)", "인증 (은상)", "인증 (동상)", "인증 (장려)", "미인증 (중단)", "미인증 (재도전)"].map((item) => (
                   <option value={item} key={item}>{item}</option>
                 ))}
               </select>
@@ -335,7 +335,7 @@ const App = (props) => {
               <label className='label' htmlFor='ER'>2차 성과평가결과</label>
               <select id="ER" onChange={(e) => setEndresult(e.target.value)} value={endresult || "default"}>
                 <option value="default" disabled>선택하세요</option>
-                {["인증", "인증(대상)", "인증(금상)", "인증(은상)", "인증(동상)", "인증(장려)", "미인증(중단)", "1차인증"].map((item) => (
+                {["인증", "인증 (대상)", "인증 (금상)", "인증 (은상)", "인증 (동상)", "인증 (장려)", "미인증 (중단)", "1차인증"].map((item) => (
                   <option value={item} key={item}>{item}</option>
                 ))}
               </select>
