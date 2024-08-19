@@ -1,7 +1,7 @@
 
 import './App.css';
 import { isMobile } from 'react-device-detect';
-import { Route, } from "react-router-dom";
+import { Route } from "react-router-dom";
 
 import React, { useContext, useEffect } from 'react';
 import context from './component/Context';
@@ -30,13 +30,13 @@ const manageRef = collection(db, "manage");
 const App = (props) => {
   const state = useContext(context);
   const { user } = state;
-
+  const appClass = isMobile ? "App mobile" : "App";
 
   useEffect(() => {
     //console.log(props.location.pathname)
   }, [])
   return (
-    <div className={isMobile ? "App mobile" : "App"}>
+    <div className={appClass}>
       {
         !user ?
           <Route path="/" render={() => <Sign manage={manageRef} />} /> :

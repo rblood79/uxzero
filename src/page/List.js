@@ -561,8 +561,8 @@ const App = (props) => {
             {/*<button className="button search" onClick={handleSearch}>검색</button>*/}
             {!isMobile && (
               <>
-                <button className="button excel" onClick={onDownload} title="Excel다운로드">엑셀다운</button>
-                <button className="button print" onClick={onPrint} title="관리대장인쇄">인쇄</button>
+                <button className="button excel" onClick={onDownload} title="Excel다운로드" disabled={result.length <= 0}>엑셀다운</button>
+                <button className="button print" onClick={onPrint} title="관리대장인쇄" disabled={result.length <= 0}>인쇄</button>
               </>
             )}
           </div>
@@ -629,7 +629,7 @@ const App = (props) => {
               <tbody>
                 {result.length > 0 ? result.map((item) => (
                   <ItemList key={item.ID + item.DATE} data={item} />
-                )) : <tr><td colSpan="24" style={style.table.tdE}>자료가 없습니다</td></tr>}
+                )) : <tr><td colSpan={isMobile ? "24px" : "22px"} style={style.table.tdE}>자료가 없습니다</td></tr>}
               </tbody>
             </table>
           </div>
