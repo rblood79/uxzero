@@ -430,141 +430,144 @@ const App = (props) => {
           <h2 className='title'>과제등록현황<span className='titleSub'>- 전체 {data.length} 중 {result.length}건</span></h2>
           <div className='resultRight'></div>
         </div>
+
         <div>
-          <div className='searchForm'>
-            <div className='searchGroup'>
-              <div className='formWrap span2'>
-                <label className='label' htmlFor='RT'>과제명</label>
-                <input
-                  type='text'
-                  id='RT'
-                  name="regTitle"
-                  placeholder=""
-                  onChange={handleFilterChange}
-                  value={regTitle}
-                />
-              </div>
-              <div className='formWrap'>
-                <label className='label' htmlFor='RL'>팀장</label>
-                <input
-                  type='text'
-                  id="RL"
-                  name="regLeader"
-                  placeholder=""
-                  onChange={handleFilterChange}
-                  value={regLeader}
-                />
-              </div>
-              <div className='formWrap'>
-                <div className='label'>사후관리상태</div>
-                <div className='radioGroup'>
-                  {colorArray.map((item, index) => (
-                    <div key={item + index}><input type='radio' name='regColor' id={item + index} value={item} onChange={handleFilterChange} checked={regColor === item} /><label htmlFor={item + index} className={'radioColor ' + item}></label></div>
-                  ))}
+          <div style={{ display: data.length > 0 ? 'block' : 'none' }}>
+            <div className='searchForm'>
+              <div className='searchGroup'>
+                <div className='formWrap span2'>
+                  <label className='label' htmlFor='RT'>과제명</label>
+                  <input
+                    type='text'
+                    id='RT'
+                    name="regTitle"
+                    placeholder=""
+                    onChange={handleFilterChange}
+                    value={regTitle}
+                  />
+                </div>
+                <div className='formWrap'>
+                  <label className='label' htmlFor='RL'>팀장</label>
+                  <input
+                    type='text'
+                    id="RL"
+                    name="regLeader"
+                    placeholder=""
+                    onChange={handleFilterChange}
+                    value={regLeader}
+                  />
+                </div>
+                <div className='formWrap'>
+                  <div className='label'>사후관리상태</div>
+                  <div className='radioGroup'>
+                    {colorArray.map((item, index) => (
+                      <div key={item + index}><input type='radio' name='regColor' id={item + index} value={item} onChange={handleFilterChange} checked={regColor === item} /><label htmlFor={item + index} className={'radioColor ' + item}></label></div>
+                    ))}
+                  </div>
+                </div>
+                <div className='formWrap'>
+                  <label className='label' htmlFor='SY'>1차 완료평가연도</label>
+                  <select id="SY" name="startYear" onChange={handleFilterChange} value={startYear}>
+                    <option value="all">전체</option>
+                    {useYearRange(minYear, maxYear).map((item) => (
+                      <option value={item} key={item}>{item}</option>
+                    ))}
+                  </select>
+                  <span className='space'>~</span>
+                  <select id="EY" name="endYear" onChange={handleFilterChange} value={endYear}>
+                    <option value="all">전체</option>
+                    {useYearRange(startYear, maxYear).map((item) => (
+                      <option value={item} key={item}>{item}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className='formWrap'>
+                  <label className='label' htmlFor='SCR'>1차 완료평가결과</label>
+                  <select id="SCR" name="startcompresult" onChange={handleFilterChange} value={startcompresult}>
+                    <option value="all">전체</option>
+                    {startCompResultArray.map((item) => (
+                      <option value={item} key={item}>{item}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className='formWrap'>
+                  <label className='label' htmlFor='RECY'>2차 완료평가연도</label>
+                  <input
+                    type='text'
+                    id='RECY'
+                    name="regEndCompYear"
+                    placeholder=""
+                    onChange={handleFilterChange}
+                    value={regEndCompYear}
+                  />
+                </div>
+                <div className='formWrap'>
+                  <label className='label' htmlFor='ECR'>2차 완료평가결과</label>
+                  <select id="ECR" name="endcompresult" onChange={handleFilterChange} value={endcompresult}>
+                    <option value="all">전체</option>
+                    {endCompResultArray.map((item) => (
+                      <option value={item} key={item}>{item}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className='formWrap borderBottom'>
+                  <label className='label' htmlFor='SR'>1차 성과평가연도</label>
+                  <select id="SR" name="startResult" onChange={handleFilterChange} value={startResult}>
+                    <option value="all">전체</option>
+                    {useYearRange(minYear, maxYear).map((item) => (
+                      <option value={item} key={item}>{item}</option>
+                    ))}
+                  </select>
+                  <span className='space'>~</span>
+                  <select id="ER" name="endResult" onChange={handleFilterChange} value={endResult}>
+                    <option value="all">전체</option>
+                    {useYearRange(startResult, maxYear).map((item) => (
+                      <option value={item} key={item}>{item}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className='formWrap borderBottom'>
+                  <label className='label' htmlFor='SR2'>1차 성과평가결과</label>
+                  <select id="SR2" name="startResult2" onChange={handleFilterChange} value={startResult2}>
+                    <option value="all">전체</option>
+                    {startResultArray.map((item) => (
+                      <option value={item} key={item}>{item}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className='formWrap borderBottom'>
+                  <label className='label' htmlFor='REY'>2차 성과평가연도</label>
+                  <input
+                    type='text'
+                    id='REY'
+                    name="regEndYear"
+                    placeholder=""
+                    onChange={handleFilterChange}
+                    value={regEndYear}
+                  />
+                </div>
+                <div className='formWrap borderBottom'>
+                  <label className='label' htmlFor='ER2'>2차 성과평가결과</label>
+                  <select id="ER2" name="endResult2" onChange={handleFilterChange} value={endResult2}>
+                    <option value="all">전체</option>
+                    {endResultArray.map((item) => (
+                      <option value={item} key={item}>{item}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
-              <div className='formWrap'>
-                <label className='label' htmlFor='SY'>1차 완료평가연도</label>
-                <select id="SY" name="startYear" onChange={handleFilterChange} value={startYear}>
-                  <option value="all">전체</option>
-                  {useYearRange(minYear, maxYear).map((item) => (
-                    <option value={item} key={item}>{item}</option>
-                  ))}
-                </select>
-                <span className='space'>~</span>
-                <select id="EY" name="endYear" onChange={handleFilterChange} value={endYear}>
-                  <option value="all">전체</option>
-                  {useYearRange(startYear, maxYear).map((item) => (
-                    <option value={item} key={item}>{item}</option>
-                  ))}
-                </select>
-              </div>
-              <div className='formWrap'>
-                <label className='label' htmlFor='SCR'>1차 완료평가결과</label>
-                <select id="SCR" name="startcompresult" onChange={handleFilterChange} value={startcompresult}>
-                  <option value="all">전체</option>
-                  {startCompResultArray.map((item) => (
-                    <option value={item} key={item}>{item}</option>
-                  ))}
-                </select>
-              </div>
-              <div className='formWrap'>
-                <label className='label' htmlFor='RECY'>2차 완료평가연도</label>
-                <input
-                  type='text'
-                  id='RECY'
-                  name="regEndCompYear"
-                  placeholder=""
-                  onChange={handleFilterChange}
-                  value={regEndCompYear}
-                />
-              </div>
-              <div className='formWrap'>
-                <label className='label' htmlFor='ECR'>2차 완료평가결과</label>
-                <select id="ECR" name="endcompresult" onChange={handleFilterChange} value={endcompresult}>
-                  <option value="all">전체</option>
-                  {endCompResultArray.map((item) => (
-                    <option value={item} key={item}>{item}</option>
-                  ))}
-                </select>
-              </div>
-              <div className='formWrap borderBottom'>
-                <label className='label' htmlFor='SR'>1차 성과평가연도</label>
-                <select id="SR" name="startResult" onChange={handleFilterChange} value={startResult}>
-                  <option value="all">전체</option>
-                  {useYearRange(minYear, maxYear).map((item) => (
-                    <option value={item} key={item}>{item}</option>
-                  ))}
-                </select>
-                <span className='space'>~</span>
-                <select id="ER" name="endResult" onChange={handleFilterChange} value={endResult}>
-                  <option value="all">전체</option>
-                  {useYearRange(startResult, maxYear).map((item) => (
-                    <option value={item} key={item}>{item}</option>
-                  ))}
-                </select>
-              </div>
-              <div className='formWrap borderBottom'>
-                <label className='label' htmlFor='SR2'>1차 성과평가결과</label>
-                <select id="SR2" name="startResult2" onChange={handleFilterChange} value={startResult2}>
-                  <option value="all">전체</option>
-                  {startResultArray.map((item) => (
-                    <option value={item} key={item}>{item}</option>
-                  ))}
-                </select>
-              </div>
-              <div className='formWrap borderBottom'>
-                <label className='label' htmlFor='REY'>2차 성과평가연도</label>
-                <input
-                  type='text'
-                  id='REY'
-                  name="regEndYear"
-                  placeholder=""
-                  onChange={handleFilterChange}
-                  value={regEndYear}
-                />
-              </div>
-              <div className='formWrap borderBottom'>
-                <label className='label' htmlFor='ER2'>2차 성과평가결과</label>
-                <select id="ER2" name="endResult2" onChange={handleFilterChange} value={endResult2}>
-                  <option value="all">전체</option>
-                  {endResultArray.map((item) => (
-                    <option value={item} key={item}>{item}</option>
-                  ))}
-                </select>
-              </div>
             </div>
-          </div>
 
-          <div className='controll'>
-            <button className="button search" onClick={resetFilters} title="검색 조건 초기화" disabled={!filterActive}>초기화</button>
-            {/*<button className="button search" onClick={handleSearch}>검색</button>*/}
-            {!isMobile && (
-              <>
-                <button className="button excel" onClick={onDownload} title="Excel다운로드" disabled={result.length <= 0}>엑셀다운</button>
-                <button className="button print" onClick={onPrint} title="관리대장인쇄" disabled={result.length <= 0}>인쇄</button>
-              </>
-            )}
+            <div className='controll'>
+              <button className="button search" onClick={resetFilters} title="검색 조건 초기화" disabled={!filterActive}>초기화</button>
+              {/*<button className="button search" onClick={handleSearch}>검색</button>*/}
+              {!isMobile && (
+                <>
+                  <button className="button excel" onClick={onDownload} title="Excel다운로드" disabled={result.length <= 0}>엑셀다운</button>
+                  <button className="button print" onClick={onPrint} title="관리대장인쇄" disabled={result.length <= 0}>인쇄</button>
+                </>
+              )}
+            </div>
           </div>
           <div className='tableContents'>
             <table ref={tableRef} style={style.table}>
