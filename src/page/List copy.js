@@ -35,7 +35,6 @@ const App = (props) => {
   const { startYear, endYear, startcompresult, endcompresult, startResult, endResult, startResult2, endResult2, regNum, regTitle, regLeader, regEndCompYear, regEndYear, regColor } = filters;
 
   // 필터 중 하나라도 활성화되었는지 확인하는 유틸리티 함수
-  /*
   const isFilterActive = () => {
     return [
       regNum, regTitle, regEndCompYear, regLeader, regEndYear,
@@ -46,10 +45,9 @@ const App = (props) => {
       regColor !== 'all'
     ].some(value => value && value !== '');
   };
-  */
 
   // 필터가 활성화되었는지 확인
-  //const filterActive = useMemo(isFilterActive, [endResult, endResult2, endYear, endcompresult, regColor, regEndCompYear, regEndYear, regLeader, regNum, regTitle, startResult, startResult2, startYear, startcompresult]);
+  const filterActive = useMemo(isFilterActive, [endResult, endResult2, endYear, endcompresult, regColor, regEndCompYear, regEndYear, regLeader, regNum, regTitle, startResult, startResult2, startYear, startcompresult]);
 
   const tableRef = useRef(null);
 
@@ -166,16 +164,16 @@ const App = (props) => {
   const memoizedResult = useMemo(() => {
     return _.filter(data, function (o) {
       const isNumMatch = !regNum || o.ID.includes(regNum);
-      const isTitleMatch = !regTitle || o.TITLE.replace(/\s+/g, '').includes(regTitle.replace(/\s+/g, ''));
-      const isEndCompYearMatch = !regEndCompYear || o.ENDCOMPYEAR.replace(/\s+/g, '').includes(regEndCompYear.replace(/\s+/g, ''));
-      const isLeaderMatch = !regLeader || o.LEADER.replace(/\s+/g, '').includes(regLeader.replace(/\s+/g, ''));
+      const isTitleMatch = !regTitle || o.TITLE.includes(regTitle);
+      const isEndCompYearMatch = !regEndCompYear || o.ENDCOMPYEAR.includes(regEndCompYear);
+      const isLeaderMatch = !regLeader || o.LEADER.includes(regLeader);
       const isColorMatch = regColor === 'all' || o.COLOR === regColor;
       const isDateMatch = (startYear === 'all' || (o.STARTCOMPYEAR >= startYear && o.STARTCOMPYEAR <= endYear)) && (endYear === 'all' || (o.STARTCOMPYEAR <= endYear));
       const isStartCompResultMatch = startcompresult === 'all' || o.STARTCOMPRESULT === startcompresult;
       const isEndCompResultMatch = endcompresult === 'all' || o.ENDCOMPRESULT === endcompresult;
       const isDateMatch2 = (startResult === 'all' || (o.STARTYEAR >= startResult && o.STARTYEAR <= endResult)) && (endResult === 'all' || (o.STARTYEAR <= endResult));
       const isStartResultMatch = startResult2 === 'all' || o.STARTRESULT === startResult2;
-      const isEndYearMatch = !regEndYear || o.ENDYEAR.replace(/\s+/g, '').includes(regEndYear.replace(/\s+/g, ''));
+      const isEndYearMatch = !regEndYear || o.ENDYEAR.includes(regEndYear);
       const isEndResultMatch = endResult2 === 'all' || o.ENDRESULT === endResult2;
 
       return isNumMatch && isTitleMatch && isLeaderMatch && isColorMatch && isEndCompYearMatch && isDateMatch && isStartCompResultMatch && isEndCompResultMatch && isDateMatch2 && isStartResultMatch && isEndYearMatch && isEndResultMatch;
@@ -279,12 +277,8 @@ const App = (props) => {
       onLoad();
     }
     // useEffect 종속성 배열
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data.length, history, location.state, onLoad]);
-  //}, [data.length, handleSearch, history, location.state, onLoad]);
+  }, [data.length, handleSearch, history, location.state, onLoad]);
 
-
-  /*
   const resetFilters = useCallback(() => {
     setFilters({
       startYear: 'all',
@@ -303,7 +297,6 @@ const App = (props) => {
       regColor: 'all'
     });
   }, []);
-  */
 
   const onPrint = () => {
     const table = tableRef.current;
@@ -566,7 +559,7 @@ const App = (props) => {
             </div>
 
             <div className='controll'>
-              {/*<button className="button reset" onClick={resetFilters} title="검색 조건 초기화" >초기화</button>*/}
+              <button className="button search" onClick={resetFilters} title="검색 조건 초기화" disabled={!filterActive}>초기화</button>
               <button className="button search" onClick={handleSearch}>검색</button>
               {!isMobile && (
                 <>

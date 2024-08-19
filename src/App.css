@@ -478,7 +478,7 @@
   margin-top: 16px;
 }
 
-.formBody+.controll{
+.formBody+.controll {
   margin-bottom: 0px;
 }
 
@@ -505,6 +505,12 @@
 
 .controll .detail {
   background-color: #09a5c5;
+}
+
+.controll .reset {
+  background: #efefef;
+  color: #303038;
+  border: 1px solid #4c4c4c;
 }
 
 .buttonLeft {
