@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="refresh" content="0; URL=/#${window.location.pathname}">
+  </head>
+  <body>
+    <script type="text/javascript">
+      // Redirect all requests to index.html, preserving the path
+      const redirectTo = window.location.pathname;
+      window.location.replace(`/${redirectTo}`);
+    </script>
+  </body>
+</html>
