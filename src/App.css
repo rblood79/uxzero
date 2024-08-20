@@ -834,6 +834,11 @@ tbody tr:hover td.delTd{
   gap: 0px;
 }
 
+.formGroup.beforAfter {
+  grid-template-columns: repeat(1, 1fr);
+  grid-template-rows: repeat(2, 144px);
+}
+
 .formWrap {
   background-color: #fff;
   display: flex;
@@ -900,7 +905,7 @@ tbody tr:hover td.delTd{
 
 .formWrap textarea {
   line-height: 21px;
-  padding-top: 15px;
+  padding-top: 14px;
 }
 
 /*.normalBox {
@@ -1013,8 +1018,10 @@ tbody tr:hover td.delTd{
 
 .searchForm .label,
 .formBody .label {
-  justify-content: space-between;
   border-top-width: 0;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-top: 14px;
 }
 
 .caption {

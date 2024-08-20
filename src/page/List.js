@@ -146,6 +146,10 @@ const App = (props) => {
     }
   };
 
+  const numbertoCommas = (number)=>{
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+  }
+  
   const useYearRange = useCallback((start, end) => {
     const yearArray = [];
     for (let year = start; year <= end; year++) {
@@ -392,7 +396,7 @@ const App = (props) => {
           <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{data.STARTRESULT}</td>
           <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{data.ENDYEAR}</td>
           <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{data.ENDRESULT}</td>
-          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{data.RESULT}</td>
+          <td rowSpan={rspan} style={Object.assign({}, style.table.td, style.table.w70)}>{numbertoCommas(data.RESULT)}</td>
           <td rowSpan={rspan} style={Object.assign({}, style.table.w54,
             data.COLOR === 'red'
               ? style.table.tdRed
@@ -622,7 +626,7 @@ const App = (props) => {
                   <th style={Object.assign({}, style.table.th, style.table.w70)}>1차성과<br />평가결과</th>
                   <th style={Object.assign({}, style.table.th, style.table.w70)}>2차성과<br />평가연도</th>
                   <th style={Object.assign({}, style.table.th, style.table.w70)}>2차성과<br />평가결과</th>
-                  <th style={Object.assign({}, style.table.th, style.table.w70)}>재무성과<br />(원)</th>
+                  <th style={Object.assign({}, style.table.th, style.table.w70)}>재무성과<br />(백만원)</th>
                   <th style={Object.assign({}, style.table.th, style.table.w54)}>사후<br />관리상태</th>
                   <th style={Object.assign({}, style.table.th, style.table.w180)}>관리지표</th>
                   <th style={Object.assign({}, style.table.th, style.table.w48)}>단위</th>

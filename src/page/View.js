@@ -18,7 +18,7 @@ const App = (props) => {
   const [startyear, setStartyear] = useState(null);
   const [startresult, setStartresult] = useState(null);
   const [endresult, setEndresult] = useState(null);
-  
+
   const tableRef = useRef();
 
   const memoizedInputs = useMemo(() => ({
@@ -37,10 +37,16 @@ const App = (props) => {
     datay3: data?.DATAY3 || "",
     datay4: data?.DATAY4 || "",
     datay5: data?.DATAY5 || "",
+    before: data?.BEFORE || "",
+    after: data?.AFTER || "",
   }), [data]);
 
   const [inputs, setInputs] = useState(memoizedInputs);
-  const { id, checknum, leader, title, endcompyear, endyear, result, indi, unit, datay0 } = inputs;
+  const { id, checknum, leader, title, endcompyear, endyear, result, indi, unit, datay0, before, after } = inputs;
+
+  const numbertoCommas = (number) => {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+  }
 
   const tempHeight = isMobile ? "48px" : "56px";
 
@@ -52,7 +58,8 @@ const App = (props) => {
       borderSpacing: 0,
       border: "2px solid #000",
       backgroundColor: "#f5f5f7",
-      fontSize: isMobile ? "14px" : "12pt",
+      fontSize: "14px",
+      lineHeight: "26px",
       tableLayout: "fixed",
       backgroundImage: `url(${logo})`,
       backgroundRepeat: "no-repeat",
@@ -64,34 +71,43 @@ const App = (props) => {
         padding: "4px 8px",
         height: "68px",
         wordBreak: "keep-all",
-        fontSize: isMobile ? "14px" : "14pt",
+        fontSize: "14px",
         textDecoration: "underline",
         textUnderlineOffset: "4px",
       },
       td: {
         padding: "0px 16px",
-        height: tempHeight,
+        //height: tempHeight,
         backgroundColor: "rgba(255, 255, 255, 0.9)",
         wordBreak: "keep-all",
         textAlign: "left",
-        letterSpacing: "1.2pt",
+        //letterSpacing: "1.2pt",
         borderRight: "1px solid rgba(0,0,0,0.16)",
         borderLeft: "1px solid rgba(0,0,0,0.16)",
+      },
+      tdR: {
+        borderRadius: "8px",
+        borderTop: "1px solid rgba(0,0,0,0.16)",
+        borderBottom: "1px solid rgba(0,0,0,0.16)",
+        verticalAlign: "top",
+        padding: "16px"
       },
       tdT: {
         borderRadius: "8px 8px 0 0",
         borderTop: "1px solid rgba(0,0,0,0.16)",
+        paddingTop : isMobile ? "16px" : "0px",
       },
       tdU: {
         padding: "0px 16px",
-        height: tempHeight,
+        //height: tempHeight,
         backgroundColor: "rgba(255, 255, 255, 0.9)",
         wordBreak: "keep-all",
         textAlign: "left",
-        letterSpacing: "1.2pt",
+        //letterSpacing: "1.2pt",
 
         borderRadius: "0 0 8px 8px",
         borderBottom: "1px solid rgba(0,0,0,0.16)",
+        paddingBottom : isMobile ? "16px" : "0px",
       },
       tdML: {
         padding: "0px 16px",
@@ -99,27 +115,27 @@ const App = (props) => {
         backgroundColor: "rgba(255, 255, 255, 0.9)",
         wordBreak: "keep-all",
         textAlign: "left",
-        letterSpacing: "1.2pt",
-        
+        //letterSpacing: "1.2pt",
+
         borderLeft: "1px solid rgba(0,0,0,0.16)",
       },
       tdMR: {
         padding: "0px 16px",
-        height: tempHeight,
+        //height: tempHeight,
         backgroundColor: "rgba(255, 255, 255, 0.9)",
         wordBreak: "keep-all",
         textAlign: "left",
-        letterSpacing: "1.2pt",
-        
+        //letterSpacing: "1.2pt",
+
         borderRight: "1px solid rgba(0,0,0,0.16)",
       },
       tdTL: {
         padding: "0px 16px",
-        height: tempHeight,
+        //height: tempHeight,
         backgroundColor: "rgba(255, 255, 255, 0.9)",
         wordBreak: "keep-all",
         textAlign: "left",
-        letterSpacing: "1.2pt",
+        //letterSpacing: "1.2pt",
 
         borderRadius: "8px 0 0 0",
         borderTop: "1px solid rgba(0,0,0,0.16)",
@@ -127,11 +143,11 @@ const App = (props) => {
       },
       tdTR: {
         padding: "0px 16px",
-        height: tempHeight,
+        //height: tempHeight,
         backgroundColor: "rgba(255, 255, 255, 0.9)",
         wordBreak: "keep-all",
         textAlign: "left",
-        letterSpacing: "1.2pt",
+        //letterSpacing: "1.2pt",
 
         borderRadius: "0 8px 0 0",
         borderTop: "1px solid rgba(0,0,0,0.16)",
@@ -139,11 +155,11 @@ const App = (props) => {
       },
       tdBL: {
         padding: "0px 16px",
-        height: tempHeight,
+        //height: tempHeight,
         backgroundColor: "rgba(255, 255, 255, 0.9)",
         wordBreak: "keep-all",
         textAlign: "left",
-        letterSpacing: "1.2pt",
+        //letterSpacing: "1.2pt",
 
         borderRadius: "0 0 0 8px",
         borderBottom: "1px solid rgba(0,0,0,0.16)",
@@ -151,11 +167,11 @@ const App = (props) => {
       },
       tdBR: {
         padding: "0px 16px",
-        height: tempHeight,
+        //height: tempHeight,
         backgroundColor: "rgba(255, 255, 255, 0.9)",
         wordBreak: "keep-all",
         textAlign: "left",
-        letterSpacing: "1.2pt",
+        //letterSpacing: "1.2pt",
 
         borderRadius: "0 0 8px 0",
         borderBottom: "1px solid rgba(0,0,0,0.16)",
@@ -172,7 +188,7 @@ const App = (props) => {
         backgroundColor: "rgba(255, 255, 255, 0.9)",
         wordBreak: "keep-all",
         textAlign: "left",
-        letterSpacing: "1.2pt",
+        //letterSpacing: "1.2pt",
         borderRadius: "0 0 8px 8px",
         borderBottom: "1px solid rgba(0,0,0,0.16)",
         borderRight: "1px solid rgba(0,0,0,0.16)",
@@ -180,13 +196,25 @@ const App = (props) => {
       },
       tde: {
         padding: "6px 36px",
-        height: tempHeight,
+        //height: tempHeight,
         wordBreak: "keep-all",
         textAlign: "left",
-        letterSpacing: "1.2pt",
+        //letterSpacing: "1.2pt",
         backgroundColor: "rgba(255, 255, 255, 0.9)",
         borderRight: "1px solid rgba(0,0,0,0.16)",
         borderLeft: "1px solid rgba(0,0,0,0.16)",
+      },
+      tde2: {
+        padding: "6px 36px",
+        //height: tempHeight,
+        wordBreak: "keep-all",
+        textAlign: "left",
+        //letterSpacing: "1.2pt",
+        borderRadius: "0 0 8px 8px",
+        backgroundColor: "rgba(255, 255, 255, 0.9)",
+        borderRight: "1px solid rgba(0,0,0,0.16)",
+        borderLeft: "1px solid rgba(0,0,0,0.16)",
+        borderBottom: "1px solid rgba(0,0,0,0.16)",
       },
       foot: {
         height: isMobile ? "16px" : "24px",
@@ -272,7 +300,7 @@ const App = (props) => {
             </colgroup>
             <thead>
               <tr>
-                <th style={style.table.th} colSpan={4}>과제명&nbsp;:&nbsp;{title}</th>
+                <th style={style.table.th} colSpan={4}>{title}</th>
               </tr>
             </thead>
             <tbody>
@@ -314,6 +342,21 @@ const App = (props) => {
                   <tr>
                     <td></td><td style={Object.assign({}, style.table.td, style.table.tdU)} colSpan={2}>■ 2차 성과 평가결과&nbsp;:&nbsp;{endresult}</td><td></td>
                   </tr>
+                  <tr>
+                    <td style={style.table.tdS} colSpan={4}></td>
+                  </tr>
+                  <tr>
+                    <td></td><td style={Object.assign({}, style.table.td, style.table.tdT)} colSpan={2}>■ 재무성과(백만원)&nbsp;:&nbsp;{numbertoCommas(result)}</td><td></td>
+                  </tr>
+                  <tr>
+                    <td></td><td style={style.table.td} colSpan={2}>■ 관리지표&nbsp;:&nbsp;{indi[0]}</td><td></td>
+                  </tr>
+                  <tr>
+                    <td></td><td style={style.table.tde} colSpan={2}>○ 단위&nbsp;:&nbsp;{unit[0]}</td><td></td>
+                  </tr>
+                  <tr>
+                    <td></td><td style={Object.assign({}, style.table.tde2)} colSpan={2}>○ 수치&nbsp;:&nbsp;{datay0[0]}</td><td></td>
+                  </tr>
                 </>
               ) : (
                 <>
@@ -329,26 +372,38 @@ const App = (props) => {
                   <tr>
                     <td></td><td style={Object.assign({}, style.table.tdBL)}>■ 2차 성과 평가연도&nbsp;:&nbsp;{endyear}</td><td style={Object.assign({}, style.table.tdBR)}>■ 2차 성과 평가결과&nbsp;:&nbsp;{endresult}</td><td></td>
                   </tr>
+                  <tr>
+                    <td style={style.table.tdS} colSpan={4}></td>
+                  </tr>
+                  <tr>
+                    <td></td><td style={Object.assign({}, style.table.td, style.table.tdT)} colSpan={2}>■ 재무성과(백만원)&nbsp;:&nbsp;{numbertoCommas(result)}</td><td></td>
+                  </tr>
+                  <tr>
+                    <td></td><td style={style.table.td} colSpan={2}>■ 관리지표&nbsp;:&nbsp;{indi[0]}</td><td></td>
+                  </tr>
+                  <tr>
+                    <td></td><td style={style.table.tdBL} >○ 단위&nbsp;:&nbsp;{unit[0]}</td><td style={style.table.tdBR} >○ 수치&nbsp;:&nbsp;{datay0[0]}</td><td></td>
+                  </tr>
                 </>
               )}
+
+
               <tr>
                 <td style={style.table.tdS} colSpan={4}></td>
               </tr>
+
               <tr>
-                <td></td><td style={Object.assign({}, style.table.td, style.table.tdT)} colSpan={2}>■ 재무성과(원)&nbsp;:&nbsp;{result}</td><td></td>
+                <td></td><td style={Object.assign({}, style.table.td, style.table.tdR)} colSpan={2}>■ 개선 전 주요내용&nbsp;:&nbsp;{before}</td><td></td>
               </tr>
+
               <tr>
-                <td></td><td style={style.table.td} colSpan={2}>■ 관리지표&nbsp;:&nbsp;{indi[0]}</td><td></td>
+                <td style={style.table.tdS} colSpan={4}></td>
               </tr>
+
               <tr>
-                <td></td><td style={style.table.tde} colSpan={2}>○ 단위&nbsp;:&nbsp;{unit[0]}</td><td></td>
+                <td></td><td style={Object.assign({}, style.table.td, style.table.tdR)} colSpan={2}>■ 개선 후 주요내용&nbsp;:&nbsp;{after}</td><td></td>
               </tr>
-              <tr>
-                <td></td><td style={style.table.tde} colSpan={2}>○ 수치&nbsp;:&nbsp;{datay0[0]}</td><td></td>
-              </tr>
-              <tr>
-                <td></td><td style={style.table.tdZ} colSpan={2}></td><td></td>
-              </tr>
+
               <tr>
                 <th colSpan={3} style={style.table.foot}></th>
               </tr>

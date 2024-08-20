@@ -40,7 +40,7 @@ const App = (props) => {
     after: ''
   });
 
-  const { id, checknum, leader, title, endcompyear, endyear, result, indi, unit, datay0, datay1, datay2, datay3, datay4, datay5, color, before, after} = inputs;
+  const { id, checknum, leader, title, endcompyear, endyear, result, indi, unit, datay0, datay1, datay2, datay3, datay4, datay5, color, before, after } = inputs;
 
   const minYear = useMemo(() => year.min, [year.min]);
   const maxYear = useMemo(() => year.max, [year.max]);
@@ -56,14 +56,24 @@ const App = (props) => {
 
   const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
-    const lines = value.split('\n');
-    if (lines.length <= colCount) {
-      setInputs(prevInputs => ({ ...prevInputs, [name]: value }));
+
+    if (name === 'before' || name === 'after') {
+      setInputs(prevInputs => ({ ...prevInputs, [name]: value }))
     } else {
-      const limitedValue = lines.slice(0, colCount).join('\n');
-      setInputs(prevInputs => ({ ...prevInputs, [name]: limitedValue }));
-    }
+      const lines = value.split('\n');
+      if (lines.length <= colCount) {
+        name !== 'result' ? setInputs(prevInputs => ({ ...prevInputs, [name]: value })) : setInputs(prevInputs => ({ ...prevInputs, [name]: value.replace(/,/g, '') }));
+      } else {
+        const limitedValue = lines.slice(0, colCount).join('\n');
+        setInputs(prevInputs => ({ ...prevInputs, [name]: limitedValue }));
+      }
+    };
+
   }, [colCount]);
+
+  const numbertoCommas = (number) => {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+  }
 
   useEffect(() => {
     let isMounted = true;
@@ -186,7 +196,7 @@ const App = (props) => {
       DATE: new Date().toUTCString()
     });
     history.push('/', { updated: true });
-  }, [id, checknum, leader, title, startcompyear, startcompresult, endcompyear, endcompresult, startyear, startresult, endyear, endresult, result, color, indi, unit, datay0, datay1, datay2, datay3, datay4, datay5,before, after, props.manage, history]);
+  }, [id, checknum, leader, title, startcompyear, startcompresult, endcompyear, endcompresult, startyear, startresult, endyear, endresult, result, color, indi, unit, datay0, datay1, datay2, datay3, datay4, datay5, before, after, props.manage, history]);
 
   const onDelete = useCallback(async () => {
     if (location.state && window.confirm(`${title} 과제를 삭제하시겠습니까?`)) {
@@ -348,14 +358,14 @@ const App = (props) => {
             </div>
             <div className='formWrap empty'></div>
             <div className='formWrap'>
-              <label className='label' htmlFor="RES">재무성과(원)</label>
+              <label className='label' htmlFor="RES">재무성과(백만원)</label>
               <input
                 type="text"
                 id='RES'
                 name="result"
                 placeholder="입력하세요"
                 onChange={handleInputChange}
-                value={result}
+                value={numbertoCommas(result)}
               />
             </div>
             <div className='formWrap'>
@@ -396,7 +406,7 @@ const App = (props) => {
               <div className='radioGroup'>
                 {["red", "green", "yellow"].map((item, index) => (
                   <div key={item + index}>
-                    
+
                     <input
                       type='radio'
                       name='color'
@@ -465,7 +475,11 @@ const App = (props) => {
                 rows={5}
               ></textarea>
             </div>
-            <div className='formWrap borderBottom'>
+
+          </div>
+
+          <div className='formGroup beforAfter'>
+            <div className='formWrap borderTop'>
               <label className='label' htmlFor="BE">개선 전 주요내용</label>
               <textarea
                 id='BE'
@@ -488,6 +502,7 @@ const App = (props) => {
               ></textarea>
             </div>
           </div>
+
         </div>
         <div className='controll'>
           <button className={'button back'} onClick={onBack}>이전</button>
