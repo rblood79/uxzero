@@ -476,6 +476,17 @@ const App = (props) => {
                 rows={5}
               ></textarea>
             </div>
+            <div className='formWrap borderBottom'>
+              <label className='label' htmlFor="AF">개선 후 주요내용</label>
+              <textarea
+                id='AF'
+                name="after"
+                placeholder="입력하세요"
+                onChange={handleInputChange}
+                value={after}
+                rows={5}
+              ></textarea>
+            </div>
           </div>
         </div>
         <div className='controll'>
