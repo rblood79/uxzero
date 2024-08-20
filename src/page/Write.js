@@ -36,9 +36,11 @@ const App = (props) => {
     datay4: '',
     datay5: '',
     color: '',
+    before: '',
+    after: ''
   });
 
-  const { id, checknum, leader, title, endcompyear, endyear, result, indi, unit, datay0, datay1, datay2, datay3, datay4, datay5, color } = inputs;
+  const { id, checknum, leader, title, endcompyear, endyear, result, indi, unit, datay0, datay1, datay2, datay3, datay4, datay5, color, before, after} = inputs;
 
   const minYear = useMemo(() => year.min, [year.min]);
   const maxYear = useMemo(() => year.max, [year.max]);
@@ -106,6 +108,8 @@ const App = (props) => {
         datay4: data.DATAY4 || '',
         datay5: data.DATAY5 || '',
         color: data.COLOR || '',
+        before: data.BEFORE || '',
+        after: data.AFTER || '',
       });
       setStartcompyear(data.STARTCOMPYEAR);
       setStartcompresult(data.STARTCOMPRESULT);
@@ -145,11 +149,13 @@ const App = (props) => {
         DATAY3: datay3,
         DATAY4: datay4,
         DATAY5: datay5,
+        BEFORE: before,
+        AFTER: after,
         DATE: new Date().toUTCString()
       });
       history.push('/', { updated: true });
     }
-  }, [id, checknum, leader, title, startcompyear, startcompresult, endcompyear, endcompresult, startyear, startresult, endyear, endresult, result, color, indi, unit, datay0, datay1, datay2, datay3, datay4, datay5, props.manage, history]);
+  }, [id, checknum, leader, title, startcompyear, startcompresult, endcompyear, endcompresult, startyear, startresult, endyear, endresult, result, color, indi, unit, datay0, datay1, datay2, datay3, datay4, datay5, before, after, props.manage, history]);
 
   const onUpdate = useCallback(async () => {
     await updateDoc(doc(props.manage, id), {
@@ -175,10 +181,12 @@ const App = (props) => {
       DATAY3: datay3,
       DATAY4: datay4,
       DATAY5: datay5,
+      BEFORE: before,
+      AFTER: after,
       DATE: new Date().toUTCString()
     });
     history.push('/', { updated: true });
-  }, [id, checknum, leader, title, startcompyear, startcompresult, endcompyear, endcompresult, startyear, startresult, endyear, endresult, result, color, indi, unit, datay0, datay1, datay2, datay3, datay4, datay5, props.manage, history]);
+  }, [id, checknum, leader, title, startcompyear, startcompresult, endcompyear, endcompresult, startyear, startresult, endyear, endresult, result, color, indi, unit, datay0, datay1, datay2, datay3, datay4, datay5,before, after, props.manage, history]);
 
   const onDelete = useCallback(async () => {
     if (location.state && window.confirm(`${title} 과제를 삭제하시겠습니까?`)) {
@@ -454,6 +462,17 @@ const App = (props) => {
                 placeholder="입력하세요"
                 onChange={handleInputChange}
                 value={datay5}
+                rows={5}
+              ></textarea>
+            </div>
+            <div className='formWrap borderBottom'>
+              <label className='label' htmlFor="BEFORE">before</label>
+              <textarea
+                id='BEFORE'
+                name="BEFORE"
+                placeholder="입력하세요"
+                onChange={handleInputChange}
+                value={before}
                 rows={5}
               ></textarea>
             </div>
