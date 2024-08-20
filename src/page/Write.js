@@ -466,10 +466,10 @@ const App = (props) => {
               ></textarea>
             </div>
             <div className='formWrap borderBottom'>
-              <label className='label' htmlFor="BEFORE">before</label>
+              <label className='label' htmlFor="BE">개선 전 주요내용</label>
               <textarea
-                id='BEFORE'
-                name="BEFORE"
+                id='BE'
+                name="before"
                 placeholder="입력하세요"
                 onChange={handleInputChange}
                 value={before}
