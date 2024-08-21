@@ -228,7 +228,7 @@ const App = (props) => {
       <div className='users'>
         <div className='resultHead'>
           <h2 className='title'>과제{data ? '수정' : '등록'}</h2>
-          <span>{data && `마지막 수정일 ${moment(data.DATE).format("YYYY-MM-DD hh:mm:ss")}`}</span>
+          <span className='titleDate'>{data && `마지막 수정일 ${moment(data.DATE).format("YYYY-MM-DD hh:mm:ss")}`}</span>
         </div>
         <div className='formBody'>
           <div className='formGroup'>
@@ -505,10 +505,12 @@ const App = (props) => {
 
         </div>
         <div className='controll'>
-          <button className={'button back'} onClick={onBack}>이전</button>
-          {location.state && <button className={'button delete'} onClick={onDelete}>삭제</button>}
-          {location.state ? <button className={'button edit'} onClick={onUpdate}>수정</button> : <button className={'button'} disabled={!id} onClick={onSave}>저장</button>}
-          {location.state && <button className={'button detail'} onClick={onView}>출력</button>}
+          <div className='buttonContainer'>
+            <button className={'button back'} onClick={onBack}>이전</button>
+            {location.state && <button className={'button delete'} onClick={onDelete}>삭제</button>}
+            {location.state ? <button className={'button edit'} onClick={onUpdate}>수정</button> : <button className={'button'} disabled={!id} onClick={onSave}>저장</button>}
+            {location.state && <button className={'button detail'} onClick={onView}>출력</button>}
+          </div>
         </div>
       </div>
     </div>
