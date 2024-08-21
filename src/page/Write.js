@@ -315,6 +315,7 @@ const App = (props) => {
                 {["완료", "조건부완료", "중단", "연장", "1차완료", "미평가"].map((item) => (
                   <option value={item} key={item}>{item}</option>
                 ))}
+                {data && <option value="">취소</option>}
               </select>
             </div>
             <div className='formWrap empty'></div>
