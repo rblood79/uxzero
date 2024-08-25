@@ -100,8 +100,8 @@
     /** start of getApproval function **********************/
     const axios = require('axios');
     async function getApproval(key, secret) {
-        // url = 'https://openapivts.koreainvestment.com:29443'; // 모의투자계좌
-        const url = 'https://openapi.koreainvestment.com:9443'; // 실전투자계좌
+        const url = 'https://openapivts.koreainvestment.com:29443'; // 모의투자계좌
+        //const url = 'https://openapi.koreainvestment.com:9443'; // 실전투자계좌
         const headers = { 'Content-Type': 'application/json' };
         const body = {
             grant_type: 'client_credentials',
