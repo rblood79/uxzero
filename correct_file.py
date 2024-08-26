@@ -2,7 +2,7 @@ import os
 import requests
 
 API_KEY = os.getenv('OPENAI_API_KEY')
-FILE_PATH = 'path/to/your/file.txt'
+FILE_PATH = 'test.txt'
 
 def correct_file(file_content):
     response = requests.post(
