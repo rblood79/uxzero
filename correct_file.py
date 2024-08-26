@@ -12,7 +12,7 @@ def correct_file(file_content):
             'Content-Type': 'application/json',
         },
         json={
-            'model': 'gpt-4',
+            'model': 'gpt-3.5-turbo',
             'messages': [
                 {'role': 'system', 'content': 'You are a code fixer bot.'},
                 {'role': 'user', 'content': f'Correct the following code:\n\n{file_content}'}
