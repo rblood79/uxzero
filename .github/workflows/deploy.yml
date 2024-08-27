@@ -3,37 +3,28 @@ name: Deploy Flutter Web App to GitHub Pages
 on:
   push:
     branches:
-      - master  # 또는 main
+      - main  # main 브랜치에 푸시될 때마다 실행
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout the code
-      uses: actions/checkout@v2
+    - uses: actions/checkout@v2
 
     - name: Install Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.10.0'
+        flutter-version: 'stable'
 
     - name: Install dependencies
       run: flutter pub get
 
-    - name: Build web application
-      run: flutter build web
-
-    - name: Verify build output
-      run: ls -la build/web
-
-    - name: Upload artifact for GitHub Pages
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: build/web  # 수정된 경로
+    - name: Build Flutter Web
+      run: flutter build web --release
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: build/web
+        publish_dir: build/web  # 빌드된 웹 파일이 있는 디렉토리
