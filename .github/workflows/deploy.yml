@@ -16,7 +16,7 @@ jobs:
     - name: Install Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.10.0'  # 필요한 경우 특정 버전을 설정
+        flutter-version: '3.10.0'
 
     - name: Install dependencies
       run: flutter pub get
@@ -24,8 +24,13 @@ jobs:
     - name: Build web application
       run: flutter build web
 
-    - name: List build directory
+    - name: Verify build output
       run: ls -la build/web
+
+    - name: Upload artifact for GitHub Pages
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: build/web  # 수정된 경로
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
