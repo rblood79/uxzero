@@ -14,7 +14,7 @@ def correct_file(file_content):
             'Content-Type': 'application/json',
         },
         json={
-            'model': 'gpt-4',
+            'model': 'gpt-3.5-turbo',
             'messages': [
                 {'role': 'system', 'content': 'You are a code optimizer.'},
                 {'role': 'user', 'content': f"Optimize the following code to improve its performance and readability:\n\n{file_content}"}
