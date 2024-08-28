@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "486591331456",
+    "project_id": "uxzero-base",
+    "storage_bucket": "uxzero-base.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:486591331456:android:7efc9ad72a6d7e73a5fa65",
+        "android_client_info": {
+          "package_name": "kr.co.ihaemil.uxzero"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyY6JQrfY6-ahgopYPvlcUuDt-MkQZXGM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
