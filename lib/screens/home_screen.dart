@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/widget_panel.dart';  // WidgetPanel import
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -6,8 +7,12 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home Screen'),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(28.0), // 원하는 높이로 설정
+        child: AppBar(
+          title: const Text('UXZERO'),
+          elevation: 4,
+        ),
       ),
       body: Column(
         children: [
@@ -21,24 +26,19 @@ class HomeScreen extends StatelessWidget {
           Expanded(
             child: Row(
               children: [
-                SizedBox(
-                  width:228,
-                  child: Container(
-                    color: Colors.green,
-                    child: const Center(child: Text('Left Content')),
-                  ),
-                ),
+                // widget 부분
+                WidgetPanel(), // 분리된 WidgetPanel을 사용
                 Expanded(
                   child: Container(
-                    color: Colors.yellow,
-                    child: const Center(child: Text('Right Content')),
+                    color: Colors.white,
+                    child: const Center(child: Text('work')),
                   ),
                 ),
                 SizedBox(
                   width: 228,
                   child: Container(
                     color: Colors.redAccent,
-                    child: const Center(child: Text('Right Content')),
+                    child: const Center(child: Text('property')),
                   ),
                 ),
               ],
