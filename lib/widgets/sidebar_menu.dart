@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class SidebarMenu extends StatelessWidget {
   final List<MenuItem> menuItems = [
-    MenuItem(icon: Icons.insert_drive_file, label: 'File'),
+    MenuItem(icon: Icons.insert_drive_file, label: 'Site'),
     MenuItem(icon: Icons.widgets, label: 'Widget'),
     MenuItem(icon: Icons.map, label: 'Node'),
     MenuItem(icon: Icons.storage, label: 'Data'),

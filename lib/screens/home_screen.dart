@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/custom_app_bar.dart'; // CustomAppBar import
+import '../widgets/top_panel.dart'; // TopPanel import
 import '../widgets/sidebar_menu.dart';  // SidebarMenu import
 import '../widgets/widget_panel.dart'; // WidgetPanel import
 import '../widgets/work_area.dart';    // WorkArea import
@@ -59,13 +60,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         children: [
           Column(
             children: [
-              SizedBox(
-                height: 48,
-                child: Container(
-                  color: Colors.blue,
-                  child: const Center(child: Text('Top Area')),
-                ),
-              ),
+              const TopPanel(), // 분리된 TopPanel 위젯을 사용
               const Expanded(
                 child: Row(
                   children: [
