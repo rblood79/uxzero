@@ -59467,7 +59467,7 @@ A.VT.prototype={
 Oz(a){$.pj().n(0,this,a)}}
 A.Bi.prototype={
 N(a){var s=null
-return new A.rC(B.zM,"Flutter Demo",A.a8l(s,s,B.fZ,s),s)}}
+return new A.rC(B.zM,"uxzero",A.a8l(s,s,B.fZ,s),s)}}
 A.r6.prototype={
 ai(){return new A.vF(null,null)}}
 A.vF.prototype={
