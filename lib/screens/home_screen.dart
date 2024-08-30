@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../widgets/custom_app_bar.dart'; // CustomAppBar import
-import '../widgets/top_panel.dart'; // TopPanel import
+import '../widgets/custom_app_bar.dart';
+import '../widgets/top_panel.dart';
 import '../widgets/sidebar_menu.dart';  // SidebarMenu import
 import '../widgets/widget_panel.dart'; // WidgetPanel import
 import '../widgets/work_area.dart';    // WorkArea import
@@ -18,6 +18,16 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   late AnimationController _controller;
   late Animation<Offset> _offsetAnimation;
 
+  double _containerWidth = 1920;
+  double _containerHeight = 1080;
+  Color _containerColor = const Color(0xFFFFFFFF);
+  double _fontSize = 24;
+
+  late TextEditingController _widthController;
+  late TextEditingController _heightController;
+  late TextEditingController _colorController;
+  late TextEditingController _fontSizeController;
+
   @override
   void initState() {
     super.initState();
@@ -32,11 +42,21 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       parent: _controller,
       curve: Curves.easeInOut,
     ));
+
+    // 초기값을 기반으로 컨트롤러 설정
+    _widthController = TextEditingController(text: _containerWidth.toString());
+    _heightController = TextEditingController(text: _containerHeight.toString());
+    _colorController = TextEditingController(text: '#${_containerColor.value.toRadixString(16).substring(2).toUpperCase()}');
+    _fontSizeController = TextEditingController(text: _fontSize.toString());
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _widthController.dispose();
+    _heightController.dispose();
+    _colorController.dispose();
+    _fontSizeController.dispose();
     super.dispose();
   }
 
@@ -52,6 +72,21 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     });
   }
 
+  void updateWorkArea(double width, double height, Color color, double fontSize) {
+    setState(() {
+      _containerWidth = width;
+      _containerHeight = height;
+      _containerColor = color;
+      _fontSize = fontSize;
+
+      // 컨트롤러의 값도 업데이트하여 입력 필드에 반영
+      _widthController.text = _containerWidth.toString();
+      _heightController.text = _containerHeight.toString();
+      _colorController.text = '#${_containerColor.value.toRadixString(16).substring(2).toUpperCase()}';
+      _fontSizeController.text = _fontSize.toString();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,16 +96,35 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           Column(
             children: [
               const TopPanel(), // 분리된 TopPanel 위젯을 사용
-              const Expanded(
+              Expanded(
                 child: Row(
                   children: [
                     Expanded(
                       child: Row(
                         children: [
                           // Work Area
-                          WorkArea(), // 분리된 WorkArea 위젯을 사용
+                          WorkArea(
+                            width: _containerWidth,
+                            height: _containerHeight,
+                            color: _containerColor,
+                            fontSize: _fontSize,
+                          ),
                           // Property Panel
-                          PropertyPanel(), // 분리된 PropertyPanel 위젯을 사용
+                          PropertyPanel(
+                            widthController: _widthController,
+                            heightController: _heightController,
+                            colorController: _colorController,
+                            fontSizeController: _fontSizeController,
+                            onSizeChanged: (double width, double height) {
+                              updateWorkArea(width, height, _containerColor, _fontSize);
+                            },
+                            onColorChanged: (Color color) {
+                              updateWorkArea(_containerWidth, _containerHeight, color, _fontSize);
+                            },
+                            onFontSizeChanged: (double fontSize) {
+                              updateWorkArea(_containerWidth, _containerHeight, _containerColor, fontSize);
+                            },
+                          ),
                         ],
                       ),
                     ),

@@ -4,9 +4,10 @@ class SidebarMenu extends StatelessWidget {
   final List<MenuItem> menuItems = [
     MenuItem(icon: Icons.insert_drive_file, label: 'Site'),
     MenuItem(icon: Icons.widgets, label: 'Widget'),
-    MenuItem(icon: Icons.map, label: 'Node'),
+    MenuItem(icon: Icons.account_tree, label: 'Tree'),
     MenuItem(icon: Icons.storage, label: 'Data'),
     MenuItem(icon: Icons.library_books, label: 'Library'),
+    MenuItem(icon: Icons.account_circle, label: 'User'),
     MenuItem(icon: Icons.settings, label: 'Settings'),
   ];
 
@@ -32,37 +33,49 @@ class SidebarMenu extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center, // 아이템을 중앙 정렬
-        children: menuItems.map((item) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4.0), // 항목 간 간격 설정
-            child: GestureDetector(
-              onTap: () {
-                onMenuButtonPressed(item.label); // 메뉴 이름을 전달
-                print('${item.label} clicked');
-              },
-              child: Container(
-                width: 36, // 버튼의 너비
-                height: 54, // 버튼의 높이
-                decoration: BoxDecoration(
-                  color: Colors.white, // 버튼 배경색
-                  borderRadius: BorderRadius.circular(8.0), // 모서리 둥글게
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(item.icon, size: 24, color: Colors.black),
-                    const SizedBox(height: 4.0),
-                    Text(
-                      item.label,
-                      style: const TextStyle(fontSize: 10, color: Colors.black),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
+        children: [
+          // 첫 번째 그룹: 상단에 배치될 메뉴 항목들
+          ...menuItems.sublist(0, 5).map((item) => buildMenuItem(item)).toList(),
+          
+          // Flexible 위젯을 사용하여 남은 공간을 차지하도록 함
+          const Spacer(),
+
+          // 두 번째 그룹: 하단에 배치될 메뉴 항목들
+          ...menuItems.sublist(5).map((item) => buildMenuItem(item)).toList(),
+        ],
+      ),
+    );
+  }
+
+  // 메뉴 항목을 빌드하는 헬퍼 메소드
+  Widget buildMenuItem(MenuItem item) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0), // 항목 간 간격 설정
+      child: GestureDetector(
+        onTap: () {
+          onMenuButtonPressed(item.label); // 메뉴 이름을 전달
+          print('${item.label} clicked');
+        },
+        child: Container(
+          width: 36, // 버튼의 너비
+          height: 54, // 버튼의 높이
+          decoration: BoxDecoration(
+            color: Colors.white, // 버튼 배경색
+            borderRadius: BorderRadius.circular(8.0), // 모서리 둥글게
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(item.icon, size: 24, color: Colors.black),
+              const SizedBox(height: 4.0),
+              Text(
+                item.label,
+                style: const TextStyle(fontSize: 10, color: Colors.black),
+                textAlign: TextAlign.center,
               ),
-            ),
-          );
-        }).toList(),
+            ],
+          ),
+        ),
       ),
     );
   }
