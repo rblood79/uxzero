@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/top_panel.dart';
-import '../widgets/sidebar_menu.dart';  // SidebarMenu import
-import '../widgets/widget_panel.dart'; // WidgetPanel import
-import '../widgets/work_area.dart';    // WorkArea import
-import '../widgets/property_panel.dart'; // PropertyPanel import
+import '../widgets/sidebar_menu.dart';
+import '../widgets/widget_panel.dart';
+import '../widgets/work_area.dart';
+import '../widgets/property_panel.dart';
+import '../models/selected_widget_model.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,16 +19,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   String selectedMenu = ''; // 현재 선택된 메뉴 항목
   late AnimationController _controller;
   late Animation<Offset> _offsetAnimation;
-
-  double _containerWidth = 1920;
-  double _containerHeight = 1080;
-  Color _containerColor = const Color(0xFFFFFFFF);
-  double _fontSize = 24;
-
-  late TextEditingController _widthController;
-  late TextEditingController _heightController;
-  late TextEditingController _colorController;
-  late TextEditingController _fontSizeController;
 
   @override
   void initState() {
@@ -42,22 +34,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       parent: _controller,
       curve: Curves.easeInOut,
     ));
-
-    // 초기값을 기반으로 컨트롤러 설정
-    _widthController = TextEditingController(text: _containerWidth.toString());
-    _heightController = TextEditingController(text: _containerHeight.toString());
-    _colorController = TextEditingController(text: '#${_containerColor.value.toRadixString(16).substring(2).toUpperCase()}');
-    _fontSizeController = TextEditingController(text: _fontSize.toString());
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    _widthController.dispose();
-    _heightController.dispose();
-    _colorController.dispose();
-    _fontSizeController.dispose();
-    super.dispose();
   }
 
   void handleMenuSelection(String menuLabel) {
@@ -72,92 +48,61 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     });
   }
 
-  void updateWorkArea(double width, double height, Color color, double fontSize) {
-    setState(() {
-      _containerWidth = width;
-      _containerHeight = height;
-      _containerColor = color;
-      _fontSize = fontSize;
-
-      // 컨트롤러의 값도 업데이트하여 입력 필드에 반영
-      _widthController.text = _containerWidth.toString();
-      _heightController.text = _containerHeight.toString();
-      _colorController.text = '#${_containerColor.value.toRadixString(16).substring(2).toUpperCase()}';
-      _fontSizeController.text = _fontSize.toString();
-    });
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const CustomAppBar(), // 분리된 CustomAppBar 위젯을 사용
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              const TopPanel(), // 분리된 TopPanel 위젯을 사용
-              Expanded(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Row(
-                        children: [
-                          // Work Area
-                          WorkArea(
-                            width: _containerWidth,
-                            height: _containerHeight,
-                            color: _containerColor,
-                            fontSize: _fontSize,
-                          ),
-                          // Property Panel
-                          PropertyPanel(
-                            widthController: _widthController,
-                            heightController: _heightController,
-                            colorController: _colorController,
-                            fontSizeController: _fontSizeController,
-                            onSizeChanged: (double width, double height) {
-                              updateWorkArea(width, height, _containerColor, _fontSize);
-                            },
-                            onColorChanged: (Color color) {
-                              updateWorkArea(_containerWidth, _containerHeight, color, _fontSize);
-                            },
-                            onFontSizeChanged: (double fontSize) {
-                              updateWorkArea(_containerWidth, _containerHeight, _containerColor, fontSize);
-                            },
-                          ),
-                        ],
+    return ChangeNotifierProvider(
+      create: (context) => SelectedWidgetModel(),
+      child: Scaffold(
+        appBar: const CustomAppBar(),
+        body: Stack(
+          children: [
+            const Column(
+              children: [
+                TopPanel(),
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 10,
+                        child: WorkArea(),
                       ),
-                    ),
-                  ],
+                      Expanded(
+                        child: PropertyPanel(),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(
-                height: 48,
-                child: Container(
-                  color: Colors.red,
-                  child: const Center(child: Text('Bottom Area')),
+                SizedBox(
+                  height: 48,
+                  child: Center(
+                    child: Text('Bottom Area'),
+                  ),
                 ),
-              ),
-            ],
-          ),
-          // AnimatedPositioned를 사용하여 WidgetPanel의 위치를 제어
-          Positioned(
-            left: 48, // SidebarMenu가 위치하는 곳으로 설정
-            top: 48,
-            bottom: 48,
-            child: SlideTransition(
-              position: _offsetAnimation, // 애니메이션 설정
-              child: WidgetPanel(), // WidgetPanel 위젯
+              ],
             ),
-          ),
-          // SidebarMenu는 Stack의 마지막에 위치해 WidgetPanel 위에 렌더링됩니다.
-          Positioned(
-            top: 48,
-            bottom: 48,
-            left: 0,
-            child: SidebarMenu(onMenuButtonPressed: handleMenuSelection), // 메뉴 버튼 클릭 시 호출
-          ),
-        ],
+            Positioned(
+              left: 48,
+              top: 48,
+              bottom: 48,
+              child: SlideTransition(
+                position: _offsetAnimation,
+                child: WidgetPanel(),
+              ),
+            ),
+            Positioned(
+              top: 48,
+              bottom: 48,
+              left: 0,
+              child: SidebarMenu(onMenuButtonPressed: handleMenuSelection),
+            ),
+          ],
+        ),
       ),
     );
   }

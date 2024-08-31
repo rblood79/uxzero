@@ -1,25 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../models/selected_widget_model.dart';
 
 class PropertyPanel extends StatelessWidget {
-  final TextEditingController widthController;
-  final TextEditingController heightController;
-  final TextEditingController colorController;
-  final TextEditingController fontSizeController;
-
-  final Function(double, double) onSizeChanged;
-  final Function(Color) onColorChanged;
-  final Function(double) onFontSizeChanged;
-
-  PropertyPanel({
-    super.key,
-    required this.widthController,
-    required this.heightController,
-    required this.colorController,
-    required this.fontSizeController,
-    required this.onSizeChanged,
-    required this.onColorChanged,
-    required this.onFontSizeChanged,
-  });
+  const PropertyPanel({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -28,65 +12,74 @@ class PropertyPanel extends StatelessWidget {
       child: Container(
         color: Colors.black12,
         padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Width and Height input
-            TextField(
-              controller: widthController,
-              decoration: const InputDecoration(labelText: '넓이'),
-              keyboardType: TextInputType.number,
-              onSubmitted: (value) {
-                final width = double.tryParse(value) ?? 1920;
-                final height = double.tryParse(heightController.text) ?? 1080;
-                onSizeChanged(width, height);
-              },
-            ),
-            TextField(
-              controller: heightController,
-              decoration: const InputDecoration(labelText: '높이'),
-              keyboardType: TextInputType.number,
-              onSubmitted: (value) {
-                final width = double.tryParse(widthController.text) ?? 1920;
-                final height = double.tryParse(value) ?? 1080;
-                onSizeChanged(width, height);
-              },
-            ),
-            const SizedBox(height: 16.0),
+        child: Consumer<SelectedWidgetModel>(
+          builder: (context, selectedWidgetModel, child) {
+            final selectedWidget = selectedWidgetModel.selectedWidgetProperties;
 
-            // Background color input
-            TextField(
-              controller: colorController,
-              decoration: const InputDecoration(labelText: '배경색 (#ffffff)'),
-              onSubmitted: (value) {
-                final color = _hexToColor(value);
-                onColorChanged(color);
-              },
-            ),
-            const SizedBox(height: 16.0),
+            if (selectedWidget == null) {
+              return const Text('위젯을 선택하세요');
+            }
 
-            // Font size input
-            TextField(
-              controller: fontSizeController,
-              decoration: const InputDecoration(labelText: '텍스트사이즈'),
-              keyboardType: TextInputType.number,
-              onSubmitted: (value) {
-                final fontSize = double.tryParse(value) ?? 24;
-                onFontSizeChanged(fontSize);
-              },
-            ),
-          ],
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Label',
+                    hintText: selectedWidget.label,
+                  ),
+                  onChanged: (value) {
+                    context.read<SelectedWidgetModel>().updateLabel(value);
+                  },
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    const Text('Color:'),
+                    const SizedBox(width: 10),
+                    Container(
+                      width: 50,
+                      height: 50,
+                      color: selectedWidget.color,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Width',
+                    hintText: selectedWidget.width.toString(),
+                  ),
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    final newWidth = double.tryParse(value) ?? selectedWidget.width;
+                    context.read<SelectedWidgetModel>().updateSize(newWidth, selectedWidget.height);
+                  },
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Height',
+                    hintText: selectedWidget.height.toString(),
+                  ),
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    final newHeight = double.tryParse(value) ?? selectedWidget.height;
+                    context.read<SelectedWidgetModel>().updateSize(selectedWidget.width, newHeight);
+                  },
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    context.read<SelectedWidgetModel>().clearSelection();
+                  },
+                  child: const Text('Clear Selection'),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
-  }
-
-  // 16진수 색상 코드를 Color 객체로 변환하는 함수
-  Color _hexToColor(String hex) {
-    hex = hex.replaceAll('#', '');
-    if (hex.length == 6) {
-      hex = 'FF$hex';
-    }
-    return Color(int.parse(hex, radix: 16));
   }
 }

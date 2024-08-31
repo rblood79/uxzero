@@ -35,13 +35,13 @@ class SidebarMenu extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center, // 아이템을 중앙 정렬
         children: [
           // 첫 번째 그룹: 상단에 배치될 메뉴 항목들
-          ...menuItems.sublist(0, 5).map((item) => buildMenuItem(item)).toList(),
+          ...menuItems.sublist(0, 5).map((item) => buildMenuItem(item)),
           
           // Flexible 위젯을 사용하여 남은 공간을 차지하도록 함
           const Spacer(),
 
           // 두 번째 그룹: 하단에 배치될 메뉴 항목들
-          ...menuItems.sublist(5).map((item) => buildMenuItem(item)).toList(),
+          ...menuItems.sublist(5).map((item) => buildMenuItem(item)),
         ],
       ),
     );

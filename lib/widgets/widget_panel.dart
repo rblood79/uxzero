@@ -23,7 +23,7 @@ class WidgetPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 180, // 패널의 너비를 설정
-      color: Colors.grey[200], // 배경색 설정
+      color: Colors.grey[300], // 배경색 설정
       padding: const EdgeInsets.all(16),
       //padding: const EdgeInsets.fromLTRB(64,16,16,16),
       
