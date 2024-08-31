@@ -17,7 +17,6 @@
 /windows
 .flutter-plugins
 .flutter-plugins-dependencies
-.gitignore
 
 package_config_subset
 package_config.json
