@@ -12,70 +12,95 @@ class WorkArea extends StatefulWidget {
 }
 
 class _WorkAreaState extends State<WorkArea> {
-  final List<Widget> widgets = []; // 드롭된 위젯을 저장할 리스트
+  final List<WidgetProperties> widgetPropertiesList = [];
 
   @override
   void initState() {
     super.initState();
 
-    // 초기 선택된 위젯 설정
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final initialWidgetProperties = WidgetProperties(
-        id: 'widget_page_01',  // 고유 ID
+        id: 'widget_page_01',
         label: 'Initial Widget',
         width: 1200,
         height: 600,
         color: Colors.white,
       );
+      widgetPropertiesList.add(initialWidgetProperties);
       context.read<SelectedWidgetModel>().selectWidget(initialWidgetProperties);
     });
   }
 
+  Widget _buildWidgetFromProperties(WidgetProperties props) {
+    return Container(
+      width: props.width,
+      height: props.height,
+      color: props.color,
+      child: Center(child: Text(props.label)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        color: Colors.grey[200],
-        child: Center(
-          child: Consumer<SelectedWidgetModel>(
-            builder: (context, selectedWidgetModel, child) {
-              final widgetProperties = selectedWidgetModel.selectedWidgetProperties;
-              if (widgetProperties == null) {
-                return const Text('위젯이 선택되지 않았습니다.');
-              }
-              return DragTarget<WidgetItem>(
-                onAccept: (WidgetItem item) {
-                  setState(() {
-                    widgets.add(item.widget!);
-                  });
-                },
-                builder: (context, candidateData, rejectedData) {
-                  return Container(
-                    key: ValueKey(widgetProperties.id),
-                    width: widgetProperties.width,
-                    height: widgetProperties.height,
-                    decoration: BoxDecoration(
-                      color: widgetProperties.color,
-                      border: Border.all(
-                        color: Colors.black,
-                        width: 1.0,
-                      ),
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: Stack(
-                      children: [
-                        Center(
-                          child: Text('${widgetProperties.id}: ${widgetProperties.label}'),
-                        ),
-                        ...widgets, // 드롭된 위젯들을 이곳에 추가
-                      ],
+    return Center(
+      child: Consumer<SelectedWidgetModel>(
+        builder: (context, selectedWidgetModel, child) {
+          final parentWidgetProperties = selectedWidgetModel.selectedWidgetProperties;
+          if (parentWidgetProperties == null) {
+            return const Text('위젯이 선택되지 않았습니다.');
+          }
+          return Container(
+            width: parentWidgetProperties.width,
+            height: parentWidgetProperties.height,
+            decoration: BoxDecoration(
+              color: parentWidgetProperties.color,
+              border: Border.all(
+                color: Colors.black,
+                width: 1.0,
+              ),
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Stack(
+              children: [
+                Center(
+                  child: Text('${parentWidgetProperties.id}: ${parentWidgetProperties.label}'),
+                ),
+                ...widgetPropertiesList.map((widgetProps) {
+                  return Positioned(
+                    left: widgetPropertiesList.indexOf(widgetProps) * 110.0,
+                    top: widgetPropertiesList.indexOf(widgetProps) * 110.0,
+                    child: DragTarget<WidgetItem>(
+                      onWillAcceptWithDetails: (details) {
+                        return details.data?.label == 'Container';
+                      },
+                      onAcceptWithDetails: (details) {
+                        setState(() {
+                          widgetPropertiesList.add(
+                            WidgetProperties(
+                              id: 'widget_${widgetPropertiesList.length + 1}',
+                              label: details.data.label,
+                              width: 100,
+                              height: 100,
+                              color: Colors.blue,
+                            ),
+                          );
+                        });
+                      },
+                      builder: (context, candidateData, rejectedData) {
+                        return GestureDetector(
+                          onTap: () {
+                            context.read<SelectedWidgetModel>().selectWidget(widgetProps);
+                          },
+                          child: _buildWidgetFromProperties(widgetProps),
+                        );
+                      },
                     ),
                   );
-                },
-              );
-            },
-          ),
-        ),
+                }).toList(),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

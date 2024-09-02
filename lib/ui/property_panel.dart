@@ -30,109 +30,109 @@ class _PropertyPanelState extends State<PropertyPanel> {
     super.dispose();
   }
 
-  void _updateControllers(WidgetProperties selectedWidget) {
-    final currentLabel = labelController.text;
-    final currentWidth = widthController.text;
-    final currentHeight = heightController.text;
-
-    if (currentLabel != selectedWidget.label) {
+  void updateControllers(WidgetProperties selectedWidget) {
+    if (labelController.text != selectedWidget.label) {
       labelController.text = selectedWidget.label;
-      labelController.selection = TextSelection.fromPosition(
-        TextPosition(offset: labelController.text.length),
-      );
     }
-
-    if (currentWidth != selectedWidget.width.toString()) {
+    if (widthController.text != selectedWidget.width.toString()) {
       widthController.text = selectedWidget.width.toString();
-      widthController.selection = TextSelection.fromPosition(
-        TextPosition(offset: widthController.text.length),
-      );
     }
-
-    if (currentHeight != selectedWidget.height.toString()) {
+    if (heightController.text != selectedWidget.height.toString()) {
       heightController.text = selectedWidget.height.toString();
-      heightController.selection = TextSelection.fromPosition(
-        TextPosition(offset: heightController.text.length),
-      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 228,
-      child: Container(
-        color: Colors.red,
-        padding: const EdgeInsets.all(8.0),
-        child: Consumer<SelectedWidgetModel>(
-          builder: (context, selectedWidgetModel, child) {
-            final selectedWidget = selectedWidgetModel.selectedWidgetProperties;
+    return Container(
+      width: 240,
+      color: Colors.grey[200],
+      padding: const EdgeInsets.all(16.0),
+      child: Consumer<SelectedWidgetModel>(
+        builder: (context, selectedWidgetModel, child) {
+          final selectedWidget = selectedWidgetModel.selectedWidgetProperties;
+          if (selectedWidget == null) {
+            return const Text('위젯을 선택하세요');
+          }
 
-            if (selectedWidget == null) {
-              return const Text('위젯을 선택하세요');
-            }
+          // 컨트롤러 업데이트
+          updateControllers(selectedWidget);
 
-            _updateControllers(selectedWidget);  // 이곳에서 컨트롤러 업데이트
-
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextField(
-                  controller: labelController,
-                  decoration: const InputDecoration(
-                    labelText: 'Label',
-                  ),
-                  onChanged: (value) {
-                    selectedWidgetModel.updateLabel(value);
-                  },
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                decoration: const InputDecoration(
+                  labelText: 'Label',
                 ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    const Text('Color:'),
-                    const SizedBox(width: 10),
-                    Container(
-                      width: 50,
-                      height: 50,
-                      color: selectedWidget.color,
+                controller: labelController,
+                onChanged: (value) {
+                  selectedWidgetModel.updateLabel(value);
+                },
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                decoration: const InputDecoration(
+                  labelText: 'Width',
+                ),
+                keyboardType: TextInputType.number,
+                controller: widthController,
+                onChanged: (value) {
+                  final newWidth =
+                      double.tryParse(value) ?? selectedWidget.width;
+                  selectedWidgetModel.updateSize(
+                      newWidth, selectedWidget.height);
+                },
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                decoration: const InputDecoration(
+                  labelText: 'Height',
+                ),
+                keyboardType: TextInputType.number,
+                controller: heightController,
+                onChanged: (value) {
+                  final newHeight =
+                      double.tryParse(value) ?? selectedWidget.height;
+                  selectedWidgetModel.updateSize(
+                      selectedWidget.width, newHeight);
+                },
+              ),
+              const SizedBox(height: 10),
+              DropdownButton<Color>(
+                value: selectedWidget.color != null &&
+                        <Color>[
+                          Colors.red,
+                          Colors.green,
+                          Colors.blue,
+                          Colors.yellow
+                        ].contains(selectedWidget.color)
+                    ? selectedWidget.color
+                    : Colors.red, // 기본값을 설정하거나 null 상태를 처리합니다.
+                items: <Color>[
+                  Colors.red,
+                  Colors.green,
+                  Colors.blue,
+                  Colors.yellow
+                ].map((Color color) {
+                  return DropdownMenuItem<Color>(
+                    value: color,
+                    child: Container(
+                      width: 100,
+                      height: 20,
+                      color: color,
                     ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: widthController,
-                  decoration: const InputDecoration(
-                    labelText: 'Width',
-                  ),
-                  keyboardType: TextInputType.number,
-                  onChanged: (value) {
-                    final newWidth = double.tryParse(value) ?? selectedWidget.width;
-                    selectedWidgetModel.updateSize(newWidth, selectedWidget.height);
-                  },
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: heightController,
-                  decoration: const InputDecoration(
-                    labelText: 'Height',
-                  ),
-                  keyboardType: TextInputType.number,
-                  onChanged: (value) {
-                    final newHeight = double.tryParse(value) ?? selectedWidget.height;
-                    selectedWidgetModel.updateSize(selectedWidget.width, newHeight);
-                  },
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    selectedWidgetModel.clearSelection();
-                  },
-                  child: const Text('Clear Selection'),
-                ),
-              ],
-            );
-          },
-        ),
+                  );
+                }).toList(),
+                onChanged: (Color? newColor) {
+                  if (newColor != null) {
+                    selectedWidgetModel.updateColor(newColor);
+                  }
+                },
+              )
+            ],
+          );
+        },
       ),
     );
   }
