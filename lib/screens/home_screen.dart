@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../widgets/custom_app_bar.dart';
-import '../widgets/top_panel.dart';
-import '../widgets/sidebar_menu.dart';
-import '../widgets/widget_panel.dart';
-import '../widgets/work_area.dart';
-import '../widgets/property_panel.dart';
+import '../ui/custom_app_bar.dart';
+import '../ui/top_panel.dart';
+import '../ui/sidebar_menu.dart';
+import '../ui/widget_panel.dart';
+import '../ui/work_area.dart';
+import '../ui/property_panel.dart';
 import '../models/selected_widget_model.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -73,6 +73,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         child: WorkArea(),
                       ),
                       Expanded(
+                        flex: 1,
                         child: PropertyPanel(),
                       ),
                     ],
