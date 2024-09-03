@@ -129,7 +129,25 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     selectedWidgetModel.updateColor(newColor);
                   }
                 },
-              )
+              ),
+              const SizedBox(height: 10),
+              DropdownButton<LayoutType>(
+                value: selectedWidget.layoutType,
+                items: LayoutType.values.map((layoutType) {
+                  return DropdownMenuItem<LayoutType>(
+                    value: layoutType,
+                    child: Text(layoutType
+                        .toString()
+                        .split('.')
+                        .last), // LayoutType 열거형을 문자열로 변환
+                  );
+                }).toList(),
+                onChanged: (LayoutType? newLayoutType) {
+                  if (newLayoutType != null) {
+                    selectedWidgetModel.updateLayoutType(newLayoutType);
+                  }
+                },
+              ),
             ],
           );
         },

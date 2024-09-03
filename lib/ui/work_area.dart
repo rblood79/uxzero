@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/selected_widget_model.dart';
-import '../widgets/container_widget.dart';
 import '../ui/widget_panel.dart';
 
 class WorkArea extends StatefulWidget {
@@ -25,6 +24,9 @@ class _WorkAreaState extends State<WorkArea> {
         width: 1200,
         height: 600,
         color: Colors.white,
+        x: 0,
+        y: 0,
+        layoutType: LayoutType.stack,  // 기본 layoutType을 Stack으로 설정
       );
       widgetPropertiesList.add(initialWidgetProperties);
       context.read<SelectedWidgetModel>().selectWidget(initialWidgetProperties);
@@ -32,12 +34,71 @@ class _WorkAreaState extends State<WorkArea> {
   }
 
   Widget _buildWidgetFromProperties(WidgetProperties props) {
-    return Container(
-      width: props.width,
-      height: props.height,
-      color: props.color,
-      child: Center(child: Text(props.label)),
+    return GestureDetector(
+      onTap: () {
+        context.read<SelectedWidgetModel>().selectWidget(props);
+      },
+      child: Container(
+        width: props.width,
+        height: props.height,
+        color: props.color,
+        child: Center(child: Text(props.label)),
+      ),
     );
+  }
+
+  Widget _buildParentLayout(LayoutType layoutType, List<WidgetProperties> widgetPropertiesList) {
+    switch (layoutType) {
+      case LayoutType.row:
+        return Row(
+          children: widgetPropertiesList.map((widgetProps) {
+            return Expanded(child: _buildWidgetFromProperties(widgetProps));
+          }).toList(),
+        );
+      case LayoutType.column:
+        return Column(
+          children: widgetPropertiesList.map((widgetProps) {
+            return Expanded(child: _buildWidgetFromProperties(widgetProps));
+          }).toList(),
+        );
+      case LayoutType.stack:
+      default:
+        return Stack(
+          children: widgetPropertiesList.map((widgetProps) {
+            return Positioned(
+              left: widgetProps.x,
+              top: widgetProps.y,
+              child: DragTarget<WidgetItem>(
+                onWillAcceptWithDetails: (details) {
+                  return details.data.label == 'Container';
+                },
+                onAcceptWithDetails: (details) {
+                  setState(() {
+                    final renderBox = context.findRenderObject() as RenderBox;
+                    final localPosition = renderBox.globalToLocal(details.offset);
+
+                    widgetPropertiesList.add(
+                      WidgetProperties(
+                        id: 'widget_${widgetPropertiesList.length + 1}',
+                        label: details.data.label,
+                        width: 100,
+                        height: 100,
+                        color: Colors.blue,
+                        x: localPosition.dx,
+                        y: localPosition.dy,
+                        layoutType: LayoutType.container,
+                      ),
+                    );
+                  });
+                },
+                builder: (context, candidateData, rejectedData) {
+                  return _buildWidgetFromProperties(widgetProps);
+                },
+              ),
+            );
+          }).toList(),
+        );
+    }
   }
 
   @override
@@ -45,60 +106,20 @@ class _WorkAreaState extends State<WorkArea> {
     return Center(
       child: Consumer<SelectedWidgetModel>(
         builder: (context, selectedWidgetModel, child) {
-          final parentWidgetProperties = selectedWidgetModel.selectedWidgetProperties;
-          if (parentWidgetProperties == null) {
-            return const Text('위젯이 선택되지 않았습니다.');
-          }
+          final WidgetProperties initialWidgetProperties = widgetPropertiesList.first;
+
           return Container(
-            width: parentWidgetProperties.width,
-            height: parentWidgetProperties.height,
+            width: initialWidgetProperties.width,
+            height: initialWidgetProperties.height,
             decoration: BoxDecoration(
-              color: parentWidgetProperties.color,
+              color: initialWidgetProperties.color,
               border: Border.all(
                 color: Colors.black,
                 width: 1.0,
               ),
               borderRadius: BorderRadius.circular(8.0),
             ),
-            child: Stack(
-              children: [
-                Center(
-                  child: Text('${parentWidgetProperties.id}: ${parentWidgetProperties.label}'),
-                ),
-                ...widgetPropertiesList.map((widgetProps) {
-                  return Positioned(
-                    left: widgetPropertiesList.indexOf(widgetProps) * 110.0,
-                    top: widgetPropertiesList.indexOf(widgetProps) * 110.0,
-                    child: DragTarget<WidgetItem>(
-                      onWillAcceptWithDetails: (details) {
-                        return details.data?.label == 'Container';
-                      },
-                      onAcceptWithDetails: (details) {
-                        setState(() {
-                          widgetPropertiesList.add(
-                            WidgetProperties(
-                              id: 'widget_${widgetPropertiesList.length + 1}',
-                              label: details.data.label,
-                              width: 100,
-                              height: 100,
-                              color: Colors.blue,
-                            ),
-                          );
-                        });
-                      },
-                      builder: (context, candidateData, rejectedData) {
-                        return GestureDetector(
-                          onTap: () {
-                            context.read<SelectedWidgetModel>().selectWidget(widgetProps);
-                          },
-                          child: _buildWidgetFromProperties(widgetProps),
-                        );
-                      },
-                    ),
-                  );
-                }).toList(),
-              ],
-            ),
+            child: _buildParentLayout(initialWidgetProperties.layoutType, widgetPropertiesList),
           );
         },
       ),

@@ -7,12 +7,12 @@ class ContainerWidget extends StatelessWidget {
   final String label;
 
   const ContainerWidget({
-    Key? key,
+    super.key,
     required this.width,
     required this.height,
     required this.color,
     required this.label,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class ContainerWidget extends StatelessWidget {
       child: Center(
         child: Text(
           label,
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
       ),
     );

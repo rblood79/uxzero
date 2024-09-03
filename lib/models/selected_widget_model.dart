@@ -5,7 +5,7 @@ class SelectedWidgetModel extends ChangeNotifier {
 
   void selectWidget(WidgetProperties properties) {
     selectedWidgetProperties = properties;
-    notifyListeners();
+    notifyListeners();  // 상태 변경을 알림
   }
 
   void clearSelection() {
@@ -34,14 +34,26 @@ class SelectedWidgetModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void updateLayoutType(LayoutType layoutType) {
+    if (selectedWidgetProperties != null) {
+      selectedWidgetProperties!.layoutType = layoutType;
+      notifyListeners();
+    }
+  }
+  
 }
 
+enum LayoutType { container, row, column, stack }
 class WidgetProperties {
-  String id;  // 고유 식별자
+  final String id;  // 고유 식별자
   String label;
   double width;
   double height;
   Color color;
+  double x;
+  double y;
+  LayoutType layoutType;
 
   WidgetProperties({
     required this.id,
@@ -49,5 +61,8 @@ class WidgetProperties {
     required this.width,
     required this.height,
     required this.color,
+    required this.x,
+    required this.y,
+    this.layoutType = LayoutType.container,
   });
 }
