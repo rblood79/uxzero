@@ -26,7 +26,7 @@ class _WorkAreaState extends State<WorkArea> {
         color: Colors.white,
         x: 0,
         y: 0,
-        layoutType: LayoutType.stack,  // 기본 layoutType을 Stack으로 설정
+        layoutType: LayoutType.stack, // 기본 layoutType을 Stack으로 설정
       );
       widgetPropertiesList.add(initialWidgetProperties);
       context.read<SelectedWidgetModel>().selectWidget(initialWidgetProperties);
@@ -52,13 +52,17 @@ class _WorkAreaState extends State<WorkArea> {
       case LayoutType.row:
         return Row(
           children: widgetPropertiesList.map((widgetProps) {
-            return Expanded(child: _buildWidgetFromProperties(widgetProps));
+            return Expanded(
+              child: _buildWidgetFromProperties(widgetProps),
+            );
           }).toList(),
         );
       case LayoutType.column:
         return Column(
           children: widgetPropertiesList.map((widgetProps) {
-            return Expanded(child: _buildWidgetFromProperties(widgetProps));
+            return Expanded(
+              child: _buildWidgetFromProperties(widgetProps),
+            );
           }).toList(),
         );
       case LayoutType.stack:
@@ -68,33 +72,7 @@ class _WorkAreaState extends State<WorkArea> {
             return Positioned(
               left: widgetProps.x,
               top: widgetProps.y,
-              child: DragTarget<WidgetItem>(
-                onWillAcceptWithDetails: (details) {
-                  return details.data.label == 'Container';
-                },
-                onAcceptWithDetails: (details) {
-                  setState(() {
-                    final renderBox = context.findRenderObject() as RenderBox;
-                    final localPosition = renderBox.globalToLocal(details.offset);
-
-                    widgetPropertiesList.add(
-                      WidgetProperties(
-                        id: 'widget_${widgetPropertiesList.length + 1}',
-                        label: details.data.label,
-                        width: 100,
-                        height: 100,
-                        color: Colors.blue,
-                        x: localPosition.dx,
-                        y: localPosition.dy,
-                        layoutType: LayoutType.container,
-                      ),
-                    );
-                  });
-                },
-                builder: (context, candidateData, rejectedData) {
-                  return _buildWidgetFromProperties(widgetProps);
-                },
-              ),
+              child: _buildWidgetFromProperties(widgetProps),
             );
           }).toList(),
         );
@@ -119,7 +97,31 @@ class _WorkAreaState extends State<WorkArea> {
               ),
               borderRadius: BorderRadius.circular(8.0),
             ),
-            child: _buildParentLayout(initialWidgetProperties.layoutType, widgetPropertiesList),
+            child: DragTarget<WidgetItem>(
+              onWillAcceptWithDetails: (details) => details.data.label == 'Container',
+              onAcceptWithDetails: (details) {
+                setState(() {
+                  final renderBox = context.findRenderObject() as RenderBox;
+                  final localPosition = renderBox.globalToLocal(details.offset);
+
+                  widgetPropertiesList.add(
+                    WidgetProperties(
+                      id: 'widget_${widgetPropertiesList.length + 1}',
+                      label: details.data.label,
+                      width: 100,
+                      height: 100,
+                      color: Colors.blue,
+                      x: localPosition.dx.clamp(0.0, initialWidgetProperties.width - 100), // 부모 영역 내에서 제한
+                      y: localPosition.dy.clamp(0.0, initialWidgetProperties.height - 100), // 부모 영역 내에서 제한
+                      layoutType: LayoutType.container,
+                    ),
+                  );
+                });
+              },
+              builder: (context, candidateData, rejectedData) {
+                return _buildParentLayout(initialWidgetProperties.layoutType, widgetPropertiesList);
+              },
+            ),
           );
         },
       ),
