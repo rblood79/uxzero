@@ -65,6 +65,6 @@ class WidgetProperties {
     required this.x,
     required this.y,
     required this.layoutType,
-    this.children = const [], // 초기값은 빈 리스트
-  });
+    List<WidgetProperties>? children, // 선택적 매개변수로 설정
+  }) : children = children ?? []; // children이 null일 경우 빈 리스트로 초기화
 }

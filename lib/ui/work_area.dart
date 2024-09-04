@@ -33,8 +33,6 @@ class _WorkAreaState extends State<WorkArea> {
         },
         child: Consumer<SelectedWidgetModel>(
           builder: (context, selectedWidgetModel, child) {
-            final selectedWidget = selectedWidgetModel.selectedWidgetProperties;
-
             return Container(
               width: rootContainer.width,
               height: rootContainer.height,
@@ -45,31 +43,7 @@ class _WorkAreaState extends State<WorkArea> {
                   width: 1.0,
                 ),
               ),
-              child: DragTarget<ContainerWidget>(
-                onWillAcceptWithDetails: (data) {
-                  return true; // 언제나 드롭을 허용
-                },
-                onAcceptWithDetails: (details) {
-                  setState(() {
-                    rootContainer.children.add(
-                      WidgetProperties(
-                        id: DateTime.now().toString(),
-                        label: details.data.label,
-                        width: details.data.width,
-                        height: details.data.height,
-                        color: details.data.color,
-                        x: 0,
-                        y: 0,
-                        layoutType: LayoutType.container,
-                      ),
-                    );
-                  });
-                },
-                builder: (context, candidateData, rejectedData) {
-                  // 선택된 레이아웃에 맞게 자식 위젯 배치
-                  return _buildLayoutWidget(rootContainer, selectedWidgetModel);
-                },
-              ),
+              child: _buildDragTargetForContainer(rootContainer, selectedWidgetModel), // 최상위 컨테이너의 DragTarget
             );
           },
         ),
@@ -77,7 +51,42 @@ class _WorkAreaState extends State<WorkArea> {
     );
   }
 
-  // 레이아웃 타입에 맞게 위젯을 배치하는 함수
+  // 드롭을 처리할 DragTarget을 컨테이너마다 생성하는 함수
+  Widget _buildDragTargetForContainer(WidgetProperties properties, SelectedWidgetModel selectedWidgetModel) {
+    return DragTarget<ContainerWidget>(
+      onWillAccept: (data) {
+        return true; // 언제나 드롭을 허용
+      },
+      onAcceptWithDetails: (details) {
+        setState(() {
+          // 현재 컨테이너의 자식 리스트에 드롭된 컨테이너 추가
+          properties.children.add(
+            WidgetProperties(
+              id: DateTime.now().toString(),
+              label: details.data.label,
+              width: details.data.width,
+              height: details.data.height,
+              color: details.data.color,
+              x: 0,
+              y: 0,
+              layoutType: LayoutType.container,
+            ),
+          );
+        });
+      },
+      builder: (context, candidateData, rejectedData) {
+        // 현재 컨테이너에 자식 컨테이너들을 재귀적으로 렌더링
+        return Container(
+          width: properties.width,
+          height: properties.height,
+          color: properties.color,
+          child: _buildLayoutWidget(properties, selectedWidgetModel),
+        );
+      },
+    );
+  }
+
+  // 레이아웃 타입에 맞게 자식 컨테이너를 배치하는 함수
   Widget _buildLayoutWidget(WidgetProperties properties, SelectedWidgetModel selectedWidgetModel) {
     switch (properties.layoutType) {
       case LayoutType.row:
@@ -105,12 +114,7 @@ class _WorkAreaState extends State<WorkArea> {
         onTap: () {
           selectedWidgetModel.selectWidget(childProperties); // 자식 컨테이너 선택
         },
-        child: Container(
-          width: childProperties.width,
-          height: childProperties.height,
-          color: childProperties.color,
-          child: _buildLayoutWidget(childProperties, selectedWidgetModel), // 재귀적으로 자식 렌더링
-        ),
+        child: _buildDragTargetForContainer(childProperties, selectedWidgetModel), // 자식 컨테이너도 DragTarget으로 설정
       );
     }).toList();
   }
