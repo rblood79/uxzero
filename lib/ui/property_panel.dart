@@ -100,8 +100,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
               ),
               const SizedBox(height: 10),
               DropdownButton<Color>(
-                value: selectedWidget.color != null &&
-                        <Color>[
+                value: <Color>[
                           Colors.red,
                           Colors.green,
                           Colors.blue,
