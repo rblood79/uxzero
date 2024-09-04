@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/selected_widget_model.dart';
-import '../ui/widget_panel.dart';
+import '../widgets/container_widget.dart';
 
 class WorkArea extends StatefulWidget {
   const WorkArea({super.key});
@@ -11,119 +11,92 @@ class WorkArea extends StatefulWidget {
 }
 
 class _WorkAreaState extends State<WorkArea> {
-  final List<WidgetProperties> widgetPropertiesList = [];
-
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final initialWidgetProperties = WidgetProperties(
-        id: 'widget_page_01',
-        label: 'Initial Widget',
-        width: 1200,
-        height: 600,
-        color: Colors.white,
-        x: 0,
-        y: 0,
-        layoutType: LayoutType.stack, // 기본 layoutType을 Stack으로 설정
-      );
-      widgetPropertiesList.add(initialWidgetProperties);
-      context.read<SelectedWidgetModel>().selectWidget(initialWidgetProperties);
-    });
-  }
-
-  Widget _buildWidgetFromProperties(WidgetProperties props) {
-    return GestureDetector(
-      onTap: () {
-        context.read<SelectedWidgetModel>().selectWidget(props);
-      },
-      child: Container(
-        width: props.width,
-        height: props.height,
-        color: props.color,
-        child: Center(child: Text(props.label)),
-      ),
-    );
-  }
-
-  Widget _buildParentLayout(LayoutType layoutType, List<WidgetProperties> widgetPropertiesList) {
-    switch (layoutType) {
-      case LayoutType.row:
-        return Row(
-          children: widgetPropertiesList.map((widgetProps) {
-            return Expanded(
-              child: _buildWidgetFromProperties(widgetProps),
-            );
-          }).toList(),
-        );
-      case LayoutType.column:
-        return Column(
-          children: widgetPropertiesList.map((widgetProps) {
-            return Expanded(
-              child: _buildWidgetFromProperties(widgetProps),
-            );
-          }).toList(),
-        );
-      case LayoutType.stack:
-      default:
-        return Stack(
-          children: widgetPropertiesList.map((widgetProps) {
-            return Positioned(
-              left: widgetProps.x,
-              top: widgetProps.y,
-              child: _buildWidgetFromProperties(widgetProps),
-            );
-          }).toList(),
-        );
-    }
-  }
+  List<Widget> widgetsInWorkArea = []; // WorkArea에 드롭된 자식 위젯들 저장
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Consumer<SelectedWidgetModel>(
-        builder: (context, selectedWidgetModel, child) {
-          final WidgetProperties initialWidgetProperties = widgetPropertiesList.first;
-
-          return Container(
-            width: initialWidgetProperties.width,
-            height: initialWidgetProperties.height,
-            decoration: BoxDecoration(
-              color: initialWidgetProperties.color,
-              border: Border.all(
-                color: Colors.black,
-                width: 1.0,
+      child: GestureDetector(
+        onTap: () {
+          // 선택된 위젯이 이미 존재하는지 확인
+          final selectedWidgetModel = Provider.of<SelectedWidgetModel>(context, listen: false);
+          if (selectedWidgetModel.selectedWidgetProperties == null) {
+            // 처음 선택한 경우만 초기 속성 설정
+            selectedWidgetModel.selectWidget(
+              WidgetProperties(
+                id: 'page_01',
+                label: 'Container',
+                width: 1200,
+                height: 600,
+                color: Colors.white,
+                x: 0,
+                y: 0,
+                layoutType: LayoutType.container, // 기본값 container
               ),
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            child: DragTarget<WidgetItem>(
-              onWillAcceptWithDetails: (details) => details.data.label == 'Container',
-              onAcceptWithDetails: (details) {
-                setState(() {
-                  final renderBox = context.findRenderObject() as RenderBox;
-                  final localPosition = renderBox.globalToLocal(details.offset);
-
-                  widgetPropertiesList.add(
-                    WidgetProperties(
-                      id: 'widget_${widgetPropertiesList.length + 1}',
-                      label: details.data.label,
-                      width: 100,
-                      height: 100,
-                      color: Colors.blue,
-                      x: localPosition.dx.clamp(0.0, initialWidgetProperties.width - 100), // 부모 영역 내에서 제한
-                      y: localPosition.dy.clamp(0.0, initialWidgetProperties.height - 100), // 부모 영역 내에서 제한
-                      layoutType: LayoutType.stack,
-                    ),
-                  );
-                });
-              },
-              builder: (context, candidateData, rejectedData) {
-                return _buildParentLayout(initialWidgetProperties.layoutType, widgetPropertiesList);
-              },
-            ),
-          );
+            );
+          }
         },
+        child: Consumer<SelectedWidgetModel>(
+          builder: (context, selectedWidgetModel, child) {
+            final selectedWidget = selectedWidgetModel.selectedWidgetProperties;
+
+            // 너비와 높이 값이 유효한지 확인
+            final width = selectedWidget?.width ?? 1200;
+            final height = selectedWidget?.height ?? 600;
+            final color = selectedWidget?.color ?? Colors.white;
+
+            // Assertion 오류 방지를 위한 유효성 검사
+            assert(width >= 0 && height >= 0, 'Width and height must be non-negative.');
+
+            // layoutType에 따라 다른 레이아웃 위젯을 반환
+            Widget layoutWidget;
+            switch (selectedWidget?.layoutType) {
+              case LayoutType.row:
+                layoutWidget = Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: widgetsInWorkArea, // Row 내에서 자식 위젯 배치
+                );
+                break;
+              case LayoutType.column:
+                layoutWidget = Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: widgetsInWorkArea, // Column 내에서 자식 위젯 배치
+                );
+                break;
+              case LayoutType.stack:
+                layoutWidget = Stack(
+                  children: widgetsInWorkArea, // Stack 내에서 자식 위젯 배치
+                );
+                break;
+              case LayoutType.container:
+              default:
+                layoutWidget = Stack(children: widgetsInWorkArea); // 기본적으로 Stack 사용
+            }
+
+            return Container(
+              width: width,
+              height: height,
+              decoration: BoxDecoration(
+                color: color,
+                border: Border.all(
+                  color: Colors.black,
+                  width: 1.0,
+                ),
+              ),
+              child: DragTarget<ContainerWidget>(
+                onAcceptWithDetails: (DragTargetDetails<ContainerWidget> details) {
+                  setState(() {
+                    // 드롭된 위젯을 리스트에 추가
+                    widgetsInWorkArea.add(details.data);
+                  });
+                },
+                builder: (context, candidateData, rejectedData) {
+                  return layoutWidget; // 선택된 레이아웃으로 자식 위젯 배치
+                },
+              ),
+            );
+          },
+        ),
       ),
     );
   }

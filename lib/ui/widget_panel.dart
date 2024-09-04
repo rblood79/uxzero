@@ -50,17 +50,38 @@ class WidgetPanel extends StatelessWidget {
               ),
               itemCount: widgetItems.length,
               itemBuilder: (context, index) {
+                final widgetItem = widgetItems[index];
+                
+                // ContainerWidget일 때만 특별 처리
+                if (widgetItem.widget is ContainerWidget) {
+                  final containerWidget = widgetItem.widget as ContainerWidget;
+
+                  return Draggable<ContainerWidget>(
+                    data: containerWidget, // 드래그 시 ContainerWidget을 넘김
+                    feedback: Material(
+                      color: Colors.transparent,
+                      child: containerWidget, // 드래그 중에 ContainerWidget 표시
+                    ),
+                    childWhenDragging: Opacity(
+                      opacity: 0.5,
+                      child: buildWidgetItem(widgetItem),
+                    ),
+                    child: buildWidgetItem(widgetItem),
+                  );
+                }
+
+                // 나머지 위젯들은 기본 처리
                 return Draggable<WidgetItem>(
-                  data: widgetItems[index],
+                  data: widgetItem, // 나머지는 WidgetItem으로 드래그 처리
                   feedback: Material(
                     color: Colors.transparent,
-                    child: widgetItems[index].widget ?? Container(), // widget이 없으면 빈 Container 반환
+                    child: widgetItem.widget ?? Container(), // widget이 없으면 빈 Container 반환
                   ),
                   childWhenDragging: Opacity(
                     opacity: 0.5,
-                    child: buildWidgetItem(widgetItems[index]),
+                    child: buildWidgetItem(widgetItem),
                   ),
-                  child: buildWidgetItem(widgetItems[index]),
+                  child: buildWidgetItem(widgetItem),
                 );
               },
             ),

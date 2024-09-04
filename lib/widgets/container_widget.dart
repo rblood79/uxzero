@@ -25,7 +25,7 @@ class ContainerWidget extends StatelessWidget {
           color: Colors.black,
           width: 1.0,
         ),
-        borderRadius: BorderRadius.circular(8.0),
+        borderRadius: BorderRadius.circular(0.0),
       ),
       child: Center(
         child: Text(
