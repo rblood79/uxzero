@@ -54,6 +54,7 @@ class WidgetProperties {
   double x;
   double y;
   LayoutType layoutType;
+  List<WidgetProperties> children; // 자식 컨테이너 리스트 추가
 
   WidgetProperties({
     required this.id,
@@ -63,6 +64,7 @@ class WidgetProperties {
     required this.color,
     required this.x,
     required this.y,
-    this.layoutType = LayoutType.container,
+    required this.layoutType,
+    this.children = const [], // 초기값은 빈 리스트
   });
 }
