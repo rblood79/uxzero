@@ -113,7 +113,7 @@ class _WorkAreaState extends State<WorkArea> {
                       color: Colors.blue,
                       x: localPosition.dx.clamp(0.0, initialWidgetProperties.width - 100), // 부모 영역 내에서 제한
                       y: localPosition.dy.clamp(0.0, initialWidgetProperties.height - 100), // 부모 영역 내에서 제한
-                      layoutType: LayoutType.container,
+                      layoutType: LayoutType.stack,
                     ),
                   );
                 });
