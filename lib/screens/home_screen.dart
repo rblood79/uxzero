@@ -73,8 +73,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         child: WorkArea(),
                       ),
                       Expanded(
-                        flex: 1,
-                        child: PropertyPanel(),
+                        flex: 2, // PropertyPanel의 flex 크기 조정
+                        child: PropertyPanel(), // 선택된 위젯의 속성을 보여주고 수정할 수 있음
                       ),
                     ],
                   ),
@@ -93,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               bottom: 48,
               child: SlideTransition(
                 position: _offsetAnimation,
-                child: WidgetPanel(),
+                child: WidgetPanel(), // WidgetPanel 슬라이드 애니메이션
               ),
             ),
             Positioned(

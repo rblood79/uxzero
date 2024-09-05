@@ -46,7 +46,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
   Widget build(BuildContext context) {
     return Container(
       width: 240,
-      color: Colors.grey[200],
+      color: Colors.white,
       padding: const EdgeInsets.all(16.0),
       child: Consumer<SelectedWidgetModel>(
         builder: (context, selectedWidgetModel, child) {
@@ -71,6 +71,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                 },
               ),
               const SizedBox(height: 10),
+
               TextField(
                 decoration: const InputDecoration(
                   labelText: 'Width',
@@ -85,6 +86,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                 },
               ),
               const SizedBox(height: 10),
+
               TextField(
                 decoration: const InputDecoration(
                   labelText: 'Height',
@@ -99,13 +101,14 @@ class _PropertyPanelState extends State<PropertyPanel> {
                 },
               ),
               const SizedBox(height: 10),
+
               DropdownButton<Color>(
                 value: <Color>[
-                          Colors.red,
-                          Colors.green,
-                          Colors.blue,
-                          Colors.yellow
-                        ].contains(selectedWidget.color)
+                  Colors.red,
+                  Colors.green,
+                  Colors.blue,
+                  Colors.yellow
+                ].contains(selectedWidget.color)
                     ? selectedWidget.color
                     : Colors.red, // 기본값을 설정하거나 null 상태를 처리합니다.
                 items: <Color>[
@@ -130,6 +133,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                 },
               ),
               const SizedBox(height: 10),
+
               DropdownButton<LayoutType>(
                 value: selectedWidget.layoutType,
                 items: LayoutType.values.map((layoutType) {
@@ -147,6 +151,35 @@ class _PropertyPanelState extends State<PropertyPanel> {
                   }
                 },
               ),
+
+              DropdownButton<MainAxisAlignment>(
+                value: selectedWidget.mainAxisAlignment,
+                items: MainAxisAlignment.values.map((alignment) {
+                  return DropdownMenuItem(
+                    value: alignment,
+                    child: Text(alignment.toString().split('.').last),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  if (value != null) {
+                    selectedWidgetModel.updateMainAxisAlignment(
+                        value); // MainAxisAlignment 업데이트
+                  }
+                },
+              ),
+
+              const SizedBox(height: 20),
+              // Flex 업데이트 (Slider 사용)
+              Text("Flex: ${selectedWidget.flex}"),
+              Slider(
+                min: 0,
+                max: 10,
+                value: selectedWidget.flex.toDouble(),
+                onChanged: (value) {
+                  selectedWidgetModel.updateFlex(value.toInt()); // Flex 업데이트
+                },
+              ),
+
             ],
           );
         },

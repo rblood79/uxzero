@@ -9,7 +9,7 @@ class WidgetPanel extends StatelessWidget {
       widget: const ContainerWidget(
         width: 100,
         height: 100,
-        color: Colors.blue,
+        color: Colors.grey,
         label: 'Container',
       ),
     ),
@@ -32,7 +32,7 @@ class WidgetPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 180,
-      color: Colors.grey[300],
+      color: Colors.white,
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [

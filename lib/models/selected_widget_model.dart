@@ -41,7 +41,21 @@ class SelectedWidgetModel extends ChangeNotifier {
       notifyListeners();
     }
   }
-  
+
+  // Flex 속성 업데이트 (수정)
+  void updateFlex(int flex) {
+    if (selectedWidgetProperties != null) {
+      selectedWidgetProperties!.flex = flex;
+      notifyListeners();
+    }
+  }
+
+  void updateMainAxisAlignment(MainAxisAlignment mainAxisAlignment) {
+    if (selectedWidgetProperties != null) {
+      selectedWidgetProperties!.mainAxisAlignment = mainAxisAlignment;
+      notifyListeners();
+    }
+  }
 }
 
 enum LayoutType { container, row, column, stack }
@@ -55,6 +69,8 @@ class WidgetProperties {
   double y;
   LayoutType layoutType;
   List<WidgetProperties> children; // 자식 컨테이너 리스트 추가
+  MainAxisAlignment mainAxisAlignment; // MainAxisAlignment 추가
+  int flex; // Flex 속성 추가
 
   WidgetProperties({
     required this.id,
@@ -65,6 +81,8 @@ class WidgetProperties {
     required this.x,
     required this.y,
     required this.layoutType,
+    this.mainAxisAlignment = MainAxisAlignment.start, // 기본값
+    this.flex = 1, // 기본값
     List<WidgetProperties>? children, // 선택적 매개변수로 설정
   }) : children = children ?? []; // children이 null일 경우 빈 리스트로 초기화
 }
