@@ -36,12 +36,17 @@ class SidebarMenu extends StatelessWidget {
         children: [
           // 첫 번째 그룹: 상단에 배치될 메뉴 항목들
           ...menuItems.sublist(0, 5).map((item) => buildMenuItem(item)),
-          
-          // Flexible 위젯을 사용하여 남은 공간을 차지하도록 함
-          const Spacer(),
 
-          // 두 번째 그룹: 하단에 배치될 메뉴 항목들
-          ...menuItems.sublist(5).map((item) => buildMenuItem(item)),
+          // Flexible을 사용하여 남은 공간을 유연하게 차지하도록 함
+          Flexible(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: menuItems
+                  .sublist(5)
+                  .map((item) => buildMenuItem(item))
+                  .toList(),
+            ),
+          ),
         ],
       ),
     );

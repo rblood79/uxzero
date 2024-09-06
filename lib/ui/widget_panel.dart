@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/container_widget.dart';
+import '../widgets/text_widget.dart';
 
 class WidgetPanel extends StatelessWidget {
   final List<WidgetItem> widgetItems = [
@@ -9,8 +10,15 @@ class WidgetPanel extends StatelessWidget {
       widget: const ContainerWidget(
         width: 100,
         height: 100,
-        color: Colors.grey,
+        color: Colors.red,
         label: 'Container',
+      ),
+    ),
+    WidgetItem(
+      icon: Icons.text_fields_outlined,
+      label: 'Text',
+      widget: const TextWidget(
+        label: 'Text',
       ),
     ),
     WidgetItem(icon: Icons.text_fields_outlined, label: 'Text'),
@@ -70,6 +78,24 @@ class WidgetPanel extends StatelessWidget {
                   );
                 }
 
+                // TextWidget일 때 특별 처리
+                if (widgetItem.widget is TextWidget) {
+                  final textWidget = widgetItem.widget as TextWidget;
+
+                  return Draggable<TextWidget>(
+                    data: textWidget, // 드래그 시 TextWidget을 넘김
+                    feedback: Material(
+                      color: Colors.transparent,
+                      child: textWidget, // 드래그 중에 TextWidget 표시
+                    ),
+                    childWhenDragging: Opacity(
+                      opacity: 0.5,
+                      child: buildWidgetItem(widgetItem),
+                    ),
+                    child: buildWidgetItem(widgetItem),
+                  );
+                }
+
                 // 나머지 위젯들은 기본 처리
                 return Draggable<WidgetItem>(
                   data: widgetItem, // 나머지는 WidgetItem으로 드래그 처리
@@ -91,11 +117,13 @@ class WidgetPanel extends StatelessWidget {
     );
   }
 
+  // 위젯 패널에서 각각의 아이템을 그리는 메서드
   Widget buildWidgetItem(WidgetItem item) {
     return Container(
       color: Colors.red,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Icon(item.icon, color: Colors.white),
           const SizedBox(height: 4.0),
@@ -110,6 +138,7 @@ class WidgetPanel extends StatelessWidget {
   }
 }
 
+// 위젯 아이템을 정의하는 클래스
 class WidgetItem {
   final IconData icon;
   final String label;

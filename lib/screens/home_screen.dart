@@ -60,6 +60,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       create: (context) => SelectedWidgetModel(),
       child: Scaffold(
         appBar: const CustomAppBar(),
+        
         body: Stack(
           children: [
             const Column(
@@ -90,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             Positioned(
               left: 48,
               top: 48,
-              bottom: 48,
+              bottom: 0,
               child: SlideTransition(
                 position: _offsetAnimation,
                 child: WidgetPanel(), // WidgetPanel 슬라이드 애니메이션
@@ -98,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             ),
             Positioned(
               top: 48,
-              bottom: 48,
+              bottom: 0,
               left: 0,
               child: SidebarMenu(onMenuButtonPressed: handleMenuSelection),
             ),

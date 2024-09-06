@@ -168,7 +168,33 @@ class _PropertyPanelState extends State<PropertyPanel> {
                 },
               ),
 
-              const SizedBox(height: 20),
+              DropdownButton<CrossAxisAlignment>(
+                value: selectedWidget.crossAxisAlignment,
+                items: CrossAxisAlignment.values.where((alignment) {
+                  // 텍스트가 포함된 경우에만 baseline을 표시
+                  if (alignment == CrossAxisAlignment.baseline &&
+                      !_hasTextWidget(selectedWidget)) {
+                    return false; // 텍스트가 없는 경우 baseline을 숨김
+                  }
+                  return true; // 나머지 정렬 옵션은 항상 표시
+                }).map((alignment) {
+                  return DropdownMenuItem(
+                    value: alignment,
+                    child: Text(alignment.toString().split('.').last),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  if (value != null) {
+                    selectedWidgetModel.updateCrossAxisAlignment(
+                        value,
+                        value == CrossAxisAlignment.baseline
+                            ? TextBaseline.alphabetic
+                            : null);
+                  }
+                },
+              ),
+
+              const SizedBox(height: 10),
               // Flex 업데이트 (Slider 사용)
               Text("Flex: ${selectedWidget.flex}"),
               Slider(
@@ -179,11 +205,25 @@ class _PropertyPanelState extends State<PropertyPanel> {
                   selectedWidgetModel.updateFlex(value.toInt()); // Flex 업데이트
                 },
               ),
-
             ],
           );
         },
       ),
     );
   }
+}
+
+bool _hasTextWidget(WidgetProperties widget) {
+  // 현재 위젯이 텍스트를 포함하는지 확인
+  if (widget.layoutType == LayoutType.container && widget.children.isNotEmpty) {
+    for (var child in widget.children) {
+      // 자식 중 텍스트가 포함된 위젯이 있는지 확인
+      if (_hasTextWidget(child)) {
+        return true;
+      }
+    }
+  }
+
+  // 텍스트 위젯이 있으면 true 반환, 없으면 false 반환
+  return widget.label.contains('Text') || widget.label.contains('Label');
 }
