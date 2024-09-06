@@ -40,7 +40,7 @@ class _WorkAreaState extends State<WorkArea> {
               decoration: BoxDecoration(
                 color: rootContainer.color,
                 border: Border.all(
-                  color: Colors.red,
+                  color: Colors.grey,
                   width: 0.0,
                 ),
               ),
@@ -116,16 +116,6 @@ class _WorkAreaState extends State<WorkArea> {
   }
 
   // 자식 컨테이너를 재귀적으로 렌더링하는 함수
-  /*List<Widget> _buildChildWidgets(WidgetProperties parentProperties, SelectedWidgetModel selectedWidgetModel) {
-    return parentProperties.children.map((childProperties) {
-      return GestureDetector(
-        onTap: () {
-          selectedWidgetModel.selectWidget(childProperties); // 자식 컨테이너 선택
-        },
-        child: _buildDragTargetForContainer(childProperties, selectedWidgetModel), // 자식 컨테이너도 DragTarget으로 설정
-      );
-    }).toList();
-  }*/
   List<Widget> _buildChildWidgets(WidgetProperties parentProperties,
       SelectedWidgetModel selectedWidgetModel) {
     return parentProperties.children.map((childProperties) {

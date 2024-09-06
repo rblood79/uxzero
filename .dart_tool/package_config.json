@@ -254,10 +254,10 @@
       "languageVersion": "3.5"
     }
   ],
-  "generated": "2024-09-05T00:23:29.059158Z",
+  "generated": "2024-09-06T00:40:36.409575Z",
   "generator": "pub",
-  "generatorVersion": "3.5.1",
+  "generatorVersion": "3.5.2",
   "flutterRoot": "file:///usr/local/Caskroom/flutter/3.24.1/flutter",
-  "flutterVersion": "3.24.1",
+  "flutterVersion": "3.24.2",
   "pubCache": "file:///Users/admin/.pub-cache"
 }
