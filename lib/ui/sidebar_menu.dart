@@ -8,7 +8,7 @@ class SidebarMenu extends StatelessWidget {
     MenuItem(icon: Icons.storage, label: 'Data'),
     MenuItem(icon: Icons.library_books, label: 'Library'),
     MenuItem(icon: Icons.account_circle, label: 'User'),
-    MenuItem(icon: Icons.settings, label: 'Settings'),
+    MenuItem(icon: Icons.settings, label: 'Setting'),
   ];
 
   final Function(String) onMenuButtonPressed;
