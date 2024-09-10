@@ -70,11 +70,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   child: Row(
                     children: [
                       Expanded(
-                        flex: 10,
+                        flex: 8,
                         child: WorkArea(),
                       ),
                       Expanded(
-                        flex: 2, // PropertyPanel의 flex 크기 조정
+                        //flex: 1, // PropertyPanel의 flex 크기 조정
                         child: PropertyPanel(), // 선택된 위젯의 속성을 보여주고 수정할 수 있음
                       ),
                     ],

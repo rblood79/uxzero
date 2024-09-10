@@ -172,6 +172,11 @@ class _WorkAreaState extends State<WorkArea> {
             onTap: () {
               selectedWidgetModel.selectWidget(childProperties);
             },
+            onLongPress: () {
+              // 선택된 위젯을 삭제하는 기능
+              selectedWidgetModel.selectWidget(childProperties);  // 삭제할 위젯 선택
+              selectedWidgetModel.deleteSelectedWidget();         // 선택된 위젯 삭제
+            },
             child: _buildDragTargetForContainer(
                 childProperties, selectedWidgetModel),
           ),
@@ -182,11 +187,19 @@ class _WorkAreaState extends State<WorkArea> {
           onTap: () {
             selectedWidgetModel.selectWidget(childProperties);
           },
+          onLongPress: () {
+              // 선택된 위젯을 삭제하는 기능
+              selectedWidgetModel.selectWidget(childProperties);  // 삭제할 위젯 선택
+              selectedWidgetModel.deleteSelectedWidget();         // 선택된 위젯 삭제
+            },
           child: _buildDragTargetForContainer(
               childProperties, selectedWidgetModel),
         );
       }
     }).toList();
   }
-  
+
+
+
+
 }
