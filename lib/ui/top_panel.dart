@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:remixicon/remixicon.dart';
 class TopPanel extends StatelessWidget {
   const TopPanel({super.key});
 
@@ -15,7 +15,7 @@ class TopPanel extends StatelessWidget {
           children: [
             // 왼쪽에 홈 아이콘
             IconButton(
-              icon: const Icon(Icons.home, color: Colors.black),
+              icon: const Icon(Remix.home_5_fill, color: Colors.black),
               onPressed: () {
                 // 홈 아이콘 클릭 시 동작
                 print('Home icon clicked');

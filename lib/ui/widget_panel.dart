@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:remixicon/remixicon.dart';
 import '../widgets/container_widget.dart';
 import '../widgets/text_widget.dart';
 
 class WidgetPanel extends StatelessWidget {
   final List<WidgetItem> widgetItems = [
     WidgetItem(
-      icon: Icons.widgets,
+      icon: Remix.add_box_line,
       label: 'Container',
       widget: const ContainerWidget(
         width: 100,
@@ -15,22 +16,22 @@ class WidgetPanel extends StatelessWidget {
       ),
     ),
     WidgetItem(
-      icon: Icons.text_fields_outlined,
+      icon: Remix.text,
       label: 'Text',
       widget: const TextWidget(
         label: 'Text',
       ),
     ),
-    WidgetItem(icon: Icons.input, label: 'Input'),
-    WidgetItem(icon: Icons.smart_button, label: 'Button'),
-    WidgetItem(icon: Icons.select_all_outlined, label: 'Select'),
-    WidgetItem(icon: Icons.image, label: 'Image'),
-    WidgetItem(icon: Icons.check_box, label: 'Checkbox'),
-    WidgetItem(icon: Icons.radio_button_checked, label: 'Radio'),
-    WidgetItem(icon: Icons.calendar_today, label: 'Calendar'),
-    WidgetItem(icon: Icons.toggle_on_rounded, label: 'Toggle'),
-    WidgetItem(icon: Icons.table_chart, label: 'Table'),
-    WidgetItem(icon: Icons.insert_chart, label: 'Chart'),
+    WidgetItem(icon: Remix.input_field, label: 'Input'),
+    WidgetItem(icon: Remix.checkbox_blank_line, label: 'Button'),
+    WidgetItem(icon: Remix.dropdown_list, label: 'Select'),
+    WidgetItem(icon: Remix.image_line, label: 'Image'),
+    WidgetItem(icon: Remix.checkbox_line, label: 'Checkbox'),
+    WidgetItem(icon: Remix.radio_button_line, label: 'Radio'),
+    WidgetItem(icon: Remix.calendar_line, label: 'Calendar'),
+    WidgetItem(icon: Remix.toggle_line, label: 'Toggle'),
+    WidgetItem(icon: Remix.table_line, label: 'Table'),
+    WidgetItem(icon: Remix.bar_chart_box_line, label: 'Chart'),
   ];
 
   WidgetPanel({super.key});
@@ -45,6 +46,9 @@ class WidgetPanel extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(8.0),
+            /*decoration: BoxDecoration(
+              border: Border.all(color: Colors.black54),
+            ),*/
             child: const Center(child: Text('Widget')),
           ),
           Expanded(
@@ -58,16 +62,15 @@ class WidgetPanel extends StatelessWidget {
               itemCount: widgetItems.length,
               itemBuilder: (context, index) {
                 final widgetItem = widgetItems[index];
-                
-                // ContainerWidget일 때만 특별 처리
+
                 if (widgetItem.widget is ContainerWidget) {
                   final containerWidget = widgetItem.widget as ContainerWidget;
 
                   return Draggable<ContainerWidget>(
-                    data: containerWidget, // 드래그 시 ContainerWidget을 넘김
+                    data: containerWidget,
                     feedback: Material(
                       color: Colors.transparent,
-                      child: containerWidget, // 드래그 중에 ContainerWidget 표시
+                      child: containerWidget,
                     ),
                     childWhenDragging: Opacity(
                       opacity: 0.5,
@@ -77,15 +80,14 @@ class WidgetPanel extends StatelessWidget {
                   );
                 }
 
-                // TextWidget일 때 특별 처리
                 if (widgetItem.widget is TextWidget) {
                   final textWidget = widgetItem.widget as TextWidget;
 
                   return Draggable<TextWidget>(
-                    data: textWidget, // 드래그 시 TextWidget을 넘김
+                    data: textWidget,
                     feedback: Material(
                       color: Colors.transparent,
-                      child: textWidget, // 드래그 중에 TextWidget 표시
+                      child: textWidget,
                     ),
                     childWhenDragging: Opacity(
                       opacity: 0.5,
@@ -95,12 +97,12 @@ class WidgetPanel extends StatelessWidget {
                   );
                 }
 
-                // 나머지 위젯들은 기본 처리
+                // 기본 처리 (widget이 null일 경우 빈 Container로 처리)
                 return Draggable<WidgetItem>(
-                  data: widgetItem, // 나머지는 WidgetItem으로 드래그 처리
+                  data: widgetItem,
                   feedback: Material(
                     color: Colors.transparent,
-                    child: widgetItem.widget ?? Container(), // widget이 없으면 빈 Container 반환
+                    child: widgetItem.widget ?? Container(),
                   ),
                   childWhenDragging: Opacity(
                     opacity: 0.5,
@@ -116,28 +118,31 @@ class WidgetPanel extends StatelessWidget {
     );
   }
 
-  // 위젯 패널에서 각각의 아이템을 그리는 메서드
   Widget buildWidgetItem(WidgetItem item) {
-    return Container(
-      color: Colors.red,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Icon(item.icon, color: Colors.white),
-          const SizedBox(height: 4.0),
-          Text(
-            item.label,
-            style: const TextStyle(color: Colors.white, fontSize: 12),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
+  return Container(
+    // color 속성 대신 BoxDecoration 내에서 color 설정
+    decoration: BoxDecoration(
+      color: Colors.transparent, // 원래 투명 색을 유지
+      border: Border.all(color: Colors.black12),
+    ),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Icon(item.icon, color: Colors.black87),
+        const SizedBox(height: 4.0),
+        Text(
+          item.label,
+          style: const TextStyle(color: Colors.grey, fontSize: 12),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    ),
+  );
 }
 
-// 위젯 아이템을 정의하는 클래스
+}
+
 class WidgetItem {
   final IconData icon;
   final String label;

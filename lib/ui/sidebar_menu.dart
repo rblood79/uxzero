@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:remixicon/remixicon.dart';
 
 class SidebarMenu extends StatelessWidget {
   final List<MenuItem> menuItems = [
-    MenuItem(icon: Icons.insert_drive_file, label: 'Site'),
-    MenuItem(icon: Icons.widgets, label: 'Widget'),
-    MenuItem(icon: Icons.account_tree, label: 'Tree'),
-    MenuItem(icon: Icons.storage, label: 'Data'),
-    MenuItem(icon: Icons.library_books, label: 'Library'),
-    MenuItem(icon: Icons.account_circle, label: 'User'),
-    MenuItem(icon: Icons.settings, label: 'Setting'),
+    MenuItem(icon: Remix.file_line, label: 'Site'),
+    MenuItem(icon: Remix.square_line, label: 'Widget'),
+    MenuItem(icon: Remix.node_tree, label: 'Tree'),
+    MenuItem(icon: Remix.database_2_line, label: 'Data'),
+    MenuItem(icon: Remix.book_3_line, label: 'Library'),
+    MenuItem(icon: Remix.account_circle_line, label: 'User'),
+    MenuItem(icon: Remix.settings_line, label: 'Setting'),
   ];
 
   final Function(String) onMenuButtonPressed;
@@ -71,11 +72,11 @@ class SidebarMenu extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(item.icon, size: 24, color: Colors.black),
+              Icon(item.icon, size: 24, color: Colors.black87),
               const SizedBox(height: 4.0),
               Text(
                 item.label,
-                style: const TextStyle(fontSize: 10, color: Colors.black),
+                style: const TextStyle(fontSize: 10, color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
             ],

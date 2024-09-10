@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:remixicon/remixicon.dart';
 import 'package:provider/provider.dart';
 import '../models/selected_widget_model.dart';
 
@@ -209,12 +210,12 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     }
                   },
                   children: const [
-                    Icon(Icons.view_column), // Row
-                    Icon(Icons.view_stream), // Column
-                    Icon(Icons.layers), // Stack
-                    Icon(Icons.grid_on), // Grid
-                    Icon(Icons.wrap_text), // Wrap
-                    Icon(Icons.list), // List
+                    Icon(Remix.layout_row_line), // Row
+                    Icon(Remix.layout_column_line), // Column
+                    Icon(Remix.stack_line), // Stack
+                    Icon(Remix.layout_grid_line), // Grid
+                    Icon(Remix.text_wrap), // Wrap
+                    Icon(Remix.list_check), // List
                   ],
                 ),
 
@@ -253,12 +254,12 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     selectedWidgetModel.updateMainAxisAlignment(newAlignment);
                   },
                   children: const [
-                    Icon(Icons.arrow_back), // Start
-                    Icon(Icons.horizontal_rule), // Center
-                    Icon(Icons.arrow_forward), // End
-                    Icon(Icons.space_bar), // Space Between
-                    Icon(Icons.space_bar), // Space Around
-                    Icon(Icons.space_bar), // Space Evenly
+                    Icon(Remix.align_item_left_line), // Start
+                    Icon(Remix.align_item_vertical_center_line), // Center
+                    Icon(Remix.align_item_right_line), // End
+                    Icon(Remix.flip_horizontal_2_line), // Space Between
+                    Icon(Remix.space), // Space Around
+                    Icon(Remix.space), // Space Evenly
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -303,11 +304,11 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     selectedWidgetModel.updateCrossAxisAlignment(newAlignment);
                   },
                   children: const [
-                    Icon(Icons.vertical_align_top), // Start
-                    Icon(Icons.vertical_align_center), // Center
-                    Icon(Icons.vertical_align_bottom), // End
-                    Icon(Icons.expand), // Stretch
-                    Icon(Icons.text_fields), // Baseline (조건에 따라 비활성화)
+                    Icon(Remix.align_item_top_line), // Start
+                    Icon(Remix.align_item_horizontal_center_line), // Center
+                    Icon(Remix.align_item_bottom_line), // End
+                    Icon(Remix.flip_vertical_2_line), // Stretch
+                    Icon(Remix.t_box_line), // Baseline (조건에 따라 비활성화)
                   ],
                 ),
                 const SizedBox(height: 10),
