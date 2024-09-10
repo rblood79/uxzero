@@ -12,34 +12,18 @@ class WorkArea extends StatefulWidget {
 }
 
 class _WorkAreaState extends State<WorkArea> {
-  WidgetProperties rootContainer = WidgetProperties(
-    id: 'page_01',
-    label: 'Container_01',
-    width: 1200,
-    height: 600,
-    color: Colors.white,
-    x: 0,
-    y: 0,
-    border: Border.all(
-      color: Colors.black,
-      width: 1.0,
-    ),
-    layoutType: LayoutType.column,
-    children: [],
-  );
-
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: GestureDetector(
-        onTap: () {
-          final selectedWidgetModel =
-              Provider.of<SelectedWidgetModel>(context, listen: false);
-          selectedWidgetModel.selectWidget(rootContainer);
-        },
-        child: Consumer<SelectedWidgetModel>(
-          builder: (context, selectedWidgetModel, child) {
-            return Container(
+      child: Consumer<SelectedWidgetModel>(
+        builder: (context, selectedWidgetModel, child) {
+          final rootContainer = selectedWidgetModel.rootContainer;
+
+          return GestureDetector(
+            onTap: () {
+              selectedWidgetModel.selectWidget(rootContainer);
+            },
+            child: Container(
               width: rootContainer.width,
               height: rootContainer.height,
               decoration: BoxDecoration(
@@ -51,9 +35,9 @@ class _WorkAreaState extends State<WorkArea> {
               ),
               child: _buildDragTargetForContainer(
                   rootContainer, selectedWidgetModel),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -66,7 +50,6 @@ class _WorkAreaState extends State<WorkArea> {
       onAccept: (details) {
         setState(() {
           if (details.data is TextWidget) {
-            // TextWidget이 드롭된 경우 텍스트로 처리
             final textWidget = details.data as TextWidget;
             properties.children.add(
               WidgetProperties(
@@ -74,18 +57,17 @@ class _WorkAreaState extends State<WorkArea> {
                 label: textWidget.label,
                 width: 100,
                 height: 40,
-                color: Colors.transparent, // 텍스트 배경 투명
+                color: Colors.transparent,
                 x: 0,
                 y: 0,
                 border: Border.all(
                   color: Colors.transparent,
                 ),
                 layoutType: LayoutType.column,
-                type: WidgetType.text, // 텍스트 타입으로 설정
+                type: WidgetType.text,
               ),
             );
           } else if (details.data is ContainerWidget) {
-            // ContainerWidget이 드롭된 경우 컨테이너로 처리
             final containerWidget = details.data as ContainerWidget;
             properties.children.add(
               WidgetProperties(
@@ -100,11 +82,12 @@ class _WorkAreaState extends State<WorkArea> {
                   color: Colors.black,
                   width: 1.0,
                 ),
-                layoutType: LayoutType.container,
-                type: WidgetType.container, // 컨테이너 타입으로 설정
+                layoutType: LayoutType.stack,
+                type: WidgetType.container,
               ),
             );
           }
+          selectedWidgetModel.addToHistory(); // 변경 사항을 이력에 추가
         });
       },
     );
@@ -129,127 +112,81 @@ class _WorkAreaState extends State<WorkArea> {
     );
   }
 
-  /*Widget _buildLayoutWidget(
+  Widget _buildLayoutWidget(
       WidgetProperties properties, SelectedWidgetModel selectedWidgetModel) {
+    // 선택된 LayoutType에 따른 레이아웃을 반환
     switch (properties.layoutType) {
       case LayoutType.row:
         return Row(
           mainAxisAlignment: properties.mainAxisAlignment,
+          crossAxisAlignment: properties.crossAxisAlignment,
           children: _buildChildWidgets(properties, selectedWidgetModel),
         );
       case LayoutType.column:
         return Column(
           mainAxisAlignment: properties.mainAxisAlignment,
+          crossAxisAlignment: properties.crossAxisAlignment,
           children: _buildChildWidgets(properties, selectedWidgetModel),
         );
       case LayoutType.stack:
-      default:
         return Stack(
           children: _buildChildWidgets(properties, selectedWidgetModel),
         );
-    }
-  }*/
-  Widget _buildLayoutWidget(
-      WidgetProperties properties, SelectedWidgetModel selectedWidgetModel) {
-    // 위젯 타입에 따라 컨테이너와 텍스트 구분
-    if (properties.type == WidgetType.text) {
-      return SizedBox(
+      case LayoutType.grid:
+        return GridView.count(
+          crossAxisCount: 2,
+          children: _buildChildWidgets(properties, selectedWidgetModel),
+        );
+      case LayoutType.wrap:
+        return Wrap(
+          alignment: WrapAlignment.start,
+          children: _buildChildWidgets(properties, selectedWidgetModel),
+        );
+      case LayoutType.list:
+        return ListView(
+          children: _buildChildWidgets(properties, selectedWidgetModel),
+        );
+      /*case LayoutType.container: // Container 추가 처리
+      return Container(
         width: properties.width,
         height: properties.height,
-        child: Center(
-          child: Text(
-            properties.label,
-            style: const TextStyle(color: Colors.black),
-          ),
-        ),
-      );
-      /*return Text(
-        properties.label,
-        style: const TextStyle(color: Colors.black),
+        color: properties.color,
+        child: properties.children.isNotEmpty
+            ? _buildLayoutWidget(properties.children.first, selectedWidgetModel) // 자식이 있으면 첫 번째 자식만 렌더링
+            : null,
       );*/
-    } else {
-      // 컨테이너로 처리
-      switch (properties.layoutType) {
-        case LayoutType.row:
-          return Row(
-            mainAxisAlignment: properties.mainAxisAlignment,
-            crossAxisAlignment: properties.crossAxisAlignment,
-            children: _buildChildWidgets(properties, selectedWidgetModel),
-          );
-        case LayoutType.column:
-          return Column(
-            mainAxisAlignment: properties.mainAxisAlignment,
-            crossAxisAlignment: properties.crossAxisAlignment,
-            children: _buildChildWidgets(properties, selectedWidgetModel),
-          );
-        case LayoutType.stack:
-        default:
-          return Stack(
-            children: _buildChildWidgets(properties, selectedWidgetModel),
-          );
-      }
+      default:
+        return const SizedBox(); // 기본적으로 빈 위젯 반환
     }
   }
 
   List<Widget> _buildChildWidgets(WidgetProperties parentProperties,
       SelectedWidgetModel selectedWidgetModel) {
     return parentProperties.children.map((childProperties) {
-      return Expanded(
-        flex: childProperties.flex,
-        child: GestureDetector(
+      // Flex가 있는 경우 Expanded로 감싸기
+      if (parentProperties.layoutType == LayoutType.row ||
+          parentProperties.layoutType == LayoutType.column) {
+        return Expanded(
+          flex: childProperties.flex,
+          child: GestureDetector(
+            onTap: () {
+              selectedWidgetModel.selectWidget(childProperties);
+            },
+            child: _buildDragTargetForContainer(
+                childProperties, selectedWidgetModel),
+          ),
+        );
+      } else {
+        // Flex가 없는 경우 그냥 출력
+        return GestureDetector(
           onTap: () {
             selectedWidgetModel.selectWidget(childProperties);
           },
-          child: _buildDragTarget(
-            properties: childProperties,
-            selectedWidgetModel: selectedWidgetModel,
-            onAccept: (details) {
-              setState(() {
-                // 드래그 된 데이터가 TextWidget일 경우
-                if (details.data is TextWidget) {
-                  final textWidget = details.data as TextWidget;
-                  childProperties.children.add(
-                    WidgetProperties(
-                      id: DateTime.now().toString(),
-                      label: textWidget.label,
-                      width: 100,
-                      height: 40,
-                      color: Colors.transparent,
-                      x: 0,
-                      y: 0,
-                      border: Border.all(
-                        color: Colors.transparent,
-                      ),
-                      layoutType: LayoutType.column,
-                      type: WidgetType.text, // 텍스트 타입 설정
-                    ),
-                  );
-                } else if (details.data is ContainerWidget) {
-                  // ContainerWidget 처리
-                  final containerWidget = details.data as ContainerWidget;
-                  childProperties.children.add(
-                    WidgetProperties(
-                      id: DateTime.now().toString(),
-                      label: containerWidget.label,
-                      width: containerWidget.width,
-                      height: containerWidget.height,
-                      color: containerWidget.color,
-                      x: 0,
-                      y: 0,
-                      border: Border.all(
-                        color: Colors.black,
-                        width: 1.0,
-                      ),
-                      layoutType: LayoutType.container,
-                      type: WidgetType.container, // 컨테이너 타입 설정
-                    ),
-                  );
-                }
-              });
-            },
-          ),
-        ),
-      );
+          child: _buildDragTargetForContainer(
+              childProperties, selectedWidgetModel),
+        );
+      }
     }).toList();
   }
+  
 }

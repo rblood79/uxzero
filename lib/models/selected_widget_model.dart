@@ -3,16 +3,26 @@ import 'package:flutter/material.dart';
 class SelectedWidgetModel extends ChangeNotifier {
   WidgetProperties? selectedWidgetProperties;
 
+  // rootContainer를 상태로 관리
+  WidgetProperties rootContainer = WidgetProperties(
+    id: 'page_01',
+    label: 'Container_01',
+    width: 1200,
+    height: 600,
+    color: Colors.white,
+    x: 0,
+    y: 0,
+    border: Border.all(
+      color: Colors.black,
+      width: 1.0,
+    ),
+    layoutType: LayoutType.stack,
+    children: [],
+  );
+
   // 상태 이력을 저장할 리스트 및 현재 이력 인덱스
   final List<WidgetProperties> _history = [];
   int _historyIndex = -1;
-
-  // 위젯을 선택하고 상태 이력에 추가
-  void selectWidget(WidgetProperties properties) {
-    selectedWidgetProperties = properties;
-    addToHistory(); // 선택 시 이력에 추가
-    notifyListeners(); // 상태 변경을 알림
-  }
 
   // 선택 취소
   void clearSelection() {
@@ -76,56 +86,95 @@ class SelectedWidgetModel extends ChangeNotifier {
   }
 
   // CrossAxisAlignment 업데이트
-  void updateCrossAxisAlignment(CrossAxisAlignment alignment,
-      [TextBaseline? baseline]) {
+  void updateCrossAxisAlignment(CrossAxisAlignment alignment, [TextBaseline? baseline]) {
     if (selectedWidgetProperties != null) {
       selectedWidgetProperties!.crossAxisAlignment = alignment;
       if (alignment == CrossAxisAlignment.baseline) {
-        selectedWidgetProperties!.textBaseline =
-            baseline ?? TextBaseline.alphabetic;
+        selectedWidgetProperties!.textBaseline = baseline ?? TextBaseline.alphabetic;
       }
       addToHistory(); // 상태 변경 시 이력에 추가
       notifyListeners();
     }
   }
 
-  // 퍼블릭 메서드: 상태 변경 시 이력에 추가
+  // 이력 추가 및 깊은 복사 보장
   void addToHistory() {
-    _addToHistory(); // 내부 프라이빗 메서드 호출
-  }
-
-  // 상태 변경 시 이력을 추가하는 프라이빗 메서드
-  void _addToHistory() {
-    // 현재 상태를 복사하여 이력에 추가
     if (_historyIndex < _history.length - 1) {
       _history.removeRange(_historyIndex + 1, _history.length);
     }
-    _history.add(selectedWidgetProperties!.copyWith());
+    _history.add(rootContainer.copyWith()); // 현재 상태를 복사하여 이력에 추가
     _historyIndex++;
+    notifyListeners(); // 상태 변경 알림
   }
 
-  // Undo 기능: 이전 상태로 복원
+  // Undo 가능한지 여부
+  bool get canUndo => _historyIndex > 0;
+
+  // Redo 가능한지 여부
+  bool get canRedo => _historyIndex < _history.length - 1;
+
+  // Undo 기능
   void undo() {
-    if (_historyIndex > 0) {
+    if (canUndo) {
       _historyIndex--;
-      selectedWidgetProperties = _history[_historyIndex].copyWith();
+      rootContainer = _history[_historyIndex].copyWith();
       notifyListeners();
     }
   }
 
-  // Redo 기능: 다음 상태로 복원
+  // Redo 기능
   void redo() {
-    if (_historyIndex < _history.length - 1) {
+    if (canRedo) {
       _historyIndex++;
-      selectedWidgetProperties = _history[_historyIndex].copyWith();
+      rootContainer = _history[_historyIndex].copyWith();
       notifyListeners();
     }
+  }
+
+  // 위젯 선택
+  void selectWidget(WidgetProperties properties) {
+    selectedWidgetProperties = properties;
+    notifyListeners();
+  }
+
+  // 선택된 위젯 삭제
+  void deleteSelectedWidget() {
+    if (selectedWidgetProperties != null) {
+      _deleteWidgetRecursive(rootContainer, selectedWidgetProperties!);
+      selectedWidgetProperties = null; // 삭제 후 선택된 위젯 초기화
+      addToHistory(); // 이력 추가
+      notifyListeners();
+    }
+  }
+
+  // 재귀적으로 위젯을 삭제하는 함수
+  bool _deleteWidgetRecursive(WidgetProperties parent, WidgetProperties target) {
+    if (parent.children.contains(target)) {
+      parent.children.remove(target);
+      return true;
+    } else {
+      for (var child in parent.children) {
+        if (_deleteWidgetRecursive(child, target)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }
 
+// LayoutType 열거형
+enum LayoutType {
+  container,
+  row,
+  column,
+  stack,
+  grid,
+  wrap,
+  list,
+}
 
-enum LayoutType { container, row, column, stack }
-
+// WidgetType 열거형
 enum WidgetType {
   container,
   text,
@@ -133,21 +182,21 @@ enum WidgetType {
 
 // WidgetProperties 클래스
 class WidgetProperties {
-  final String id; // 위젯을 구분할 고유 식별자
-  String label; // 위젯 레이블
-  double width; // 위젯 너비
-  double height; // 위젯 높이
-  Color color; // 위젯 색상
-  Border border; // 테두리 설정
-  double x; // 위젯의 X 좌표
-  double y; // 위젯의 Y 좌표
+  final String id;
+  String label;
+  double width;
+  double height;
+  Color color;
+  Border border;
+  double x;
+  double y;
   LayoutType layoutType;
-  List<WidgetProperties> children; // 자식 컨테이너 리스트 추가
-  MainAxisAlignment mainAxisAlignment; // MainAxisAlignment 추가
-  CrossAxisAlignment crossAxisAlignment; //CrossAxisAlignment 추가
-  TextBaseline? textBaseline; // 텍스트 기준선 속성 추가
-  int flex; // Flex 속성 추가
-  WidgetType type; // 위젯의 타입을 구분하는 속성 추가
+  List<WidgetProperties> children;
+  MainAxisAlignment mainAxisAlignment;
+  CrossAxisAlignment crossAxisAlignment;
+  TextBaseline? textBaseline;
+  int flex;
+  WidgetType type;
 
   WidgetProperties({
     required this.id,
@@ -155,19 +204,18 @@ class WidgetProperties {
     required this.width,
     required this.height,
     required this.color,
-    required this.border, // 테두리 추가
+    required this.border,
     required this.x,
     required this.y,
     required this.layoutType,
-    this.mainAxisAlignment = MainAxisAlignment.start, // 기본값
-    this.crossAxisAlignment = CrossAxisAlignment.start, // 기본값
-    this.textBaseline, // 선택적 기준선 속성
-    this.flex = 0, // 기본값
-    this.type = WidgetType.container, // 기본값은 container로 설정
-    List<WidgetProperties>? children, // 선택적 매개변수로 설정
-  }) : children = children ?? []; // children이 null일 경우 빈 리스트로 초기화
+    this.mainAxisAlignment = MainAxisAlignment.start,
+    this.crossAxisAlignment = CrossAxisAlignment.start,
+    this.textBaseline,
+    this.flex = 0,
+    this.type = WidgetType.container,
+    List<WidgetProperties>? children,
+  }) : children = children ?? [];
 
-  // 객체 복사 메서드
   WidgetProperties copyWith({
     String? id,
     String? label,
@@ -195,7 +243,9 @@ class WidgetProperties {
       x: x ?? this.x,
       y: y ?? this.y,
       layoutType: layoutType ?? this.layoutType,
-      children: children ?? List.from(this.children), // 리스트 복사
+      children: children != null
+          ? List<WidgetProperties>.from(children.map((child) => child.copyWith()))
+          : List<WidgetProperties>.from(this.children.map((child) => child.copyWith())),
       mainAxisAlignment: mainAxisAlignment ?? this.mainAxisAlignment,
       crossAxisAlignment: crossAxisAlignment ?? this.crossAxisAlignment,
       textBaseline: textBaseline ?? this.textBaseline,

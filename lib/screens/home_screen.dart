@@ -36,6 +36,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     ));
   }
 
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   void handleMenuSelection(String menuLabel) {
     setState(() {
       if (menuLabel == 'Widget') {
@@ -46,12 +52,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         _controller.reverse(); // 슬라이드 아웃 애니메이션 실행
       }
     });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 
   @override
@@ -74,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         child: WorkArea(),
                       ),
                       Expanded(
-                        flex: 1, // PropertyPanel의 flex 크기 조정
+                        flex: 2, // PropertyPanel의 flex 크기 조정
                         child: PropertyPanel(), // 선택된 위젯의 속성을 보여주고 수정할 수 있음
                       ),
                     ],

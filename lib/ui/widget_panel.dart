@@ -21,7 +21,6 @@ class WidgetPanel extends StatelessWidget {
         label: 'Text',
       ),
     ),
-    WidgetItem(icon: Icons.text_fields_outlined, label: 'Text'),
     WidgetItem(icon: Icons.input, label: 'Input'),
     WidgetItem(icon: Icons.smart_button, label: 'Button'),
     WidgetItem(icon: Icons.select_all_outlined, label: 'Select'),
