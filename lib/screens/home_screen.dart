@@ -15,7 +15,8 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   String selectedMenu = ''; // 현재 선택된 메뉴 항목
   late AnimationController _controller;
   late Animation<Offset> _offsetAnimation;
@@ -60,32 +61,15 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       create: (context) => SelectedWidgetModel(),
       child: Scaffold(
         appBar: const CustomAppBar(),
-        
         body: Stack(
           children: [
             const Column(
               children: [
                 TopPanel(),
                 Expanded(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 8,
-                        child: WorkArea(),
-                      ),
-                      Expanded(
-                        flex: 2, // PropertyPanel의 flex 크기 조정
-                        child: PropertyPanel(), // 선택된 위젯의 속성을 보여주고 수정할 수 있음
-                      ),
-                    ],
-                  ),
+                  child: WorkArea(),
                 ),
-                SizedBox(
-                  height: 48,
-                  child: Center(
-                    child: Text('Bottom Area'),
-                  ),
-                ),
+                
               ],
             ),
             Positioned(
@@ -102,6 +86,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               bottom: 0,
               left: 0,
               child: SidebarMenu(onMenuButtonPressed: handleMenuSelection),
+            ),
+            const Positioned(
+              right: 0,
+              top: 48,
+              bottom: 0,
+              child: PropertyPanel(), // 선택된 위젯의 속성을 보여주고 수정할 수 있음
             ),
           ],
         ),

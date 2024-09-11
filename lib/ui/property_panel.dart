@@ -47,7 +47,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 240,
+      width: 328,
       color: Colors.white,
       padding: const EdgeInsets.all(16.0),
       child: Consumer<SelectedWidgetModel>(
@@ -210,8 +210,8 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     }
                   },
                   children: const [
-                    Icon(Remix.layout_row_line), // Row
-                    Icon(Remix.layout_column_line), // Column
+                    Icon(Remix.layout_column_line), // Row
+                    Icon(Remix.layout_row_line), // Column
                     Icon(Remix.stack_line), // Stack
                     Icon(Remix.layout_grid_line), // Grid
                     Icon(Remix.text_wrap), // Wrap

@@ -61,7 +61,7 @@ class _WorkAreaState extends State<WorkArea> {
                 x: 0,
                 y: 0,
                 border: Border.all(
-                  color: Colors.transparent,
+                  color: Colors.red,
                 ),
                 layoutType: LayoutType.column,
                 type: WidgetType.text,
@@ -115,7 +115,7 @@ class _WorkAreaState extends State<WorkArea> {
   Widget _buildLayoutWidget(
       WidgetProperties properties, SelectedWidgetModel selectedWidgetModel) {
     // 텍스트 위젯인 경우
-    if (properties.type == WidgetType.text) {
+    /*if (properties.type == WidgetType.text) {
       return Center(
         child: Text(
           properties.label, // label 값을 표시
@@ -125,7 +125,8 @@ class _WorkAreaState extends State<WorkArea> {
           ),
         ),
       );
-    }
+    }*/
+    
     // 선택된 LayoutType에 따른 레이아웃을 반환
     switch (properties.layoutType) {
       case LayoutType.row:
@@ -172,12 +173,27 @@ class _WorkAreaState extends State<WorkArea> {
     }
   }
 
-  List<Widget> _buildChildWidgets(WidgetProperties parentProperties,
-      SelectedWidgetModel selectedWidgetModel) {
+  List<Widget> _buildChildWidgets(WidgetProperties parentProperties,SelectedWidgetModel selectedWidgetModel) {
     return parentProperties.children.map((childProperties) {
-      // Flex가 있는 경우 Expanded로 감싸기
-      if (parentProperties.layoutType == LayoutType.row ||
+      if (childProperties.type == WidgetType.text) {
+        // 텍스트 위젯의 경우
+        return GestureDetector(
+          onTap: () {
+            selectedWidgetModel.selectWidget(childProperties);
+          },
+          onLongPress: () {
+            // 선택된 위젯을 삭제하는 기능
+            selectedWidgetModel.selectWidget(childProperties); // 삭제할 위젯 선택
+            selectedWidgetModel.deleteSelectedWidget(); // 선택된 위젯 삭제
+          },
+          child: Text(
+            childProperties.label, // 텍스트 출력
+            style: const TextStyle(fontSize: 12, color: Colors.black),
+          ),
+        );
+      } else if (parentProperties.layoutType == LayoutType.row ||
           parentProperties.layoutType == LayoutType.column) {
+        // Flex가 있는 경우 Expanded로 감싸기
         return Expanded(
           flex: childProperties.flex,
           child: GestureDetector(

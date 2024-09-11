@@ -5,6 +5,8 @@ class ContainerWidget extends StatelessWidget {
   final double height;
   final Color color;
   final String label;
+  
+  final dynamic decoration;
 
   const ContainerWidget({
     super.key,
@@ -12,6 +14,7 @@ class ContainerWidget extends StatelessWidget {
     required this.height,
     required this.color,
     required this.label,
+    required this.decoration,
   });
 
   @override

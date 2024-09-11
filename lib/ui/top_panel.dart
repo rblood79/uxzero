@@ -22,21 +22,7 @@ class TopPanel extends StatelessWidget {
               },
             ),
             // 오른쪽에 콤보 박스
-            DropdownButton<String>(
-              value: '100%',
-              icon: const Icon(Icons.arrow_drop_down),
-              items: <String>['50%', '75%', '100%', '125%', '150%']
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                // 콤보 박스 선택 시 동작
-                print('Selected: $newValue');
-              },
-            ),
+            
           ],
         ),
       ),
