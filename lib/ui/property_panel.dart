@@ -47,7 +47,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 328,
+      width: 280,
       color: Colors.white,
       padding: const EdgeInsets.all(16.0),
       child: Consumer<SelectedWidgetModel>(
@@ -90,7 +90,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                       onPressed: () {
                         selectedWidgetModel.deleteSelectedWidget();
                       },
-                      child: const Text('Delete'),
+                      child: const Text('Del'),
                     ),
                   ],
                 ),
@@ -209,6 +209,10 @@ class _PropertyPanelState extends State<PropertyPanel> {
                       selectedWidgetModel.updateLayoutType(newLayoutType);
                     }
                   },
+                  constraints: const BoxConstraints(
+                    minHeight: 40.0,
+                    minWidth: 40.0,
+                  ),
                   children: const [
                     Icon(Remix.layout_column_line), // Row
                     Icon(Remix.layout_row_line), // Column
@@ -253,6 +257,10 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     }
                     selectedWidgetModel.updateMainAxisAlignment(newAlignment);
                   },
+                  constraints: const BoxConstraints(
+                    minHeight: 40.0,
+                    minWidth: 40.0,
+                  ),
                   children: const [
                     Icon(Remix.align_item_left_line), // Start
                     Icon(Remix.align_item_vertical_center_line), // Center
@@ -303,6 +311,10 @@ class _PropertyPanelState extends State<PropertyPanel> {
 
                     selectedWidgetModel.updateCrossAxisAlignment(newAlignment);
                   },
+                  constraints: const BoxConstraints(
+                    minHeight: 40.0,
+                    minWidth: 40.0,
+                  ),
                   children: const [
                     Icon(Remix.align_item_top_line), // Start
                     Icon(Remix.align_item_horizontal_center_line), // Center
