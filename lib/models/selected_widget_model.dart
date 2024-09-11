@@ -16,7 +16,7 @@ class SelectedWidgetModel extends ChangeNotifier {
       color: Colors.black,
       width: 1.0,
     ),
-    layoutType: LayoutType.stack,
+    layoutType: LayoutType.row,
     children: [],
   );
 
@@ -253,4 +253,6 @@ class WidgetProperties {
       type: type ?? this.type,
     );
   }
+
+  toJson() {}
 }

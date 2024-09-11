@@ -11,7 +11,7 @@ class WidgetPanel extends StatelessWidget {
       widget: const ContainerWidget(
         width: 100,
         height: 100,
-        color: Colors.red,
+        color: Colors.amber,
         label: 'Container',
       ),
     ),
@@ -19,6 +19,9 @@ class WidgetPanel extends StatelessWidget {
       icon: Remix.text,
       label: 'Text',
       widget: const TextWidget(
+        width: 100,
+        height: 100,
+        color: Colors.amber,
         label: 'Text',
       ),
     ),

@@ -114,6 +114,18 @@ class _WorkAreaState extends State<WorkArea> {
 
   Widget _buildLayoutWidget(
       WidgetProperties properties, SelectedWidgetModel selectedWidgetModel) {
+    // 텍스트 위젯인 경우
+    if (properties.type == WidgetType.text) {
+      return Center(
+        child: Text(
+          properties.label, // label 값을 표시
+          style: const TextStyle(
+            fontSize: 12,
+            color: Colors.black,
+          ),
+        ),
+      );
+    }
     // 선택된 LayoutType에 따른 레이아웃을 반환
     switch (properties.layoutType) {
       case LayoutType.row:
@@ -174,8 +186,8 @@ class _WorkAreaState extends State<WorkArea> {
             },
             onLongPress: () {
               // 선택된 위젯을 삭제하는 기능
-              selectedWidgetModel.selectWidget(childProperties);  // 삭제할 위젯 선택
-              selectedWidgetModel.deleteSelectedWidget();         // 선택된 위젯 삭제
+              selectedWidgetModel.selectWidget(childProperties); // 삭제할 위젯 선택
+              selectedWidgetModel.deleteSelectedWidget(); // 선택된 위젯 삭제
             },
             child: _buildDragTargetForContainer(
                 childProperties, selectedWidgetModel),
@@ -188,18 +200,14 @@ class _WorkAreaState extends State<WorkArea> {
             selectedWidgetModel.selectWidget(childProperties);
           },
           onLongPress: () {
-              // 선택된 위젯을 삭제하는 기능
-              selectedWidgetModel.selectWidget(childProperties);  // 삭제할 위젯 선택
-              selectedWidgetModel.deleteSelectedWidget();         // 선택된 위젯 삭제
-            },
+            // 선택된 위젯을 삭제하는 기능
+            selectedWidgetModel.selectWidget(childProperties); // 삭제할 위젯 선택
+            selectedWidgetModel.deleteSelectedWidget(); // 선택된 위젯 삭제
+          },
           child: _buildDragTargetForContainer(
               childProperties, selectedWidgetModel),
         );
       }
     }).toList();
   }
-
-
-
-
 }
