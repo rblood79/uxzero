@@ -22,8 +22,8 @@ class WidgetPanel extends StatelessWidget {
       icon: Remix.add_box_line,
       label: 'Container',
       widget: ContainerWidget(
-        width: 64,
-        height: 64,
+        width: 100,
+        height: 100,
         color: Colors.amber,
         label: 'Container',
         decoration: BoxDecoration(
@@ -39,7 +39,7 @@ class WidgetPanel extends StatelessWidget {
       label: 'Text',
       widget: const TextWidget(
         width: 100,
-        height: 100,
+        height: 20,
         color: Colors.amber,
         label: 'Text',
       ),

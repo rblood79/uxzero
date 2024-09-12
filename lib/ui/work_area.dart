@@ -21,20 +21,33 @@ class _WorkAreaState extends State<WorkArea> {
 
           return GestureDetector(
             onTap: () {
-              selectedWidgetModel.selectWidget(rootContainer);
+              // 부모 컨테이너 선택 시 자식 선택 해제
+              if (selectedWidgetModel.selectedWidgetProperties !=
+                  rootContainer) {
+                selectedWidgetModel.clearSelection(); // 선택된 자식을 해제
+                selectedWidgetModel.selectWidget(rootContainer); // 부모 선택
+              }
             },
-            child: Container(
-              width: rootContainer.width,
-              height: rootContainer.height,
-              decoration: BoxDecoration(
-                color: rootContainer.color,
-                border: Border.all(
-                  color: Colors.grey,
-                  width: 1.0,
+            child: Stack(
+              children: [
+                // 부모 컨테이너 레이아웃
+                Container(
+                  width: rootContainer.width,
+                  height: rootContainer.height,
+                  decoration: BoxDecoration(
+                    color: rootContainer.color,
+                    border: Border.all(
+                      color: Colors.grey,
+                      width: 1.0,
+                    ),
+                  ),
+                  child: _buildDragTargetForContainer(
+                      rootContainer, selectedWidgetModel),
                 ),
-              ),
-              child: _buildDragTargetForContainer(
-                  rootContainer, selectedWidgetModel),
+                // 부모 컨테이너가 선택되거나 자식 중 하나가 선택된 경우 가이드라인 적용
+                if (selectedWidgetModel.isSelected(rootContainer))
+                  _buildGuideline(rootContainer),
+              ],
             ),
           );
         },
@@ -114,20 +127,6 @@ class _WorkAreaState extends State<WorkArea> {
 
   Widget _buildLayoutWidget(
       WidgetProperties properties, SelectedWidgetModel selectedWidgetModel) {
-    // 텍스트 위젯인 경우
-    /*if (properties.type == WidgetType.text) {
-      return Center(
-        child: Text(
-          properties.label, // label 값을 표시
-          style: const TextStyle(
-            fontSize: 12,
-            color: Colors.black,
-          ),
-        ),
-      );
-    }*/
-    
-    // 선택된 LayoutType에 따른 레이아웃을 반환
     switch (properties.layoutType) {
       case LayoutType.row:
         return Row(
@@ -159,71 +158,181 @@ class _WorkAreaState extends State<WorkArea> {
         return ListView(
           children: _buildChildWidgets(properties, selectedWidgetModel),
         );
-      /*case LayoutType.container: // Container 추가 처리
-      return Container(
-        width: properties.width,
-        height: properties.height,
-        color: properties.color,
-        child: properties.children.isNotEmpty
-            ? _buildLayoutWidget(properties.children.first, selectedWidgetModel) // 자식이 있으면 첫 번째 자식만 렌더링
-            : null,
-      );*/
       default:
         return const SizedBox(); // 기본적으로 빈 위젯 반환
     }
   }
 
-  List<Widget> _buildChildWidgets(WidgetProperties parentProperties,SelectedWidgetModel selectedWidgetModel) {
+  List<Widget> _buildChildWidgets(WidgetProperties parentProperties,
+      SelectedWidgetModel selectedWidgetModel) {
     return parentProperties.children.map((childProperties) {
+      // 자식 위젯이 선택된 경우에만 가이드라인 적용
+      bool isSelected =
+          selectedWidgetModel.selectedWidgetProperties == childProperties;
+
+      // 자식이 텍스트 위젯인 경우
       if (childProperties.type == WidgetType.text) {
-        // 텍스트 위젯의 경우
-        return GestureDetector(
-          onTap: () {
-            selectedWidgetModel.selectWidget(childProperties);
-          },
-          onLongPress: () {
-            // 선택된 위젯을 삭제하는 기능
-            selectedWidgetModel.selectWidget(childProperties); // 삭제할 위젯 선택
-            selectedWidgetModel.deleteSelectedWidget(); // 선택된 위젯 삭제
-          },
-          child: Text(
-            childProperties.label, // 텍스트 출력
-            style: const TextStyle(fontSize: 12, color: Colors.black),
-          ),
+        return Stack(
+          children: [
+            // 드래그 타겟 설정 (항상 상위 레이어에서 동작)
+            GestureDetector(
+              onTap: () {
+                // 자식을 선택하면 부모 선택 해제
+                if (!isSelected) {
+                  selectedWidgetModel.clearSelection(); // 부모 선택 해제
+                  selectedWidgetModel.selectWidget(childProperties); // 자식 선택
+                }
+              },
+              onLongPress: () {
+                selectedWidgetModel.selectWidget(childProperties);
+                selectedWidgetModel.deleteSelectedWidget();
+              },
+              child: DragTarget<Object>(
+                onWillAcceptWithDetails: (data) => true,
+                onAcceptWithDetails: (data) {
+                  // 드래그 드롭 처리
+                },
+                builder: (context, candidateData, rejectedData) {
+                  return Container(
+                    width: childProperties.width,
+                    height: childProperties.height,
+                    color: childProperties.color,
+                    child: Center(
+                      child: Text(
+                        childProperties.label,
+                        style:
+                            const TextStyle(fontSize: 12, color: Colors.black),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            // 선택된 경우 가이드라인 추가 (드래그 타겟 위에 겹쳐서 표시)
+            if (isSelected) _buildGuideline(childProperties),
+          ],
         );
-      } else if (parentProperties.layoutType == LayoutType.row ||
+      }
+
+      // Flex 레이아웃인 경우 (Row 또는 Column)
+      else if (parentProperties.layoutType == LayoutType.row ||
           parentProperties.layoutType == LayoutType.column) {
-        // Flex가 있는 경우 Expanded로 감싸기
         return Expanded(
           flex: childProperties.flex,
-          child: GestureDetector(
-            onTap: () {
-              selectedWidgetModel.selectWidget(childProperties);
-            },
-            onLongPress: () {
-              // 선택된 위젯을 삭제하는 기능
-              selectedWidgetModel.selectWidget(childProperties); // 삭제할 위젯 선택
-              selectedWidgetModel.deleteSelectedWidget(); // 선택된 위젯 삭제
-            },
-            child: _buildDragTargetForContainer(
-                childProperties, selectedWidgetModel),
+          child: Stack(
+            children: [
+              // 드래그 타겟 설정 (항상 상위 레이어에서 동작)
+              GestureDetector(
+                onTap: () {
+                  // 자식을 선택하면 부모 선택 해제
+                  if (!isSelected) {
+                    selectedWidgetModel.clearSelection(); // 부모 선택 해제
+                    selectedWidgetModel.selectWidget(childProperties); // 자식 선택
+                  }
+                },
+                onLongPress: () {
+                  selectedWidgetModel.selectWidget(childProperties);
+                  selectedWidgetModel.deleteSelectedWidget();
+                },
+                child: DragTarget<Object>(
+                  onWillAcceptWithDetails: (data) => true,
+                  onAcceptWithDetails: (data) {
+                    // 드래그 드롭 처리
+                  },
+                  builder: (context, candidateData, rejectedData) {
+                    return Container(
+                      width: childProperties.width,
+                      height: childProperties.height,
+                      color: childProperties.color,
+                      child: _buildDragTargetForContainer(
+                          childProperties, selectedWidgetModel),
+                    );
+                  },
+                ),
+              ),
+              // 선택된 경우 가이드라인 추가 (드래그 타겟 위에 겹쳐서 표시)
+              if (isSelected) _buildGuideline(childProperties),
+            ],
           ),
         );
-      } else {
-        // Flex가 없는 경우 그냥 출력
-        return GestureDetector(
-          onTap: () {
-            selectedWidgetModel.selectWidget(childProperties);
-          },
-          onLongPress: () {
-            // 선택된 위젯을 삭제하는 기능
-            selectedWidgetModel.selectWidget(childProperties); // 삭제할 위젯 선택
-            selectedWidgetModel.deleteSelectedWidget(); // 선택된 위젯 삭제
-          },
-          child: _buildDragTargetForContainer(
-              childProperties, selectedWidgetModel),
+      }
+
+      // 다른 레이아웃의 경우
+      else {
+        return Stack(
+          children: [
+            // 드래그 타겟 설정 (항상 상위 레이어에서 동작)
+            GestureDetector(
+              onTap: () {
+                // 자식을 선택하면 부모 선택 해제
+                if (!isSelected) {
+                  selectedWidgetModel.clearSelection(); // 부모 선택 해제
+                  selectedWidgetModel.selectWidget(childProperties); // 자식 선택
+                }
+              },
+              onLongPress: () {
+                selectedWidgetModel.selectWidget(childProperties);
+                selectedWidgetModel.deleteSelectedWidget();
+              },
+              child: DragTarget<Object>(
+                onWillAcceptWithDetails: (data) => true,
+                onAcceptWithDetails: (data) {
+                  // 드래그 드롭 처리
+                },
+                builder: (context, candidateData, rejectedData) {
+                  return Container(
+                    width: childProperties.width,
+                    height: childProperties.height,
+                    color: childProperties.color,
+                    child: _buildDragTargetForContainer(
+                        childProperties, selectedWidgetModel),
+                  );
+                },
+              ),
+            ),
+            // 선택된 경우 가이드라인 추가 (드래그 타겟 위에 겹쳐서 표시)
+            if (isSelected) _buildGuideline(childProperties),
+          ],
         );
       }
     }).toList();
+  }
+
+  // 가이드라인을 표시하는 함수
+  Widget _buildGuideline(WidgetProperties properties) {
+    return IgnorePointer(
+      ignoring: true, // 가이드라인은 이벤트를 무시하도록 설정
+      child: Container(
+        width: properties.width, // 자식 위젯의 크기와 동일
+        height: properties.height, // 자식 위젯의 크기와 동일
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.blue, // 가이드라인 색상
+            width: 2.0,
+          ),
+        ),
+        child: Align(
+          alignment: Alignment.topLeft,
+          child: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+              decoration: BoxDecoration(
+                color: Colors.yellow, // 라벨의 배경색
+                borderRadius: BorderRadius.circular(4.0), // 둥근 모서리
+              ),
+              child: Text(
+                properties.label,
+                style: const TextStyle(
+                  color: Colors.black, // 텍스트 색상
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

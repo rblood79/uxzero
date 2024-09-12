@@ -24,12 +24,27 @@ class SelectedWidgetModel extends ChangeNotifier {
   final List<WidgetProperties> _history = [];
   int _historyIndex = -1;
 
-  // 선택 취소
+  // 선택 상태를 변경할 때는 항상 기존 선택을 초기화하고 새로운 선택을 설정
+  void selectWidget(WidgetProperties? properties) {
+    // 이미 선택된 상태에서 동일한 위젯이 선택되면 아무 작업도 하지 않음
+    if (selectedWidgetProperties == properties) return;
+
+    // 선택된 위젯 초기화
+    selectedWidgetProperties = properties;
+    notifyListeners();
+  }
+
+  // 선택된 위젯을 초기화 (선택 해제)
   void clearSelection() {
     selectedWidgetProperties = null;
     notifyListeners();
   }
 
+  // 선택된 위젯이 부모이거나 자식인지 확인하는 함수
+  bool isSelected(WidgetProperties widget) {
+    return selectedWidgetProperties == widget;
+  }
+  
   // 라벨 업데이트
   void updateLabel(String label) {
     if (selectedWidgetProperties != null) {
@@ -129,12 +144,6 @@ class SelectedWidgetModel extends ChangeNotifier {
       rootContainer = _history[_historyIndex].copyWith();
       notifyListeners();
     }
-  }
-
-  // 위젯 선택
-  void selectWidget(WidgetProperties properties) {
-    selectedWidgetProperties = properties;
-    notifyListeners();
   }
 
   // 선택된 위젯 삭제
