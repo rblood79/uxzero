@@ -108,45 +108,51 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     }
                   },
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 16),
 
-                // 너비 수정
-                TextField(
-                  decoration: const InputDecoration(
-                    labelText: 'Width',
-                  ),
-                  keyboardType: TextInputType.number,
-                  controller: widthController,
-                  onChanged: (value) {
-                    final newWidth =
-                        double.tryParse(value) ?? selectedWidget.width;
-                    if (newWidth != selectedWidget.width) {
-                      selectedWidgetModel.updateSize(
-                          newWidth, selectedWidget.height);
-                    }
-                  },
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        decoration: const InputDecoration(
+                          labelText: 'Width',
+                        ),
+                        keyboardType: TextInputType.number,
+                        controller: widthController,
+                        onChanged: (value) {
+                          final newWidth =
+                              double.tryParse(value) ?? selectedWidget.width;
+                          if (newWidth != selectedWidget.width) {
+                            selectedWidgetModel.updateSize(
+                                newWidth, selectedWidget.height);
+                          }
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 16), // 두 TextField 사이에 간격 추가
+                    Expanded(
+                      child: TextField(
+                        decoration: const InputDecoration(
+                          labelText: 'Height',
+                        ),
+                        keyboardType: TextInputType.number,
+                        controller: heightController,
+                        onChanged: (value) {
+                          final newHeight =
+                              double.tryParse(value) ?? selectedWidget.height;
+                          if (newHeight != selectedWidget.height) {
+                            selectedWidgetModel.updateSize(
+                                selectedWidget.width, newHeight);
+                          }
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 10),
-
-                // 높이 수정
-                TextField(
-                  decoration: const InputDecoration(
-                    labelText: 'Height',
-                  ),
-                  keyboardType: TextInputType.number,
-                  controller: heightController,
-                  onChanged: (value) {
-                    final newHeight =
-                        double.tryParse(value) ?? selectedWidget.height;
-                    if (newHeight != selectedWidget.height) {
-                      selectedWidgetModel.updateSize(
-                          selectedWidget.width, newHeight);
-                    }
-                  },
-                ),
-                const SizedBox(height: 10),
-
+                const SizedBox(height: 16),
                 // 색상 선택
+                const Text('Background Color'),
                 DropdownButton<Color>(
                   value: <Color>[
                     Colors.red,
@@ -177,7 +183,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     }
                   },
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 16),
 
                 // LayoutType 선택 (ToggleButtons)
                 const Text('Layout Type'),
@@ -223,7 +229,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                   ],
                 ),
 
-                const SizedBox(height: 10),
+                const SizedBox(height: 16),
 
                 // MainAxisAlignment 선택 (ToggleButtons)
                 const Text('Main Axis Alignment'),
@@ -270,7 +276,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     Icon(Remix.space), // Space Evenly
                   ],
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 16),
 
                 // CrossAxisAlignment 선택 (ToggleButtons)
                 const Text('Cross Axis Alignment'),
@@ -323,7 +329,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     Icon(Remix.t_box_line), // Baseline (조건에 따라 비활성화)
                   ],
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 16),
 
                 // Flex 속성 수정 (Slider 사용)
                 Text("Flex: ${selectedWidget.flex}"),
