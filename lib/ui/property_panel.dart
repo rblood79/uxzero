@@ -155,6 +155,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                 const Text('Background Color'),
                 DropdownButton<Color>(
                   value: <Color>[
+                    Colors.transparent,
                     Colors.red,
                     Colors.green,
                     Colors.blue,
@@ -163,6 +164,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                       ? selectedWidget.color
                       : Colors.red, // 기본 색상 설정
                   items: <Color>[
+                    Colors.transparent,
                     Colors.red,
                     Colors.green,
                     Colors.blue,
