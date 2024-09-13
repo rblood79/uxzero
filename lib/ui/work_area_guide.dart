@@ -300,84 +300,85 @@ class _WorkAreaState extends State<WorkArea> {
   }
 
   OverlayEntry _buildMultipleOverlay(List<_OverlayInfo> overlayInfoList,
-    SelectedWidgetModel selectedWidgetModel) {
-  
-  // 선택된 객체를 마지막에 그리기 위해 배열에서 선택된 객체를 제거하고 다시 추가
-  final selectedOverlayInfo = overlayInfoList.removeAt(0); // 선택된 객체는 항상 첫 번째
-  overlayInfoList.add(selectedOverlayInfo); // 선택된 객체를 마지막에 추가
+      SelectedWidgetModel selectedWidgetModel) {
+    // 선택된 객체를 마지막에 그리기 위해 배열에서 선택된 객체를 제거하고 다시 추가
+    final selectedOverlayInfo = overlayInfoList.removeAt(0); // 선택된 객체는 항상 첫 번째
+    overlayInfoList.add(selectedOverlayInfo); // 선택된 객체를 마지막에 추가
 
-  return OverlayEntry(
-    builder: (context) => Stack(
-      children: overlayInfoList.asMap().entries.map((entry) {
-        final index = entry.key;
-        final overlayInfo = entry.value;
+    return OverlayEntry(
+      builder: (context) => Stack(
+        children: overlayInfoList.asMap().entries.map((entry) {
+          final index = entry.key;
+          final overlayInfo = entry.value;
 
-        // 가이드라인 색상 리스트 (깊이에 따라 색상 변경)
-        final colors = [
-          Colors.red,
-          Colors.orange,
-          Colors.green,
-          Colors.blue,
-          Colors.purple
-        ];
-        final color = colors[index % colors.length]; // 계층 깊이에 따라 색상 순환
+          // 가이드라인 색상 리스트 (깊이에 따라 색상 변경)
+          final colors = [
+            Colors.red,
+            Colors.orange,
+            Colors.green,
+            Colors.lightBlue,
+            Colors.lightBlueAccent,
+            Colors.blue,
+            Colors.blueAccent,
+            Colors.purple,
+            
+          ];
+          final color = colors[index % colors.length]; // 계층 깊이에 따라 색상 순환
 
-        return Stack(
-          children: [
-            // 가이드라인 표시
-            Positioned(
-              left: overlayInfo.offset.dx,
-              top: overlayInfo.offset.dy,
-              child: IgnorePointer(
-                ignoring: true,
-                child: Container(
-                  width: overlayInfo.size.width,
-                  height: overlayInfo.size.height,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: color,
-                      width: 2.0,
+          return Stack(
+            children: [
+              // 가이드라인 표시
+              Positioned(
+                left: overlayInfo.offset.dx,
+                top: overlayInfo.offset.dy,
+                child: IgnorePointer(
+                  ignoring: true,
+                  child: Container(
+                    width: overlayInfo.size.width,
+                    height: overlayInfo.size.height,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: color,
+                        width: 2.0,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            // 각 계층 객체의 레이블 표시 (현재는 나중에 처리 예정)
-            Positioned(
-              left: overlayInfo.offset.dx,
-              top: overlayInfo.offset.dy - 30, // 레이블 위치 조정은 나중에 적용
-              child: GestureDetector(
-                onTap: () {
-                  selectedWidgetModel.clearSelection();
-                  selectedWidgetModel.selectWidget(overlayInfo.properties);
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 8.0),
-                  decoration: BoxDecoration(
-                    color: color.withOpacity(1.0), // 가이드라인 색상에 맞춘 배경
-                    borderRadius: BorderRadius.circular(0.0),
-                  ),
-                  child: Text(
-                    overlayInfo.properties.label,
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
-                      fontWeight: FontWeight.normal,
-                      decoration: TextDecoration.none,
+              // 각 계층 객체의 레이블 표시 (현재는 나중에 처리 예정)
+              Positioned(
+                left: overlayInfo.offset.dx,
+                top: overlayInfo.offset.dy - 30, // 레이블 위치 조정은 나중에 적용
+                child: GestureDetector(
+                  onTap: () {
+                    selectedWidgetModel.clearSelection();
+                    selectedWidgetModel.selectWidget(overlayInfo.properties);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    decoration: BoxDecoration(
+                      color: color.withOpacity(1.0), // 가이드라인 색상에 맞춘 배경
+                      borderRadius: BorderRadius.circular(0.0),
+                    ),
+                    child: Text(
+                      overlayInfo.properties.label,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                        fontWeight: FontWeight.normal,
+                        decoration: TextDecoration.none,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
-        );
-      }).toList(),
-    ),
-  );
-}
-
-
+            ],
+          );
+        }).toList(),
+      ),
+    );
+  }
 
   @override
   void dispose() {
