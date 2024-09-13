@@ -13,11 +13,15 @@ class WorkArea extends StatefulWidget {
 
 class _WorkAreaState extends State<WorkArea> {
   OverlayEntry? _guidelineOverlay;
-  final Map<String, GlobalKey> _widgetKeys = {};
+
+  // GlobalKey는 크기와 위치를 추적해야 하는 위젯에만 사용
+  final Map<String, GlobalKey<State<StatefulWidget>>> _globalKeys = {};
+
+  // 나머지 위젯은 ValueKey로 관리
+  final Map<String, ValueKey<String>> _valueKeys = {};
 
   @override
   Widget build(BuildContext context) {
-    // MediaQuery를 사용해 현재 화면 크기 정보 가져오기
     final size = MediaQuery.of(context).size;
 
     return LayoutBuilder(
@@ -27,14 +31,13 @@ class _WorkAreaState extends State<WorkArea> {
             builder: (context, selectedWidgetModel, child) {
               final rootContainer = selectedWidgetModel.rootContainer;
 
-              // 화면 크기가 변경되면 가이드라인 재계산
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 _updateGuidelineOverlay(selectedWidgetModel);
               });
 
-              // 부모 컨테이너에 GlobalKey 부여
-              if (!_widgetKeys.containsKey(rootContainer.id)) {
-                _widgetKeys[rootContainer.id] = GlobalKey();
+              // 부모 컨테이너에 GlobalKey 또는 ValueKey 부여
+              if (!_globalKeys.containsKey(rootContainer.id)) {
+                _globalKeys[rootContainer.id] = GlobalKey();
               }
 
               return GestureDetector(
@@ -47,10 +50,8 @@ class _WorkAreaState extends State<WorkArea> {
                 },
                 child: Stack(
                   children: [
-                    // 부모 컨테이너 레이아웃
                     Container(
-                      key: _widgetKeys[
-                          rootContainer.id], // 부모 컨테이너에 GlobalKey 적용
+                      key: _globalKeys[rootContainer.id], // GlobalKey 사용
                       width: rootContainer.width,
                       height: rootContainer.height,
                       decoration: BoxDecoration(
@@ -118,7 +119,7 @@ class _WorkAreaState extends State<WorkArea> {
               ),
             );
           }
-          selectedWidgetModel.addToHistory(); // 변경 사항을 이력에 추가
+          selectedWidgetModel.addToHistory();
         });
       },
     );
@@ -177,7 +178,7 @@ class _WorkAreaState extends State<WorkArea> {
           children: _buildChildWidgets(properties, selectedWidgetModel),
         );
       default:
-        return const SizedBox(); // 기본적으로 빈 위젯 반환
+        return const SizedBox();
     }
   }
 
@@ -187,9 +188,17 @@ class _WorkAreaState extends State<WorkArea> {
       bool isSelected =
           selectedWidgetModel.selectedWidgetProperties == childProperties;
 
-      // 각 자식 위젯에 대해 GlobalKey 할당
-      if (!_widgetKeys.containsKey(childProperties.id)) {
-        _widgetKeys[childProperties.id] = GlobalKey();
+      // GlobalKey와 ValueKey의 구분: 크기 및 위치 추적이 필요한 위젯에만 GlobalKey 사용
+      if (!_globalKeys.containsKey(childProperties.id) &&
+          (childProperties.type == WidgetType.container ||
+              childProperties.type == WidgetType.text)) {
+        _globalKeys[childProperties.id] = GlobalKey();
+      }
+
+      if (!_valueKeys.containsKey(childProperties.id) &&
+          childProperties.type != WidgetType.container &&
+          childProperties.type != WidgetType.text) {
+        _valueKeys[childProperties.id] = ValueKey(childProperties.id);
       }
 
       Widget childWidget = GestureDetector(
@@ -210,7 +219,9 @@ class _WorkAreaState extends State<WorkArea> {
           },
           builder: (context, candidateData, rejectedData) {
             return Container(
-              key: _widgetKeys[childProperties.id], // 자식 위젯에 GlobalKey 부착
+              key: _globalKeys.containsKey(childProperties.id)
+                  ? _globalKeys[childProperties.id] // GlobalKey 사용
+                  : _valueKeys[childProperties.id], // ValueKey 사용
               width: childProperties.width,
               height: childProperties.height,
               color: childProperties.color,
@@ -229,7 +240,6 @@ class _WorkAreaState extends State<WorkArea> {
         ),
       );
 
-      // Flex 레이아웃일 경우
       if (parentProperties.layoutType == LayoutType.row ||
           parentProperties.layoutType == LayoutType.column) {
         return Expanded(
@@ -252,15 +262,13 @@ class _WorkAreaState extends State<WorkArea> {
     }
 
     if (selectedWidget != null) {
-      // 선택된 위젯의 실제 렌더링 크기와 위치를 가져옴
-      final key = _widgetKeys[selectedWidget.id];
+      final key = _globalKeys[selectedWidget.id];
       if (key != null && key.currentContext != null) {
         final RenderBox renderBox =
             key.currentContext!.findRenderObject() as RenderBox;
         final size = renderBox.size;
         final offset = renderBox.localToGlobal(Offset.zero);
 
-        // 실제 크기와 위치를 사용해 가이드라인을 그릴 OverlayEntry 생성
         _guidelineOverlay =
             _buildOverlay(selectedWidget, size, offset, selectedWidgetModel);
         Overlay.of(context).insert(_guidelineOverlay!);
@@ -268,19 +276,16 @@ class _WorkAreaState extends State<WorkArea> {
     }
   }
 
-  // OverlayEntry로 가이드라인을 생성하는 함수
   OverlayEntry _buildOverlay(WidgetProperties properties, Size size,
       Offset offset, SelectedWidgetModel selectedWidgetModel) {
     return OverlayEntry(
       builder: (context) => Stack(
         children: [
-          // 가이드라인 자체
           Positioned(
             left: offset.dx,
             top: offset.dy,
             child: IgnorePointer(
-              ignoring: true, // 가이드라인은 이벤트를 무시하도록 설정
-              
+              ignoring: true,
               child: Container(
                 width: size.width,
                 height: size.height,
@@ -293,13 +298,11 @@ class _WorkAreaState extends State<WorkArea> {
               ),
             ),
           ),
-          // 라벨을 가이드라인 위쪽에 배치
           Positioned(
             left: offset.dx,
-            top: offset.dy - 30, // Y축으로 위로 이동 (가이드라인 위로)
+            top: offset.dy - 30,
             child: GestureDetector(
               onTap: () {
-                // 라벨 클릭 시 해당 객체 선택
                 selectedWidgetModel.clearSelection();
                 selectedWidgetModel.selectWidget(properties);
               },
@@ -316,7 +319,7 @@ class _WorkAreaState extends State<WorkArea> {
                     color: Colors.black,
                     fontSize: 14,
                     fontWeight: FontWeight.normal,
-                    decoration: TextDecoration.none, // 밑줄 제거
+                    decoration: TextDecoration.none,
                   ),
                 ),
               ),
