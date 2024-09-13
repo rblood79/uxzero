@@ -14,16 +14,11 @@ class WorkArea extends StatefulWidget {
 class _WorkAreaState extends State<WorkArea> {
   OverlayEntry? _guidelineOverlay;
 
-  // GlobalKey는 크기와 위치를 추적해야 하는 위젯에만 사용
   final Map<String, GlobalKey<State<StatefulWidget>>> _globalKeys = {};
-
-  // 나머지 위젯은 ValueKey로 관리
   final Map<String, ValueKey<String>> _valueKeys = {};
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
     return LayoutBuilder(
       builder: (context, constraints) {
         return Center(
@@ -35,7 +30,6 @@ class _WorkAreaState extends State<WorkArea> {
                 _updateGuidelineOverlay(selectedWidgetModel);
               });
 
-              // 부모 컨테이너에 GlobalKey 또는 ValueKey 부여
               if (!_globalKeys.containsKey(rootContainer.id)) {
                 _globalKeys[rootContainer.id] = GlobalKey();
               }
@@ -51,7 +45,7 @@ class _WorkAreaState extends State<WorkArea> {
                 child: Stack(
                   children: [
                     Container(
-                      key: _globalKeys[rootContainer.id], // GlobalKey 사용
+                      key: _globalKeys[rootContainer.id],
                       width: rootContainer.width,
                       height: rootContainer.height,
                       decoration: BoxDecoration(
@@ -89,14 +83,15 @@ class _WorkAreaState extends State<WorkArea> {
                 label: textWidget.label,
                 width: 100,
                 height: 40,
-                color: Colors.transparent,
                 x: 0,
                 y: 0,
+                color: Colors.transparent,
                 border: Border.all(
                   color: Colors.red,
                 ),
                 layoutType: LayoutType.column,
                 type: WidgetType.text,
+                parent: properties, // 부모 참조 설정
               ),
             );
           } else if (details.data is ContainerWidget) {
@@ -107,15 +102,16 @@ class _WorkAreaState extends State<WorkArea> {
                 label: containerWidget.label,
                 width: containerWidget.width,
                 height: containerWidget.height,
-                color: containerWidget.color,
                 x: 0,
                 y: 0,
+                color: containerWidget.color,
                 border: Border.all(
                   color: Colors.black,
                   width: 1.0,
                 ),
                 layoutType: LayoutType.stack,
                 type: WidgetType.container,
+                parent: properties, // 부모 참조 설정
               ),
             );
           }
@@ -188,7 +184,6 @@ class _WorkAreaState extends State<WorkArea> {
       bool isSelected =
           selectedWidgetModel.selectedWidgetProperties == childProperties;
 
-      // GlobalKey와 ValueKey의 구분: 크기 및 위치 추적이 필요한 위젯에만 GlobalKey 사용
       if (!_globalKeys.containsKey(childProperties.id) &&
           (childProperties.type == WidgetType.container ||
               childProperties.type == WidgetType.text)) {
@@ -220,8 +215,8 @@ class _WorkAreaState extends State<WorkArea> {
           builder: (context, candidateData, rejectedData) {
             return Container(
               key: _globalKeys.containsKey(childProperties.id)
-                  ? _globalKeys[childProperties.id] // GlobalKey 사용
-                  : _valueKeys[childProperties.id], // ValueKey 사용
+                  ? _globalKeys[childProperties.id]
+                  : _valueKeys[childProperties.id],
               width: childProperties.width,
               height: childProperties.height,
               color: childProperties.color,
@@ -252,87 +247,154 @@ class _WorkAreaState extends State<WorkArea> {
     }).toList();
   }
 
+  // GUIDEIN 플래그를 추가하여 모든 계층을 표시할지 상위 부모까지만 표시할지 제어
+  static const bool guideIn = true; // true: 모든 계층 부모 표시, false: 상위 부모까지만 표시
+
   // 가이드라인 Overlay 업데이트 함수
   void _updateGuidelineOverlay(SelectedWidgetModel selectedWidgetModel) {
     final selectedWidget = selectedWidgetModel.selectedWidgetProperties;
 
+    // 기존 Overlay가 있으면 제거
     if (_guidelineOverlay != null) {
       _guidelineOverlay!.remove();
       _guidelineOverlay = null;
     }
 
+    // 선택된 위젯이 있을 경우
     if (selectedWidget != null) {
-      final key = _globalKeys[selectedWidget.id];
-      if (key != null && key.currentContext != null) {
-        final RenderBox renderBox =
-            key.currentContext!.findRenderObject() as RenderBox;
-        final size = renderBox.size;
-        final offset = renderBox.localToGlobal(Offset.zero);
+      List<_OverlayInfo> overlayInfoList = [];
 
-        _guidelineOverlay =
-            _buildOverlay(selectedWidget, size, offset, selectedWidgetModel);
-        Overlay.of(context).insert(_guidelineOverlay!);
+      // 선택된 객체부터 상위 부모까지 추적
+      WidgetProperties? currentWidget = selectedWidget;
+      int depth = 0; // 깊이를 추적하여 플래그에 따른 처리 수행
+      while (currentWidget != null) {
+        final key = _globalKeys[currentWidget.id];
+        if (key != null && key.currentContext != null) {
+          final RenderBox renderBox =
+              key.currentContext!.findRenderObject() as RenderBox;
+          final size = renderBox.size;
+          final offset = renderBox.localToGlobal(Offset.zero);
+
+          // 상위 객체 정보 저장 (위치, 크기)
+          overlayInfoList.add(_OverlayInfo(
+            properties: currentWidget,
+            size: size,
+            offset: offset,
+          ));
+        }
+
+        // 플래그가 false일 경우, 선택된 객체와 부모만 추적 후 종료
+        if (!guideIn && depth >= 1) {
+          break;
+        }
+
+        currentWidget = currentWidget.parent; // 상위 객체로 이동
+        depth++; // 깊이 증가
       }
+
+      // 가이드라인 및 라벨 표시
+      _guidelineOverlay =
+          _buildMultipleOverlay(overlayInfoList, selectedWidgetModel);
+      Overlay.of(context).insert(_guidelineOverlay!);
     }
   }
 
-  OverlayEntry _buildOverlay(WidgetProperties properties, Size size,
-      Offset offset, SelectedWidgetModel selectedWidgetModel) {
-    return OverlayEntry(
-      builder: (context) => Stack(
-        children: [
-          Positioned(
-            left: offset.dx,
-            top: offset.dy,
-            child: IgnorePointer(
-              ignoring: true,
-              child: Container(
-                width: size.width,
-                height: size.height,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.lightBlueAccent,
-                    width: 2.0,
+  OverlayEntry _buildMultipleOverlay(List<_OverlayInfo> overlayInfoList,
+    SelectedWidgetModel selectedWidgetModel) {
+  
+  // 선택된 객체를 마지막에 그리기 위해 배열에서 선택된 객체를 제거하고 다시 추가
+  final selectedOverlayInfo = overlayInfoList.removeAt(0); // 선택된 객체는 항상 첫 번째
+  overlayInfoList.add(selectedOverlayInfo); // 선택된 객체를 마지막에 추가
+
+  return OverlayEntry(
+    builder: (context) => Stack(
+      children: overlayInfoList.asMap().entries.map((entry) {
+        final index = entry.key;
+        final overlayInfo = entry.value;
+
+        // 가이드라인 색상 리스트 (깊이에 따라 색상 변경)
+        final colors = [
+          Colors.red,
+          Colors.orange,
+          Colors.green,
+          Colors.blue,
+          Colors.purple
+        ];
+        final color = colors[index % colors.length]; // 계층 깊이에 따라 색상 순환
+
+        return Stack(
+          children: [
+            // 가이드라인 표시
+            Positioned(
+              left: overlayInfo.offset.dx,
+              top: overlayInfo.offset.dy,
+              child: IgnorePointer(
+                ignoring: true,
+                child: Container(
+                  width: overlayInfo.size.width,
+                  height: overlayInfo.size.height,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: color,
+                      width: 2.0,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          Positioned(
-            left: offset.dx,
-            top: offset.dy - 30,
-            child: GestureDetector(
-              onTap: () {
-                selectedWidgetModel.clearSelection();
-                selectedWidgetModel.selectWidget(properties);
-              },
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                decoration: BoxDecoration(
-                  color: Colors.lightBlueAccent,
-                  borderRadius: BorderRadius.circular(0.0),
-                ),
-                child: Text(
-                  properties.label,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal,
-                    decoration: TextDecoration.none,
+            // 각 계층 객체의 레이블 표시 (현재는 나중에 처리 예정)
+            Positioned(
+              left: overlayInfo.offset.dx,
+              top: overlayInfo.offset.dy - 30, // 레이블 위치 조정은 나중에 적용
+              child: GestureDetector(
+                onTap: () {
+                  selectedWidgetModel.clearSelection();
+                  selectedWidgetModel.selectWidget(overlayInfo.properties);
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 8.0),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(1.0), // 가이드라인 색상에 맞춘 배경
+                    borderRadius: BorderRadius.circular(0.0),
+                  ),
+                  child: Text(
+                    overlayInfo.properties.label,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal,
+                      decoration: TextDecoration.none,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
+          ],
+        );
+      }).toList(),
+    ),
+  );
+}
+
+
 
   @override
   void dispose() {
     _guidelineOverlay?.remove();
     super.dispose();
   }
+}
+
+// 상위 객체들의 정보를 담을 클래스
+class _OverlayInfo {
+  final WidgetProperties properties;
+  final Size size;
+  final Offset offset;
+
+  _OverlayInfo({
+    required this.properties,
+    required this.size,
+    required this.offset,
+  });
 }

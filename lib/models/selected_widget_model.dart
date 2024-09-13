@@ -206,6 +206,7 @@ class WidgetProperties {
   TextBaseline? textBaseline;
   int flex;
   WidgetType type;
+  WidgetProperties? parent; // 부모 참조 필드 추가
 
   WidgetProperties({
     required this.id,
@@ -223,8 +224,10 @@ class WidgetProperties {
     this.flex = 0,
     this.type = WidgetType.container,
     List<WidgetProperties>? children,
+    this.parent, // 부모 초기화
   }) : children = children ?? [];
 
+  // copyWith 메서드에서 부모 참조 처리
   WidgetProperties copyWith({
     String? id,
     String? label,
@@ -241,6 +244,7 @@ class WidgetProperties {
     TextBaseline? textBaseline,
     int? flex,
     WidgetType? type,
+    WidgetProperties? parent, // 부모 참조 copyWith에 추가
   }) {
     return WidgetProperties(
       id: id ?? this.id,
@@ -253,15 +257,20 @@ class WidgetProperties {
       y: y ?? this.y,
       layoutType: layoutType ?? this.layoutType,
       children: children != null
-          ? List<WidgetProperties>.from(children.map((child) => child.copyWith()))
-          : List<WidgetProperties>.from(this.children.map((child) => child.copyWith())),
+          ? List<WidgetProperties>.from(
+              children.map((child) => child.copyWith(parent: this))) // 자식에게 부모 참조 설정
+          : List<WidgetProperties>.from(
+              this.children.map((child) => child.copyWith(parent: this))), // 자식에게 부모 참조 유지
       mainAxisAlignment: mainAxisAlignment ?? this.mainAxisAlignment,
       crossAxisAlignment: crossAxisAlignment ?? this.crossAxisAlignment,
       textBaseline: textBaseline ?? this.textBaseline,
       flex: flex ?? this.flex,
       type: type ?? this.type,
+      parent: parent ?? this.parent, // 부모 참조 유지
     );
   }
 
+  // JSON serialization 메서드 (추후 확장을 위해 존재)
   toJson() {}
 }
+
