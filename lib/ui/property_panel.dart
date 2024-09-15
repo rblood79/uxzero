@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:remixicon/remixicon.dart';
 import 'package:provider/provider.dart';
+import 'package:remixicon/remixicon.dart';
 import '../models/selected_widget_model.dart';
 
 class PropertyPanel extends StatefulWidget {
@@ -52,12 +52,14 @@ class _PropertyPanelState extends State<PropertyPanel> {
       padding: const EdgeInsets.all(16.0),
       child: Consumer<SelectedWidgetModel>(
         builder: (context, selectedWidgetModel, child) {
-          final selectedWidget = selectedWidgetModel.selectedWidgetProperties;
-          if (selectedWidget == null) {
+          final selectedWidgets = selectedWidgetModel.selectedWidgetProperties;
+
+          // 선택된 위젯이 없는 경우
+          if (selectedWidgets.isEmpty) {
             return const Text('위젯을 선택하세요');
           }
 
-          // 필요할 때만 컨트롤러 업데이트
+          final selectedWidget = selectedWidgets.first;
           updateControllers(selectedWidget);
 
           final bool hasText = _hasTextWidget(selectedWidget);
@@ -130,7 +132,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                         },
                       ),
                     ),
-                    const SizedBox(width: 16), // 두 TextField 사이에 간격 추가
+                    const SizedBox(width: 16),
                     Expanded(
                       child: TextField(
                         decoration: const InputDecoration(
@@ -151,34 +153,12 @@ class _PropertyPanelState extends State<PropertyPanel> {
                   ],
                 ),
                 const SizedBox(height: 16),
+
                 // 색상 선택
                 const Text('Background Color'),
                 DropdownButton<Color>(
-                  value: <Color>[
-                    Colors.transparent,
-                    Colors.red,
-                    Colors.green,
-                    Colors.blue,
-                    Colors.yellow
-                  ].contains(selectedWidget.color)
-                      ? selectedWidget.color
-                      : Colors.red, // 기본 색상 설정
-                  items: <Color>[
-                    Colors.transparent,
-                    Colors.red,
-                    Colors.green,
-                    Colors.blue,
-                    Colors.yellow
-                  ].map((Color color) {
-                    return DropdownMenuItem<Color>(
-                      value: color,
-                      child: Container(
-                        width: 100,
-                        height: 20,
-                        color: color,
-                      ),
-                    );
-                  }).toList(),
+                  value: _getValidColor(selectedWidget.color),
+                  items: _buildColorDropdownItems(),
                   onChanged: (Color? newColor) {
                     if (newColor != null) {
                       selectedWidgetModel.updateColor(newColor);
@@ -187,7 +167,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                 ),
                 const SizedBox(height: 16),
 
-                // LayoutType 선택 (ToggleButtons)
+                // 레이아웃 타입 변경
                 const Text('Layout Type'),
                 ToggleButtons(
                   isSelected: [
@@ -230,23 +210,48 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     Icon(Remix.list_check), // List
                   ],
                 ),
-
                 const SizedBox(height: 16),
 
-                // MainAxisAlignment 선택 (ToggleButtons)
+                // 텍스트 위젯인 경우만 표시
+                if (hasText) ...[
+                  const Text('Font Size'),
+                  Slider(
+                    min: 8,
+                    max: 64,
+                    value: selectedWidget.fontSize ?? 12.0,
+                    onChanged: (value) {
+                      selectedWidgetModel.updateFontSize(value);
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  const Text('Text Alignment'),
+                  DropdownButton<TextAlign>(
+                    value: selectedWidget.textAlign ?? TextAlign.left,
+                    items: TextAlign.values.map((TextAlign align) {
+                      return DropdownMenuItem<TextAlign>(
+                        value: align,
+                        child: Text(align.toString().split('.').last),
+                      );
+                    }).toList(),
+                    onChanged: (TextAlign? newAlign) {
+                      if (newAlign != null) {
+                        selectedWidgetModel.updateTextAlign(newAlign);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                ],
+
+                // MainAxisAlignment 선택
                 const Text('Main Axis Alignment'),
                 ToggleButtons(
                   isSelected: [
                     selectedWidget.mainAxisAlignment == MainAxisAlignment.start,
-                    selectedWidget.mainAxisAlignment ==
-                        MainAxisAlignment.center,
+                    selectedWidget.mainAxisAlignment == MainAxisAlignment.center,
                     selectedWidget.mainAxisAlignment == MainAxisAlignment.end,
-                    selectedWidget.mainAxisAlignment ==
-                        MainAxisAlignment.spaceBetween,
-                    selectedWidget.mainAxisAlignment ==
-                        MainAxisAlignment.spaceAround,
-                    selectedWidget.mainAxisAlignment ==
-                        MainAxisAlignment.spaceEvenly,
+                    selectedWidget.mainAxisAlignment == MainAxisAlignment.spaceBetween,
+                    selectedWidget.mainAxisAlignment == MainAxisAlignment.spaceAround,
+                    selectedWidget.mainAxisAlignment == MainAxisAlignment.spaceEvenly,
                   ],
                   onPressed: (int index) {
                     MainAxisAlignment newAlignment;
@@ -280,20 +285,14 @@ class _PropertyPanelState extends State<PropertyPanel> {
                 ),
                 const SizedBox(height: 16),
 
-                // CrossAxisAlignment 선택 (ToggleButtons)
+                // CrossAxisAlignment 선택
                 const Text('Cross Axis Alignment'),
                 ToggleButtons(
                   isSelected: [
-                    selectedWidget.crossAxisAlignment ==
-                        CrossAxisAlignment.start,
-                    selectedWidget.crossAxisAlignment ==
-                        CrossAxisAlignment.center,
+                    selectedWidget.crossAxisAlignment == CrossAxisAlignment.start,
+                    selectedWidget.crossAxisAlignment == CrossAxisAlignment.center,
                     selectedWidget.crossAxisAlignment == CrossAxisAlignment.end,
-                    selectedWidget.crossAxisAlignment ==
-                        CrossAxisAlignment.stretch,
-                    selectedWidget.crossAxisAlignment ==
-                            CrossAxisAlignment.baseline &&
-                        hasText, // Baseline 비활성화 조건 추가
+                    selectedWidget.crossAxisAlignment == CrossAxisAlignment.stretch,
                   ],
                   onPressed: (int index) {
                     CrossAxisAlignment newAlignment;
@@ -303,20 +302,9 @@ class _PropertyPanelState extends State<PropertyPanel> {
                       newAlignment = CrossAxisAlignment.center;
                     } else if (index == 2) {
                       newAlignment = CrossAxisAlignment.end;
-                    } else if (index == 3) {
-                      newAlignment = CrossAxisAlignment.stretch;
-                    } else if (index == 4 && hasText) {
-                      newAlignment = CrossAxisAlignment.baseline;
                     } else {
-                      // 텍스트가 없으면 Baseline 선택 금지
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content:
-                                Text('Baseline 정렬은 텍스트가 있는 경우에만 사용 가능합니다.')),
-                      );
-                      return;
+                      newAlignment = CrossAxisAlignment.stretch;
                     }
-
                     selectedWidgetModel.updateCrossAxisAlignment(newAlignment);
                   },
                   constraints: const BoxConstraints(
@@ -328,7 +316,6 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     Icon(Remix.align_item_horizontal_center_line), // Center
                     Icon(Remix.align_item_bottom_line), // End
                     Icon(Remix.flip_vertical_2_line), // Stretch
-                    Icon(Remix.t_box_line), // Baseline (조건에 따라 비활성화)
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -357,5 +344,42 @@ class _PropertyPanelState extends State<PropertyPanel> {
       return true;
     }
     return widget.children.any(_hasTextWidget); // 자식 위젯도 재귀적으로 확인
+  }
+
+  // 색상 목록 생성 함수
+  List<DropdownMenuItem<Color>> _buildColorDropdownItems() {
+    return <Color>[
+      Colors.transparent,
+      Colors.red,
+      Colors.green,
+      Colors.blue,
+      Colors.yellow
+    ].map((Color color) {
+      return DropdownMenuItem<Color>(
+        value: color,
+        child: Container(
+          width: 100,
+          height: 20,
+          color: color,
+        ),
+      );
+    }).toList();
+  }
+
+  // 선택된 색상이 Dropdown에 포함되지 않을 경우 처리
+  Color _getValidColor(Color selectedColor) {
+    final List<Color> availableColors = [
+      Colors.transparent,
+      Colors.red,
+      Colors.green,
+      Colors.blue,
+      Colors.yellow,
+    ];
+
+    // 선택된 색상이 목록에 없는 경우 기본값으로 Colors.red 반환
+    if (!availableColors.contains(selectedColor)) {
+      return Colors.red;
+    }
+    return selectedColor;
   }
 }
