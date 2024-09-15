@@ -17,8 +17,8 @@ class _WorkAreaState extends State<WorkArea> {
   final Map<String, GlobalKey<State<StatefulWidget>>> _globalKeys = {};
   final Map<String, ValueKey<String>> _valueKeys = {};
 
-  Offset? _dragStartPosition; // 드래그 시작점
-  Offset? _dragEndPosition; // 드래그 종료점
+  Offset? _dragStartPosition; // 드래그 시작점 (Global)
+  Offset? _dragEndPosition; // 드래그 종료점 (Global)
   bool _isDragging = false; // 드래그 상태 플래그
 
   @override
@@ -47,25 +47,21 @@ class _WorkAreaState extends State<WorkArea> {
                 },
                 onPanStart: (details) {
                   setState(() {
-                    // 드래그 시작 위치를 globalPosition을 local로 변환
-                    final renderBox = context.findRenderObject() as RenderBox;
                     _dragStartPosition = details.globalPosition; // 변경
-                    _dragEndPosition =
-                        _dragStartPosition; // 드래그 시작점과 끝점을 동일하게 설정
+                    _dragEndPosition = _dragStartPosition; // 동일하게 설정
                     _isDragging = true;
                   });
                 },
                 onPanUpdate: (details) {
                   setState(() {
-                    // 드래그 중 위치를 globalPosition으로 유지
-                    _dragEndPosition = details.globalPosition; // 변경
+                    _dragEndPosition = details.globalPosition; // 유지
                   });
                 },
                 onPanEnd: (details) {
                   setState(() {
                     _isDragging = false;
                     _selectWidgetsInDragArea(selectedWidgetModel);
-                    _dragStartPosition = null; // 드래그 끝나면 시작점과 끝점을 null로
+                    _dragStartPosition = null; // 드래그 끝나면 null로
                     _dragEndPosition = null;
                   });
                 },
@@ -75,21 +71,14 @@ class _WorkAreaState extends State<WorkArea> {
                       key: _globalKeys[rootContainer.id],
                       width: rootContainer.width,
                       height: rootContainer.height,
-                      decoration: BoxDecoration(
-                        color: rootContainer.color,
-                        border: Border.all(
-                          color: Colors.grey,
-                          width: 1.0,
-                        ),
-                      ),
+                      decoration: rootContainer.decoration, // 변경: decoration을 사용
                       child: _buildDragTargetForContainer(
                           rootContainer, selectedWidgetModel),
                     ),
-                    // 드래그 중일 때만 영역 표시 (좌표 보정)
                     if (_isDragging &&
                         _dragStartPosition != null &&
                         _dragEndPosition != null)
-                      _buildDragSelectionBox(), // 드래그 영역만 분리하여 리빌드
+                      _buildDragSelectionBox(context), // 로컬 좌표를 사용하여 수정
                   ],
                 ),
               );
@@ -100,19 +89,20 @@ class _WorkAreaState extends State<WorkArea> {
     );
   }
 
-  // 드래그 영역만 그리기
-  Widget _buildDragSelectionBox() {
+  // 드래그 영역을 로컬 좌표로 변환한 후 그리기
+  Widget _buildDragSelectionBox(BuildContext context) {
+    final renderBox = context.findRenderObject() as RenderBox;
+    final localStart = renderBox.globalToLocal(_dragStartPosition!);
+    final localEnd = renderBox.globalToLocal(_dragEndPosition!);
+
     return Positioned.fromRect(
-      rect: Rect.fromPoints(
-        _dragStartPosition!,
-        _dragEndPosition!,
-      ),
+      rect: Rect.fromPoints(localStart, localEnd), // 로컬 좌표로 변경된 좌표 사용
       child: IgnorePointer(
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.blue.withOpacity(0.3),
+            color: Colors.lightBlue.withOpacity(0.3),
             border: Border.all(
-              color: Colors.blue,
+              color: Colors.lightBlue,
               width: 2,
             ),
           ),
@@ -125,31 +115,26 @@ class _WorkAreaState extends State<WorkArea> {
   void _selectWidgetsInDragArea(SelectedWidgetModel selectedWidgetModel) {
     if (_dragStartPosition == null || _dragEndPosition == null) return;
 
-    // 드래그 영역의 Rect를 globalPosition 기준으로 설정
     final dragArea = Rect.fromPoints(_dragStartPosition!, _dragEndPosition!);
 
     selectedWidgetModel.clearSelection(); // 기존 선택 초기화
 
-    // rootContainer의 자식들만 확인
     for (var child in selectedWidgetModel.rootContainer.children) {
       _selectWidgetsInContainer(child, dragArea, selectedWidgetModel);
     }
   }
 
-  // 재귀적으로 자식 위젯을 확인하며 드래그 영역에 속하는지 판단
   void _selectWidgetsInContainer(WidgetProperties container, Rect dragArea,
       SelectedWidgetModel selectedWidgetModel) {
     final key = _globalKeys[container.id];
     if (key != null && key.currentContext != null) {
       final renderBox = key.currentContext!.findRenderObject();
       if (renderBox == null || renderBox is! RenderBox) {
-        return; // RenderBox가 null이거나 잘못된 타입일 때 처리
+        return;
       }
-      // 위젯의 위치를 전역 좌표로 변환
       final position = renderBox.localToGlobal(Offset.zero);
       final size = renderBox.size;
 
-      // 위젯의 Rect 계산
       final widgetRect = Rect.fromLTWH(
         position.dx,
         position.dy,
@@ -157,13 +142,11 @@ class _WorkAreaState extends State<WorkArea> {
         size.height,
       );
 
-      // 드래그 박스와 위젯의 Rect가 겹치는지 확인
       if (dragArea.overlaps(widgetRect)) {
-        selectedWidgetModel.addToSelection(container); // 다중 선택 지원
+        selectedWidgetModel.addToSelection(container);
       }
     }
 
-    // 자식 위젯도 재귀적으로 처리
     for (var child in container.children) {
       _selectWidgetsInContainer(child, dragArea, selectedWidgetModel);
     }
@@ -182,13 +165,16 @@ class _WorkAreaState extends State<WorkArea> {
               WidgetProperties(
                 id: DateTime.now().toString(),
                 label: textWidget.label,
-                width: 100,
-                height: 40,
+                width: textWidget.width,
+                height: textWidget.height,
                 x: 0,
                 y: 0,
-                color: Colors.transparent,
-                border: Border.all(
-                  color: Colors.red,
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  border: Border.all(
+                    color: Colors.grey,
+                    width: 0.5,
+                  ),
                 ),
                 layoutType: LayoutType.column,
                 type: WidgetType.text,
@@ -205,11 +191,7 @@ class _WorkAreaState extends State<WorkArea> {
                 height: containerWidget.height,
                 x: 0,
                 y: 0,
-                color: containerWidget.color,
-                border: Border.all(
-                  color: Colors.black,
-                  width: 1.0,
-                ),
+                decoration: containerWidget.decoration,
                 layoutType: LayoutType.stack,
                 type: WidgetType.container,
                 parent: properties,
@@ -234,7 +216,8 @@ class _WorkAreaState extends State<WorkArea> {
         return Container(
           width: properties.width,
           height: properties.height,
-          color: properties.color,
+          decoration:
+              properties.decoration, // 변경: decoration 사용
           child: _buildLayoutWidget(properties, selectedWidgetModel),
         );
       },
@@ -319,7 +302,7 @@ class _WorkAreaState extends State<WorkArea> {
                   : _valueKeys[childProperties.id],
               width: childProperties.width,
               height: childProperties.height,
-              color: childProperties.color,
+              decoration: childProperties.decoration, // 수정: BoxDecoration 사용
               child: childProperties.type == WidgetType.text
                   ? Center(
                       child: Text(

@@ -7,16 +7,18 @@ class SelectedWidgetModel extends ChangeNotifier {
   // rootContainer를 상태로 관리
   WidgetProperties rootContainer = WidgetProperties(
     id: 'page_01',
-    label: 'Container_01',
+    label: 'page_01',
     width: 1200,
     height: 600,
-    color: Colors.white,
+    decoration: BoxDecoration(
+      color: Colors.white,
+      border: Border.all(
+        color: Colors.grey,
+        width: 0.5,
+      ),
+    ),
     x: 0,
     y: 0,
-    border: Border.all(
-      color: Colors.black,
-      width: 1.0,
-    ),
     layoutType: LayoutType.row,
     children: [],
   );
@@ -91,13 +93,29 @@ class SelectedWidgetModel extends ChangeNotifier {
   void updateColor(Color color) {
     if (selectedWidgetProperties.isNotEmpty) {
       for (var selectedWidget in selectedWidgetProperties) {
-        selectedWidget.color = color;
+        selectedWidget.decoration = selectedWidget.decoration.copyWith(
+          color: color,
+        );
       }
       addToHistory(); // 상태 변경 시 이력에 추가
       notifyListeners();
     }
   }
 
+  // 테두리(border) 업데이트
+  void updateBorder(Border border) {
+    if (selectedWidgetProperties.isNotEmpty) {
+      for (var selectedWidget in selectedWidgetProperties) {
+        selectedWidget.decoration = selectedWidget.decoration.copyWith(
+          border: border,
+        );
+      }
+      addToHistory(); // 상태 변경 시 이력에 추가
+      notifyListeners();
+    }
+  }
+
+  // 폰트 크기 업데이트
   void updateFontSize(double fontSize) {
     if (selectedWidgetProperties.isNotEmpty) {
       for (var selectedWidget in selectedWidgetProperties) {
@@ -108,7 +126,7 @@ class SelectedWidgetModel extends ChangeNotifier {
     }
   }
 
-// 레이아웃 타입 업데이트
+  // 레이아웃 타입 업데이트
   void updateLayoutType(LayoutType layoutType) {
     if (selectedWidgetProperties.isNotEmpty) {
       for (var selectedWidget in selectedWidgetProperties) {
@@ -119,11 +137,11 @@ class SelectedWidgetModel extends ChangeNotifier {
     }
   }
 
+  // 텍스트 정렬 업데이트
   void updateTextAlign(TextAlign textAlign) {
     if (selectedWidgetProperties.isNotEmpty) {
       for (var selectedWidget in selectedWidgetProperties) {
-        print(selectedWidget.textAlign);
-         selectedWidget.textAlign = textAlign;
+        selectedWidget.textAlign = textAlign;
       }
       addToHistory(); // 상태 변경 시 이력에 추가
       notifyListeners(); // 상태 변경 후 알림
@@ -230,6 +248,7 @@ class SelectedWidgetModel extends ChangeNotifier {
   }
 }
 
+
 // LayoutType 열거형
 enum LayoutType {
   container,
@@ -253,8 +272,7 @@ class WidgetProperties {
   String label;
   double width;
   double height;
-  Color color;
-  Border border;
+  BoxDecoration decoration; // color와 border를 포함하는 BoxDecoration으로 수정
   double x;
   double y;
   LayoutType layoutType;
@@ -275,8 +293,7 @@ class WidgetProperties {
     required this.label,
     required this.width,
     required this.height,
-    required this.color,
-    required this.border,
+    required this.decoration, // BoxDecoration 필드 추가
     required this.x,
     required this.y,
     required this.layoutType,
@@ -297,8 +314,7 @@ class WidgetProperties {
     String? label,
     double? width,
     double? height,
-    Color? color,
-    Border? border,
+    BoxDecoration? decoration, // BoxDecoration 추가
     double? x,
     double? y,
     LayoutType? layoutType,
@@ -317,8 +333,7 @@ class WidgetProperties {
       label: label ?? this.label,
       width: width ?? this.width,
       height: height ?? this.height,
-      color: color ?? this.color,
-      border: border ?? this.border,
+      decoration: decoration ?? this.decoration, // BoxDecoration 유지
       x: x ?? this.x,
       y: y ?? this.y,
       layoutType: layoutType ?? this.layoutType,
@@ -345,8 +360,10 @@ class WidgetProperties {
       'label': label,
       'width': width,
       'height': height,
-      'color': color.value,
-      'border': border.toString(),
+      'decoration': {
+        'color': decoration.color?.value,
+        'border': decoration.border?.toString(),
+      }, // BoxDecoration의 color와 border 정보를 JSON으로 변환
       'x': x,
       'y': y,
       'layoutType': layoutType.toString(),
@@ -361,3 +378,5 @@ class WidgetProperties {
     };
   }
 }
+
+

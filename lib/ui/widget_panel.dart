@@ -24,12 +24,13 @@ class WidgetPanel extends StatelessWidget {
       widget: ContainerWidget(
         width: 100,
         height: 100,
-        color: Colors.amber,
+        color: Colors.black,
         label: 'Container',
         decoration: BoxDecoration(
+          color: Colors.transparent,
           border: Border.all(
-            color: Colors.black,
-            width: 1.0,
+            color: Colors.grey,
+            width: 0.5,
           ),
         ),
       ),
@@ -39,8 +40,8 @@ class WidgetPanel extends StatelessWidget {
       label: 'Text',
       widget: const TextWidget(
         width: 100,
-        height: 20,
-        color: Colors.amber,
+        height: 40,
+        color: Colors.black,
         label: 'Text',
       ),
     ),

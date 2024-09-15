@@ -154,14 +154,34 @@ class _PropertyPanelState extends State<PropertyPanel> {
                 ),
                 const SizedBox(height: 16),
 
-                // 색상 선택
+                // 색상 선택 (Background Color)
                 const Text('Background Color'),
                 DropdownButton<Color>(
-                  value: _getValidColor(selectedWidget.color),
+                  value: _getValidColor(selectedWidget.decoration?.color),
                   items: _buildColorDropdownItems(),
                   onChanged: (Color? newColor) {
                     if (newColor != null) {
                       selectedWidgetModel.updateColor(newColor);
+                    }
+                  },
+                ),
+                const SizedBox(height: 16),
+
+                // 테두리 색상 선택 (Border Color)
+                const Text('Border Color'),
+                DropdownButton<Color>(
+                  value: _getValidColor(
+                      selectedWidget.decoration?.border?.top.color),
+                  items: _buildColorDropdownItems(),
+                  onChanged: (Color? newColor) {
+                    if (newColor != null) {
+                      selectedWidgetModel.updateBorder(
+                        Border.all(
+                          color: newColor,
+                          width: selectedWidget.decoration?.border?.top.width ??
+                              1.0,
+                        ),
+                      );
                     }
                   },
                 ),
@@ -249,9 +269,12 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     selectedWidget.mainAxisAlignment == MainAxisAlignment.start,
                     selectedWidget.mainAxisAlignment == MainAxisAlignment.center,
                     selectedWidget.mainAxisAlignment == MainAxisAlignment.end,
-                    selectedWidget.mainAxisAlignment == MainAxisAlignment.spaceBetween,
-                    selectedWidget.mainAxisAlignment == MainAxisAlignment.spaceAround,
-                    selectedWidget.mainAxisAlignment == MainAxisAlignment.spaceEvenly,
+                    selectedWidget.mainAxisAlignment ==
+                        MainAxisAlignment.spaceBetween,
+                    selectedWidget.mainAxisAlignment ==
+                        MainAxisAlignment.spaceAround,
+                    selectedWidget.mainAxisAlignment ==
+                        MainAxisAlignment.spaceEvenly,
                   ],
                   onPressed: (int index) {
                     MainAxisAlignment newAlignment;
@@ -289,10 +312,13 @@ class _PropertyPanelState extends State<PropertyPanel> {
                 const Text('Cross Axis Alignment'),
                 ToggleButtons(
                   isSelected: [
-                    selectedWidget.crossAxisAlignment == CrossAxisAlignment.start,
-                    selectedWidget.crossAxisAlignment == CrossAxisAlignment.center,
+                    selectedWidget.crossAxisAlignment ==
+                        CrossAxisAlignment.start,
+                    selectedWidget.crossAxisAlignment ==
+                        CrossAxisAlignment.center,
                     selectedWidget.crossAxisAlignment == CrossAxisAlignment.end,
-                    selectedWidget.crossAxisAlignment == CrossAxisAlignment.stretch,
+                    selectedWidget.crossAxisAlignment ==
+                        CrossAxisAlignment.stretch,
                   ],
                   onPressed: (int index) {
                     CrossAxisAlignment newAlignment;
@@ -367,7 +393,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
   }
 
   // 선택된 색상이 Dropdown에 포함되지 않을 경우 처리
-  Color _getValidColor(Color selectedColor) {
+  Color _getValidColor(Color? selectedColor) {
     final List<Color> availableColors = [
       Colors.transparent,
       Colors.red,
@@ -376,8 +402,8 @@ class _PropertyPanelState extends State<PropertyPanel> {
       Colors.yellow,
     ];
 
-    // 선택된 색상이 목록에 없는 경우 기본값으로 Colors.red 반환
-    if (!availableColors.contains(selectedColor)) {
+    // 선택된 색상이 null이거나 목록에 없는 경우 기본값으로 Colors.red 반환
+    if (selectedColor == null || !availableColors.contains(selectedColor)) {
       return Colors.red;
     }
     return selectedColor;
