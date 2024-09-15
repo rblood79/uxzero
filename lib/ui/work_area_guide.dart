@@ -17,6 +17,10 @@ class _WorkAreaState extends State<WorkArea> {
   final Map<String, GlobalKey<State<StatefulWidget>>> _globalKeys = {};
   final Map<String, ValueKey<String>> _valueKeys = {};
 
+  Offset? _dragStartPosition; // 드래그 시작점
+  Offset? _dragEndPosition; // 드래그 종료점
+  bool _isDragging = false; // 드래그 상태 플래그
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -36,11 +40,34 @@ class _WorkAreaState extends State<WorkArea> {
 
               return GestureDetector(
                 onTap: () {
-                  if (selectedWidgetModel.selectedWidgetProperties !=
-                      rootContainer) {
-                    selectedWidgetModel.clearSelection();
-                    selectedWidgetModel.selectWidget(rootContainer);
-                  }
+                  // 단일 선택 시 rootContainer 선택 가능하게 설정
+                  selectedWidgetModel.clearSelection(); // 기존 선택 초기화
+                  selectedWidgetModel
+                      .selectWidget(rootContainer); // rootContainer 선택
+                },
+                onPanStart: (details) {
+                  setState(() {
+                    // 드래그 시작 위치를 globalPosition을 local로 변환
+                    final renderBox = context.findRenderObject() as RenderBox;
+                    _dragStartPosition = details.globalPosition; // 변경
+                    _dragEndPosition =
+                        _dragStartPosition; // 드래그 시작점과 끝점을 동일하게 설정
+                    _isDragging = true;
+                  });
+                },
+                onPanUpdate: (details) {
+                  setState(() {
+                    // 드래그 중 위치를 globalPosition으로 유지
+                    _dragEndPosition = details.globalPosition; // 변경
+                  });
+                },
+                onPanEnd: (details) {
+                  setState(() {
+                    _isDragging = false;
+                    _selectWidgetsInDragArea(selectedWidgetModel);
+                    _dragStartPosition = null; // 드래그 끝나면 시작점과 끝점을 null로
+                    _dragEndPosition = null;
+                  });
                 },
                 child: Stack(
                   children: [
@@ -58,6 +85,11 @@ class _WorkAreaState extends State<WorkArea> {
                       child: _buildDragTargetForContainer(
                           rootContainer, selectedWidgetModel),
                     ),
+                    // 드래그 중일 때만 영역 표시 (좌표 보정)
+                    if (_isDragging &&
+                        _dragStartPosition != null &&
+                        _dragEndPosition != null)
+                      _buildDragSelectionBox(), // 드래그 영역만 분리하여 리빌드
                   ],
                 ),
               );
@@ -66,6 +98,75 @@ class _WorkAreaState extends State<WorkArea> {
         );
       },
     );
+  }
+
+  // 드래그 영역만 그리기
+  Widget _buildDragSelectionBox() {
+    return Positioned.fromRect(
+      rect: Rect.fromPoints(
+        _dragStartPosition!,
+        _dragEndPosition!,
+      ),
+      child: IgnorePointer(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.blue.withOpacity(0.3),
+            border: Border.all(
+              color: Colors.blue,
+              width: 2,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 드래그 영역 내의 위젯 선택 처리
+  void _selectWidgetsInDragArea(SelectedWidgetModel selectedWidgetModel) {
+    if (_dragStartPosition == null || _dragEndPosition == null) return;
+
+    // 드래그 영역의 Rect를 globalPosition 기준으로 설정
+    final dragArea = Rect.fromPoints(_dragStartPosition!, _dragEndPosition!);
+
+    selectedWidgetModel.clearSelection(); // 기존 선택 초기화
+
+    // rootContainer의 자식들만 확인
+    for (var child in selectedWidgetModel.rootContainer.children) {
+      _selectWidgetsInContainer(child, dragArea, selectedWidgetModel);
+    }
+  }
+
+  // 재귀적으로 자식 위젯을 확인하며 드래그 영역에 속하는지 판단
+  void _selectWidgetsInContainer(WidgetProperties container, Rect dragArea,
+      SelectedWidgetModel selectedWidgetModel) {
+    final key = _globalKeys[container.id];
+    if (key != null && key.currentContext != null) {
+      final renderBox = key.currentContext!.findRenderObject();
+      if (renderBox == null || renderBox is! RenderBox) {
+        return; // RenderBox가 null이거나 잘못된 타입일 때 처리
+      }
+      // 위젯의 위치를 전역 좌표로 변환
+      final position = renderBox.localToGlobal(Offset.zero);
+      final size = renderBox.size;
+
+      // 위젯의 Rect 계산
+      final widgetRect = Rect.fromLTWH(
+        position.dx,
+        position.dy,
+        size.width,
+        size.height,
+      );
+
+      // 드래그 박스와 위젯의 Rect가 겹치는지 확인
+      if (dragArea.overlaps(widgetRect)) {
+        selectedWidgetModel.addToSelection(container); // 다중 선택 지원
+      }
+    }
+
+    // 자식 위젯도 재귀적으로 처리
+    for (var child in container.children) {
+      _selectWidgetsInContainer(child, dragArea, selectedWidgetModel);
+    }
   }
 
   Widget _buildDragTargetForContainer(
@@ -91,7 +192,7 @@ class _WorkAreaState extends State<WorkArea> {
                 ),
                 layoutType: LayoutType.column,
                 type: WidgetType.text,
-                parent: properties, // 부모 참조 설정
+                parent: properties,
               ),
             );
           } else if (details.data is ContainerWidget) {
@@ -111,7 +212,7 @@ class _WorkAreaState extends State<WorkArea> {
                 ),
                 layoutType: LayoutType.stack,
                 type: WidgetType.container,
-                parent: properties, // 부모 참조 설정
+                parent: properties,
               ),
             );
           }
@@ -181,8 +282,8 @@ class _WorkAreaState extends State<WorkArea> {
   List<Widget> _buildChildWidgets(WidgetProperties parentProperties,
       SelectedWidgetModel selectedWidgetModel) {
     return parentProperties.children.map((childProperties) {
-      bool isSelected =
-          selectedWidgetModel.selectedWidgetProperties == childProperties;
+      bool isSelected = selectedWidgetModel.selectedWidgetProperties
+          .contains(childProperties); // 다중 선택 여부
 
       if (!_globalKeys.containsKey(childProperties.id) &&
           (childProperties.type == WidgetType.container ||
@@ -198,13 +299,12 @@ class _WorkAreaState extends State<WorkArea> {
 
       Widget childWidget = GestureDetector(
         onTap: () {
-          if (!isSelected) {
-            selectedWidgetModel.clearSelection();
-            selectedWidgetModel.selectWidget(childProperties);
-          }
+          // 기존 선택 상태 초기화 후 클릭한 객체만 선택
+          selectedWidgetModel.clearSelection(); // 기존 선택 해제
+          selectedWidgetModel.selectWidget(childProperties); // 클릭한 객체만 선택
         },
         onLongPress: () {
-          selectedWidgetModel.selectWidget(childProperties);
+          selectedWidgetModel.selectWidget(childProperties); // 선택된 위젯을 삭제
           selectedWidgetModel.deleteSelectedWidget();
         },
         child: DragTarget<Object>(
@@ -224,8 +324,11 @@ class _WorkAreaState extends State<WorkArea> {
                   ? Center(
                       child: Text(
                         childProperties.label,
-                        style:
-                            const TextStyle(fontSize: 12, color: Colors.black),
+                        textAlign: childProperties.textAlign ?? TextAlign.left,
+                        style: TextStyle(
+                          fontSize: childProperties.fontSize ?? 12.0,
+                          color: Colors.black,
+                        ),
                       ),
                     )
                   : _buildDragTargetForContainer(
@@ -247,52 +350,42 @@ class _WorkAreaState extends State<WorkArea> {
     }).toList();
   }
 
-  // GUIDEIN 플래그를 추가하여 모든 계층을 표시할지 상위 부모까지만 표시할지 제어
-  static const bool guideIn = true; // true: 모든 계층 부모 표시, false: 상위 부모까지만 표시
-
-  // 가이드라인 Overlay 업데이트 함수
   void _updateGuidelineOverlay(SelectedWidgetModel selectedWidgetModel) {
-    final selectedWidget = selectedWidgetModel.selectedWidgetProperties;
+    final selectedWidgets = selectedWidgetModel.selectedWidgetProperties;
 
-    // 기존 Overlay가 있으면 제거
     if (_guidelineOverlay != null) {
       _guidelineOverlay!.remove();
       _guidelineOverlay = null;
     }
 
-    // 선택된 위젯이 있을 경우
-    if (selectedWidget != null) {
+    if (selectedWidgets.isNotEmpty) {
       List<_OverlayInfo> overlayInfoList = [];
 
-      // 선택된 객체부터 상위 부모까지 추적
-      WidgetProperties? currentWidget = selectedWidget;
-      int depth = 0; // 깊이를 추적하여 플래그에 따른 처리 수행
-      while (currentWidget != null) {
-        final key = _globalKeys[currentWidget.id];
-        if (key != null && key.currentContext != null) {
-          final RenderBox renderBox =
-              key.currentContext!.findRenderObject() as RenderBox;
-          final size = renderBox.size;
-          final offset = renderBox.localToGlobal(Offset.zero);
+      for (var selectedWidget in selectedWidgets) {
+        WidgetProperties? currentWidget = selectedWidget;
+        int depth = 0;
+        while (currentWidget != null) {
+          final key = _globalKeys[currentWidget.id];
+          if (key != null && key.currentContext != null) {
+            final renderBox = key.currentContext!.findRenderObject();
+            if (renderBox == null || renderBox is! RenderBox) {
+              return; // RenderBox가 null이거나 잘못된 타입일 때 처리
+            }
+            final size = renderBox.size;
+            final offset = renderBox.localToGlobal(Offset.zero);
 
-          // 상위 객체 정보 저장 (위치, 크기)
-          overlayInfoList.add(_OverlayInfo(
-            properties: currentWidget,
-            size: size,
-            offset: offset,
-          ));
+            overlayInfoList.add(_OverlayInfo(
+              properties: currentWidget,
+              size: size,
+              offset: offset,
+            ));
+          }
+
+          currentWidget = currentWidget.parent;
+          depth++;
         }
-
-        // 플래그가 false일 경우, 선택된 객체와 부모만 추적 후 종료
-        if (!guideIn && depth >= 1) {
-          break;
-        }
-
-        currentWidget = currentWidget.parent; // 상위 객체로 이동
-        depth++; // 깊이 증가
       }
 
-      // 가이드라인 및 라벨 표시
       _guidelineOverlay =
           _buildMultipleOverlay(overlayInfoList, selectedWidgetModel);
       Overlay.of(context).insert(_guidelineOverlay!);
@@ -301,17 +394,14 @@ class _WorkAreaState extends State<WorkArea> {
 
   OverlayEntry _buildMultipleOverlay(List<_OverlayInfo> overlayInfoList,
       SelectedWidgetModel selectedWidgetModel) {
-    // 선택된 객체를 마지막에 그리기 위해 배열에서 선택된 객체를 제거하고 다시 추가
-    final selectedOverlayInfo = overlayInfoList.removeAt(0); // 선택된 객체는 항상 첫 번째
-    overlayInfoList.add(selectedOverlayInfo); // 선택된 객체를 마지막에 추가
+    final selectedOverlayInfo = overlayInfoList.removeAt(0);
+    overlayInfoList.add(selectedOverlayInfo);
 
     return OverlayEntry(
       builder: (context) => Stack(
         children: overlayInfoList.asMap().entries.map((entry) {
           final index = entry.key;
           final overlayInfo = entry.value;
-
-          // 가이드라인 색상 리스트 (깊이에 따라 색상 변경)
           final colors = [
             Colors.red,
             Colors.orange,
@@ -321,13 +411,11 @@ class _WorkAreaState extends State<WorkArea> {
             Colors.blue,
             Colors.blueAccent,
             Colors.purple,
-            
           ];
-          final color = colors[index % colors.length]; // 계층 깊이에 따라 색상 순환
+          final color = colors[index % colors.length];
 
           return Stack(
             children: [
-              // 가이드라인 표시
               Positioned(
                 left: overlayInfo.offset.dx,
                 top: overlayInfo.offset.dy,
@@ -345,10 +433,9 @@ class _WorkAreaState extends State<WorkArea> {
                   ),
                 ),
               ),
-              // 각 계층 객체의 레이블 표시 (현재는 나중에 처리 예정)
               Positioned(
                 left: overlayInfo.offset.dx,
-                top: overlayInfo.offset.dy - 30, // 레이블 위치 조정은 나중에 적용
+                top: overlayInfo.offset.dy - 30,
                 child: GestureDetector(
                   onTap: () {
                     selectedWidgetModel.clearSelection();
@@ -358,7 +445,7 @@ class _WorkAreaState extends State<WorkArea> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16.0, vertical: 8.0),
                     decoration: BoxDecoration(
-                      color: color.withOpacity(1.0), // 가이드라인 색상에 맞춘 배경
+                      color: color.withOpacity(1.0),
                       borderRadius: BorderRadius.circular(0.0),
                     ),
                     child: Text(
