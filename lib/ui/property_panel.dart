@@ -234,7 +234,8 @@ class _PropertyPanelState extends State<PropertyPanel> {
 
                 // 텍스트 위젯인 경우만 표시
                 if (hasText) ...[
-                  const Text('Font Size'),
+                  Text(
+                      'Font Size: ${selectedWidget.fontSize?.toStringAsFixed(0) ?? '12'}'),
                   Slider(
                     min: 8,
                     max: 64,
@@ -267,7 +268,8 @@ class _PropertyPanelState extends State<PropertyPanel> {
                 ToggleButtons(
                   isSelected: [
                     selectedWidget.mainAxisAlignment == MainAxisAlignment.start,
-                    selectedWidget.mainAxisAlignment == MainAxisAlignment.center,
+                    selectedWidget.mainAxisAlignment ==
+                        MainAxisAlignment.center,
                     selectedWidget.mainAxisAlignment == MainAxisAlignment.end,
                     selectedWidget.mainAxisAlignment ==
                         MainAxisAlignment.spaceBetween,
