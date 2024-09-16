@@ -71,7 +71,8 @@ class _WorkAreaState extends State<WorkArea> {
                       key: _globalKeys[rootContainer.id],
                       width: rootContainer.width,
                       height: rootContainer.height,
-                      decoration: rootContainer.decoration, // 변경: decoration을 사용
+                      decoration:
+                          rootContainer.decoration, // 변경: decoration을 사용
                       child: _buildDragTargetForContainer(
                           rootContainer, selectedWidgetModel),
                     ),
@@ -103,7 +104,7 @@ class _WorkAreaState extends State<WorkArea> {
             color: Colors.lightBlue.withOpacity(0.3),
             border: Border.all(
               color: Colors.lightBlue,
-              width: 2,
+              width: 1,
             ),
           ),
         ),
@@ -178,6 +179,7 @@ class _WorkAreaState extends State<WorkArea> {
                 ),
                 layoutType: LayoutType.column,
                 type: WidgetType.text,
+                alignment: Alignment.center, // 기본값 설정
                 parent: properties,
               ),
             );
@@ -216,8 +218,7 @@ class _WorkAreaState extends State<WorkArea> {
         return Container(
           width: properties.width,
           height: properties.height,
-          decoration:
-              properties.decoration, // 변경: decoration 사용
+          decoration: properties.decoration, // 변경: decoration 사용
           child: _buildLayoutWidget(properties, selectedWidgetModel),
         );
       },
@@ -304,18 +305,17 @@ class _WorkAreaState extends State<WorkArea> {
               height: childProperties.height,
               decoration: childProperties.decoration, // 수정: BoxDecoration 사용
               child: childProperties.type == WidgetType.text
-                  ? Center(
+                  ? Align(
+                      alignment: childProperties.alignment ?? Alignment.center, // 기본 정렬 설정
                       child: Text(
                         childProperties.label,
-                        textAlign: childProperties.textAlign ?? TextAlign.left,
-                        style: TextStyle(
-                          fontSize: childProperties.fontSize ?? 12.0,
+                        textAlign: childProperties.textAlign ?? TextAlign.center, // 텍스트 정렬
+                        style: TextStyle(fontSize: childProperties.fontSize ?? 12.0,
                           color: Colors.black,
                         ),
                       ),
                     )
-                  : _buildDragTargetForContainer(
-                      childProperties, selectedWidgetModel),
+                  : _buildDragTargetForContainer(childProperties, selectedWidgetModel),
             );
           },
         ),

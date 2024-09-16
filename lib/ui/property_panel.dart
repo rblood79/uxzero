@@ -155,9 +155,9 @@ class _PropertyPanelState extends State<PropertyPanel> {
                 const SizedBox(height: 16),
 
                 // 색상 선택 (Background Color)
-                const Text('Background Color'),
+                const Text('Background Color',style: TextStyle(fontSize: 12, color: Colors.grey),),
                 DropdownButton<Color>(
-                  value: _getValidColor(selectedWidget.decoration?.color),
+                  value: _getValidColor(selectedWidget.decoration.color),
                   items: _buildColorDropdownItems(),
                   onChanged: (Color? newColor) {
                     if (newColor != null) {
@@ -168,17 +168,17 @@ class _PropertyPanelState extends State<PropertyPanel> {
                 const SizedBox(height: 16),
 
                 // 테두리 색상 선택 (Border Color)
-                const Text('Border Color'),
+                const Text('Border Color',style: TextStyle(fontSize: 12, color: Colors.grey),),
                 DropdownButton<Color>(
                   value: _getValidColor(
-                      selectedWidget.decoration?.border?.top.color),
+                      selectedWidget.decoration.border?.top.color),
                   items: _buildColorDropdownItems(),
                   onChanged: (Color? newColor) {
                     if (newColor != null) {
                       selectedWidgetModel.updateBorder(
                         Border.all(
                           color: newColor,
-                          width: selectedWidget.decoration?.border?.top.width ??
+                          width: selectedWidget.decoration.border?.top.width ??
                               1.0,
                         ),
                       );
@@ -188,54 +188,67 @@ class _PropertyPanelState extends State<PropertyPanel> {
                 const SizedBox(height: 16),
 
                 // 레이아웃 타입 변경
-                const Text('Layout Type'),
-                ToggleButtons(
-                  isSelected: [
-                    selectedWidget.layoutType == LayoutType.row,
-                    selectedWidget.layoutType == LayoutType.column,
-                    selectedWidget.layoutType == LayoutType.stack,
-                    selectedWidget.layoutType == LayoutType.grid,
-                    selectedWidget.layoutType == LayoutType.wrap,
-                    selectedWidget.layoutType == LayoutType.list,
-                  ],
-                  onPressed: (int index) {
-                    LayoutType newLayoutType;
-                    if (index == 0) {
-                      newLayoutType = LayoutType.row;
-                    } else if (index == 1) {
-                      newLayoutType = LayoutType.column;
-                    } else if (index == 2) {
-                      newLayoutType = LayoutType.stack;
-                    } else if (index == 3) {
-                      newLayoutType = LayoutType.grid;
-                    } else if (index == 4) {
-                      newLayoutType = LayoutType.wrap;
-                    } else {
-                      newLayoutType = LayoutType.list;
-                    }
-                    if (newLayoutType != selectedWidget.layoutType) {
-                      selectedWidgetModel.updateLayoutType(newLayoutType);
-                    }
-                  },
-                  constraints: const BoxConstraints(
-                    minHeight: 40.0,
-                    minWidth: 40.0,
+                const Text('Layout Type',style: TextStyle(fontSize: 12, color: Colors.grey),),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.black12, width: 0.5),
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
-                  children: const [
-                    Icon(Remix.layout_column_line), // Row
-                    Icon(Remix.layout_row_line), // Column
-                    Icon(Remix.stack_line), // Stack
-                    Icon(Remix.layout_grid_line), // Grid
-                    Icon(Remix.text_wrap), // Wrap
-                    Icon(Remix.list_check), // List
-                  ],
+                  padding: const EdgeInsets.all(0.0),
+                  width: 192, // GridView의 너비 설정
+                  height: 96, // GridView의 높이 설정
+                  child: GridView.count(
+                    crossAxisCount: 4, // 3개의 열로 설정
+                    crossAxisSpacing: 0.0, // 열 간격
+                    mainAxisSpacing: 0.0, // 행 간격
+                    children: [
+                      _buildFixedSizeIconButton(
+                        icon: Remix.layout_column_line,
+                        value: LayoutType.row,
+                        selectedWidget: selectedWidget,
+                        selectedWidgetModel: selectedWidgetModel,
+                      ),
+                      _buildFixedSizeIconButton(
+                        icon: Remix.layout_row_line,
+                        value: LayoutType.column,
+                        selectedWidget: selectedWidget,
+                        selectedWidgetModel: selectedWidgetModel,
+                      ),
+                      _buildFixedSizeIconButton(
+                        icon: Remix.stack_line,
+                        value: LayoutType.stack,
+                        selectedWidget: selectedWidget,
+                        selectedWidgetModel: selectedWidgetModel,
+                      ),
+                      _buildFixedSizeIconButton(
+                        icon: Remix.layout_grid_line,
+                        value: LayoutType.grid,
+                        selectedWidget: selectedWidget,
+                        selectedWidgetModel: selectedWidgetModel,
+                      ),
+                      _buildFixedSizeIconButton(
+                        icon: Remix.text_wrap,
+                        value: LayoutType.wrap,
+                        selectedWidget: selectedWidget,
+                        selectedWidgetModel: selectedWidgetModel,
+                      ),
+                      _buildFixedSizeIconButton(
+                        icon: Remix.list_check,
+                        value: LayoutType.list,
+                        selectedWidget: selectedWidget,
+                        selectedWidgetModel: selectedWidgetModel,
+                      ),
+                    ],
+                  ),
                 ),
+
                 const SizedBox(height: 16),
 
                 // 텍스트 위젯인 경우만 표시
                 if (hasText) ...[
                   Text(
-                      'Font Size: ${selectedWidget.fontSize?.toStringAsFixed(0) ?? '12'}'),
+                      'Font Size: ${selectedWidget.fontSize?.toStringAsFixed(0) ?? '12'}',style: const TextStyle(fontSize: 12, color: Colors.grey)),
                   Slider(
                     min: 8,
                     max: 64,
@@ -244,8 +257,8 @@ class _PropertyPanelState extends State<PropertyPanel> {
                       selectedWidgetModel.updateFontSize(value);
                     },
                   ),
-                  const SizedBox(height: 16),
-                  const Text('Text Alignment'),
+                  /*const SizedBox(height: 16),
+                  const Text('Text Align'),
                   DropdownButton<TextAlign>(
                     value: selectedWidget.textAlign ?? TextAlign.left,
                     items: TextAlign.values.map((TextAlign align) {
@@ -259,97 +272,188 @@ class _PropertyPanelState extends State<PropertyPanel> {
                         selectedWidgetModel.updateTextAlign(newAlign);
                       }
                     },
+                  ),*/
+                  const SizedBox(height: 16),
+                  const Text('Alignment',style: TextStyle(fontSize: 12, color: Colors.grey),),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: Colors.black12, width: 0.5),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    padding: const EdgeInsets.all(8.0),
+                    width: 144, // GridView의 너비 설정
+                    height: 144, // GridView의 높이 설정
+                    child: GridView.count(
+                      crossAxisCount: 3, // 3x3 그리드 설정
+                      crossAxisSpacing: 8.0, // 열 간격
+                      mainAxisSpacing: 8.0, // 행 간격
+                      children: [
+                        _buildFixedSizeIconButton(
+                          icon: Remix.checkbox_blank_fill,
+                          value: Alignment.topLeft,
+                          selectedWidget: selectedWidget,
+                          selectedWidgetModel: selectedWidgetModel,
+                        ),
+                        _buildFixedSizeIconButton(
+                          icon: Remix.checkbox_blank_fill,
+                          value: Alignment.topCenter,
+                          selectedWidget: selectedWidget,
+                          selectedWidgetModel: selectedWidgetModel,
+                        ),
+                        _buildFixedSizeIconButton(
+                          icon: Remix.checkbox_blank_fill,
+                          value: Alignment.topRight,
+                          selectedWidget: selectedWidget,
+                          selectedWidgetModel: selectedWidgetModel,
+                        ),
+                        _buildFixedSizeIconButton(
+                          icon: Remix.checkbox_blank_fill,
+                          value: Alignment.centerLeft,
+                          selectedWidget: selectedWidget,
+                          selectedWidgetModel: selectedWidgetModel,
+                        ),
+                        _buildFixedSizeIconButton(
+                          icon: Remix.checkbox_blank_fill,
+                          value: Alignment.center,
+                          selectedWidget: selectedWidget,
+                          selectedWidgetModel: selectedWidgetModel,
+                        ),
+                        _buildFixedSizeIconButton(
+                          icon: Remix.checkbox_blank_fill,
+                          value: Alignment.centerRight,
+                          selectedWidget: selectedWidget,
+                          selectedWidgetModel: selectedWidgetModel,
+                        ),
+                        _buildFixedSizeIconButton(
+                          icon: Remix.checkbox_blank_fill,
+                          value: Alignment.bottomLeft,
+                          selectedWidget: selectedWidget,
+                          selectedWidgetModel: selectedWidgetModel,
+                        ),
+                        _buildFixedSizeIconButton(
+                          icon: Remix.checkbox_blank_fill,
+                          value: Alignment.bottomCenter,
+                          selectedWidget: selectedWidget,
+                          selectedWidgetModel: selectedWidgetModel,
+                        ),
+                        _buildFixedSizeIconButton(
+                          icon: Remix.checkbox_blank_fill,
+                          value: Alignment.bottomRight,
+                          selectedWidget: selectedWidget,
+                          selectedWidgetModel: selectedWidgetModel,
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 16),
                 ],
 
                 // MainAxisAlignment 선택
-                const Text('Main Axis Alignment'),
-                ToggleButtons(
-                  isSelected: [
-                    selectedWidget.mainAxisAlignment == MainAxisAlignment.start,
-                    selectedWidget.mainAxisAlignment ==
-                        MainAxisAlignment.center,
-                    selectedWidget.mainAxisAlignment == MainAxisAlignment.end,
-                    selectedWidget.mainAxisAlignment ==
-                        MainAxisAlignment.spaceBetween,
-                    selectedWidget.mainAxisAlignment ==
-                        MainAxisAlignment.spaceAround,
-                    selectedWidget.mainAxisAlignment ==
-                        MainAxisAlignment.spaceEvenly,
-                  ],
-                  onPressed: (int index) {
-                    MainAxisAlignment newAlignment;
-                    if (index == 0) {
-                      newAlignment = MainAxisAlignment.start;
-                    } else if (index == 1) {
-                      newAlignment = MainAxisAlignment.center;
-                    } else if (index == 2) {
-                      newAlignment = MainAxisAlignment.end;
-                    } else if (index == 3) {
-                      newAlignment = MainAxisAlignment.spaceBetween;
-                    } else if (index == 4) {
-                      newAlignment = MainAxisAlignment.spaceAround;
-                    } else {
-                      newAlignment = MainAxisAlignment.spaceEvenly;
-                    }
-                    selectedWidgetModel.updateMainAxisAlignment(newAlignment);
-                  },
-                  constraints: const BoxConstraints(
-                    minHeight: 40.0,
-                    minWidth: 40.0,
+                const Text('Main Axis Alignment',style: TextStyle(fontSize: 12, color: Colors.grey),),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.black12, width: 0.5),
+                    borderRadius: BorderRadius.circular(0.0),
                   ),
-                  children: const [
-                    Icon(Remix.align_item_left_line), // Start
-                    Icon(Remix.align_item_vertical_center_line), // Center
-                    Icon(Remix.align_item_right_line), // End
-                    Icon(Remix.flip_horizontal_2_line), // Space Between
-                    Icon(Remix.space), // Space Around
-                    Icon(Remix.space), // Space Evenly
-                  ],
+                  padding: const EdgeInsets.all(0.0),
+                  width: 192, // GridView의 너비 설정
+                  height: 96, // GridView의 높이 설정
+                  child: GridView.count(
+                    crossAxisCount: 4, // 3개의 열로 설정
+                    crossAxisSpacing: 0.0, // 열 간격
+                    mainAxisSpacing: 0.0, // 행 간격
+                    children: [
+                      _buildFixedSizeIconButton(
+                        icon: Remix.align_item_left_line, // Start
+                        value: MainAxisAlignment.start,
+                        selectedWidget: selectedWidget,
+                        selectedWidgetModel: selectedWidgetModel,
+                      ),
+                      _buildFixedSizeIconButton(
+                        icon: Remix.align_item_vertical_center_line, // Center
+                        value: MainAxisAlignment.center,
+                        selectedWidget: selectedWidget,
+                        selectedWidgetModel: selectedWidgetModel,
+                      ),
+                      _buildFixedSizeIconButton(
+                        icon: Remix.align_item_right_line, // End
+                        value: MainAxisAlignment.end,
+                        selectedWidget: selectedWidget,
+                        selectedWidgetModel: selectedWidgetModel,
+                      ),
+                      _buildFixedSizeIconButton(
+                        icon: Remix.flip_horizontal_2_line, // Space Between
+                        value: MainAxisAlignment.spaceBetween,
+                        selectedWidget: selectedWidget,
+                        selectedWidgetModel: selectedWidgetModel,
+                      ),
+                      _buildFixedSizeIconButton(
+                        icon: Remix.space, // Space Around
+                        value: MainAxisAlignment.spaceAround,
+                        selectedWidget: selectedWidget,
+                        selectedWidgetModel: selectedWidgetModel,
+                      ),
+                      _buildFixedSizeIconButton(
+                        icon: Remix.space, // Space Evenly
+                        value: MainAxisAlignment.spaceEvenly,
+                        selectedWidget: selectedWidget,
+                        selectedWidgetModel: selectedWidgetModel,
+                      ),
+                    ],
+                  ),
                 ),
+
                 const SizedBox(height: 16),
 
                 // CrossAxisAlignment 선택
-                const Text('Cross Axis Alignment'),
-                ToggleButtons(
-                  isSelected: [
-                    selectedWidget.crossAxisAlignment ==
-                        CrossAxisAlignment.start,
-                    selectedWidget.crossAxisAlignment ==
-                        CrossAxisAlignment.center,
-                    selectedWidget.crossAxisAlignment == CrossAxisAlignment.end,
-                    selectedWidget.crossAxisAlignment ==
-                        CrossAxisAlignment.stretch,
-                  ],
-                  onPressed: (int index) {
-                    CrossAxisAlignment newAlignment;
-                    if (index == 0) {
-                      newAlignment = CrossAxisAlignment.start;
-                    } else if (index == 1) {
-                      newAlignment = CrossAxisAlignment.center;
-                    } else if (index == 2) {
-                      newAlignment = CrossAxisAlignment.end;
-                    } else {
-                      newAlignment = CrossAxisAlignment.stretch;
-                    }
-                    selectedWidgetModel.updateCrossAxisAlignment(newAlignment);
-                  },
-                  constraints: const BoxConstraints(
-                    minHeight: 40.0,
-                    minWidth: 40.0,
+                const Text('Cross Axis Alignment',style: TextStyle(fontSize: 12, color: Colors.grey),),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.black12, width: 0.5),
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
-                  children: const [
-                    Icon(Remix.align_item_top_line), // Start
-                    Icon(Remix.align_item_horizontal_center_line), // Center
-                    Icon(Remix.align_item_bottom_line), // End
-                    Icon(Remix.flip_vertical_2_line), // Stretch
-                  ],
+                  padding: const EdgeInsets.all(0.0),
+                  width: 192, // GridView의 너비 설정
+                  height: 48, // GridView의 높이 설정
+                  child: GridView.count(
+                    crossAxisCount: 4, // 2개의 열로 설정
+                    crossAxisSpacing: 0.0, // 열 간격
+                    mainAxisSpacing: 0.0, // 행 간격
+                    children: [
+                      _buildFixedSizeIconButton(
+                        icon: Remix.align_item_top_line, // Start
+                        value: CrossAxisAlignment.start,
+                        selectedWidget: selectedWidget,
+                        selectedWidgetModel: selectedWidgetModel,
+                      ),
+                      _buildFixedSizeIconButton(
+                        icon: Remix.align_item_horizontal_center_line, // Center
+                        value: CrossAxisAlignment.center,
+                        selectedWidget: selectedWidget,
+                        selectedWidgetModel: selectedWidgetModel,
+                      ),
+                      _buildFixedSizeIconButton(
+                        icon: Remix.align_item_bottom_line, // End
+                        value: CrossAxisAlignment.end,
+                        selectedWidget: selectedWidget,
+                        selectedWidgetModel: selectedWidgetModel,
+                      ),
+                      _buildFixedSizeIconButton(
+                        icon: Remix.flip_vertical_2_line, // Stretch
+                        value: CrossAxisAlignment.stretch,
+                        selectedWidget: selectedWidget,
+                        selectedWidgetModel: selectedWidgetModel,
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 16),
 
                 // Flex 속성 수정 (Slider 사용)
-                Text("Flex: ${selectedWidget.flex}"),
+                Text("Flex: ${selectedWidget.flex}",style: const TextStyle(fontSize: 12, color: Colors.grey)),
                 Slider(
                   min: 0,
                   max: 10,
@@ -410,4 +514,67 @@ class _PropertyPanelState extends State<PropertyPanel> {
     }
     return selectedColor;
   }
+}
+
+Widget _buildFixedSizeIconButton({
+  required IconData icon,
+  required dynamic
+      value, // LayoutType 또는 Alignment, MainAxisAlignment 모두 받을 수 있도록 dynamic 사용
+  required WidgetProperties selectedWidget,
+  required SelectedWidgetModel selectedWidgetModel,
+}) {
+  bool isSelected;
+
+  // value가 LayoutType인지 Alignment인지 MainAxisAlignment인지에 따라 선택 여부를 구분
+  if (value is LayoutType) {
+    isSelected = selectedWidget.layoutType == value;
+  } else if (value is Alignment) {
+    isSelected = selectedWidget.alignment == value;
+  } else if (value is MainAxisAlignment) {
+    isSelected = selectedWidget.mainAxisAlignment == value;
+  } else if (value is CrossAxisAlignment) {
+    isSelected =
+        selectedWidget.crossAxisAlignment == value; // CrossAxisAlignment 체크 추가
+  } else {
+    isSelected = false;
+  }
+
+  return SizedBox(
+    width: 48.0,
+    height: 48.0,
+    child: Container(
+      decoration: BoxDecoration(
+        color: value is Alignment ? Colors.transparent : Colors.white,
+        border: Border.all(
+            color: value is Alignment ? Colors.transparent : Colors.black12,
+            width: 0.5),
+      ),
+      child: TextButton(
+        onPressed: () {
+          // value가 LayoutType, Alignment, MainAxisAlignment, CrossAxisAlignment인지에 따라 적절한 업데이트 호출
+          if (value is LayoutType) {
+            selectedWidgetModel.updateLayoutType(value);
+          } else if (value is Alignment) {
+            selectedWidgetModel.updateAlignment(value);
+          } else if (value is MainAxisAlignment) {
+            selectedWidgetModel.updateMainAxisAlignment(value);
+          } else if (value is CrossAxisAlignment) {
+            selectedWidgetModel
+                .updateCrossAxisAlignment(value); // CrossAxisAlignment 업데이트 추가
+          }
+        },
+        style: TextButton.styleFrom(
+          backgroundColor:
+              isSelected ? Colors.blue.withOpacity(0.2) : Colors.transparent,
+          padding: EdgeInsets.zero,
+          alignment: Alignment.center,
+        ),
+        child: Icon(
+          icon,
+          size: value is Alignment ? 14.0 : 21.0,
+          color: isSelected ? Colors.blue : Colors.black87,
+        ),
+      ),
+    ),
+  );
 }

@@ -42,7 +42,9 @@ class WidgetPanel extends StatelessWidget {
         width: 100,
         height: 40,
         color: Colors.black,
-        label: 'Text',
+        label: 'Text', 
+        textAlign:TextAlign.left,
+        alignment: Alignment.center,
       ),
     ),
     WidgetItem(icon: Remix.input_field, label: 'Input'),
@@ -62,7 +64,7 @@ class WidgetPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 180,
+      width: 159,
       color: Colors.white,
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -75,8 +77,8 @@ class WidgetPanel extends StatelessWidget {
             child: GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2, // 한 줄에 2개의 아이템
-                crossAxisSpacing: 4.0, // 아이템 간격
-                mainAxisSpacing: 4.0, // 아이템 간격
+                crossAxisSpacing: 0.0, // 아이템 간격
+                mainAxisSpacing: 0.0, // 아이템 간격
                 childAspectRatio: 1, // 1:1 비율로 설정
               ),
               itemCount: widgetItems.length,

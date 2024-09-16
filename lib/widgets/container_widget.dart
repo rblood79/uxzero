@@ -30,12 +30,7 @@ class ContainerWidget extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(0.0),
       ),
-      child: Center(
-        child: Text(
-          label,
-          style: const TextStyle(color: Colors.white),
-        ),
-      ),
+      
     );
   }
 }

@@ -60,7 +60,7 @@ class SidebarMenu extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           onMenuButtonPressed(item.label); // 메뉴 이름을 전달
-          print('${item.label} clicked');
+          //print('${item.label} clicked');
         },
         child: Container(
           width: 36, // 버튼의 너비

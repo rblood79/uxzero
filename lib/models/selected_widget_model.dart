@@ -148,6 +148,16 @@ class SelectedWidgetModel extends ChangeNotifier {
     }
   }
 
+  void updateAlignment(Alignment alignment) {
+    if (selectedWidgetProperties.isNotEmpty) {
+      for (var selectedWidget in selectedWidgetProperties) {
+        selectedWidget.alignment = alignment;
+      }
+      addToHistory(); // 상태 변경 시 이력에 추가
+      notifyListeners(); // 상태 변경 후 알림
+    }
+  }
+
   // Flex 속성 업데이트
   void updateFlex(int flex) {
     if (selectedWidgetProperties.isNotEmpty) {
@@ -287,6 +297,7 @@ class WidgetProperties {
   // 텍스트 위젯을 위한 추가 속성
   double? fontSize; // 폰트 크기
   TextAlign? textAlign; // 텍스트 정렬
+  Alignment? alignment;
 
   WidgetProperties({
     required this.id,
@@ -306,6 +317,7 @@ class WidgetProperties {
     this.parent,
     this.fontSize, // 텍스트 위젯을 위한 폰트 크기
     this.textAlign, // 텍스트 위젯을 위한 텍스트 정렬
+    this.alignment,
   }) : children = children ?? [];
 
   // copyWith 메서드에서 부모 참조 및 새로운 속성 처리
@@ -327,6 +339,7 @@ class WidgetProperties {
     WidgetProperties? parent, // 부모 참조 copyWith에 추가
     double? fontSize, // 추가: 폰트 크기
     TextAlign? textAlign, // 추가: 텍스트 정렬
+    Alignment? alignment,
   }) {
     return WidgetProperties(
       id: id ?? this.id,
@@ -350,6 +363,7 @@ class WidgetProperties {
       parent: parent ?? this.parent, // 부모 참조 유지
       fontSize: fontSize ?? this.fontSize, // 추가: 폰트 크기 유지
       textAlign: textAlign ?? this.textAlign, // 추가: 텍스트 정렬 유지
+      alignment: alignment ?? this.alignment,
     );
   }
 
@@ -375,6 +389,7 @@ class WidgetProperties {
       'type': type.toString(),
       'fontSize': fontSize,
       'textAlign': textAlign?.toString(),
+      'align': alignment?.toString(),
     };
   }
 }

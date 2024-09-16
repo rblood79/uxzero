@@ -5,6 +5,8 @@ class TextWidget extends StatelessWidget {
   final double height;
   final Color color;
   final String label;
+  final dynamic textAlign;
+  final dynamic alignment;
 
   const TextWidget({
     super.key,
@@ -12,6 +14,8 @@ class TextWidget extends StatelessWidget {
     required this.height,
     required this.color,
     required this.label,
+    required this.textAlign,
+    required this.alignment,
   });
 
   @override
