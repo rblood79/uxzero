@@ -47,7 +47,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 280,
+      width: 224,
       color: Colors.white,
       padding: const EdgeInsets.all(16.0),
       child: Consumer<SelectedWidgetModel>(
@@ -78,7 +78,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                               selectedWidgetModel.undo();
                             }
                           : null,
-                      child: const Text('Undo'),
+                      child: const Text('U'),
                     ),
                     ElevatedButton(
                       onPressed: selectedWidgetModel.canRedo
@@ -86,13 +86,13 @@ class _PropertyPanelState extends State<PropertyPanel> {
                               selectedWidgetModel.redo();
                             }
                           : null,
-                      child: const Text('Redo'),
+                      child: const Text('R'),
                     ),
                     ElevatedButton(
                       onPressed: () {
                         selectedWidgetModel.deleteSelectedWidget();
                       },
-                      child: const Text('Del'),
+                      child: const Text('D'),
                     ),
                   ],
                 ),
@@ -197,7 +197,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                   ),
                   padding: const EdgeInsets.all(0.0),
                   width: 192, // GridView의 너비 설정
-                  height: 96, // GridView의 높이 설정
+                  height: 97, // GridView의 높이 설정
                   child: GridView.count(
                     crossAxisCount: 4, // 3개의 열로 설정
                     crossAxisSpacing: 0.0, // 열 간격
@@ -274,7 +274,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     },
                   ),*/
                   const SizedBox(height: 16),
-                  const Text('Alignment',style: TextStyle(fontSize: 12, color: Colors.grey),),
+                  const Text('Alignment',style: TextStyle(fontSize: 12, color: Colors.black12),),
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -355,11 +355,11 @@ class _PropertyPanelState extends State<PropertyPanel> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     border: Border.all(color: Colors.black12, width: 0.5),
-                    borderRadius: BorderRadius.circular(0.0),
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
                   padding: const EdgeInsets.all(0.0),
                   width: 192, // GridView의 너비 설정
-                  height: 96, // GridView의 높이 설정
+                  height: 97, // GridView의 높이 설정
                   child: GridView.count(
                     crossAxisCount: 4, // 3개의 열로 설정
                     crossAxisSpacing: 0.0, // 열 간격
@@ -417,7 +417,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                   ),
                   padding: const EdgeInsets.all(0.0),
                   width: 192, // GridView의 너비 설정
-                  height: 48, // GridView의 높이 설정
+                  height: 49, // GridView의 높이 설정
                   child: GridView.count(
                     crossAxisCount: 4, // 2개의 열로 설정
                     crossAxisSpacing: 0.0, // 열 간격
@@ -565,14 +565,14 @@ Widget _buildFixedSizeIconButton({
         },
         style: TextButton.styleFrom(
           backgroundColor:
-              isSelected ? Colors.blue.withOpacity(0.2) : Colors.transparent,
+              isSelected ? Colors.grey.withOpacity(0.2) : Colors.transparent,
           padding: EdgeInsets.zero,
           alignment: Alignment.center,
         ),
         child: Icon(
           icon,
           size: value is Alignment ? 14.0 : 21.0,
-          color: isSelected ? Colors.blue : Colors.black87,
+          color: isSelected ? Colors.black87 : Colors.grey,
         ),
       ),
     ),
