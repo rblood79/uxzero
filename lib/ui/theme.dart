@@ -6,7 +6,7 @@ class AppTheme {
   static ThemeData lightTheme = ThemeData(
     //primaryColor: Colors.teal,
     colorScheme: ColorScheme.fromSwatch().copyWith(
-      primary: Colors.blue,
+      primary: Colors.red,
       secondary: Colors.blueAccent,
       surface: Colors.grey[100],
       onPrimary: Colors.red,
@@ -141,9 +141,9 @@ class AppTheme {
 
     // 슬라이드 테마 정의
     sliderTheme: SliderThemeData(
-      activeTrackColor: Colors.blueAccent,
+      //activeTrackColor: Colors.blueAccent,
       inactiveTrackColor: Colors.grey[100],
-      thumbColor: Colors.blueAccent,
+      //thumbColor: Colors.blueAccent,
     ),
   );
 
