@@ -72,7 +72,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    ElevatedButton(
+                    TextButton(
                       onPressed: selectedWidgetModel.canUndo
                           ? () {
                               selectedWidgetModel.undo();
@@ -80,7 +80,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                           : null,
                       child: const Text('U'),
                     ),
-                    ElevatedButton(
+                    TextButton(
                       onPressed: selectedWidgetModel.canRedo
                           ? () {
                               selectedWidgetModel.redo();
@@ -88,7 +88,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                           : null,
                       child: const Text('R'),
                     ),
-                    ElevatedButton(
+                    TextButton(
                       onPressed: () {
                         selectedWidgetModel.deleteSelectedWidget();
                       },
@@ -101,7 +101,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                 // 라벨 수정
                 TextField(
                   decoration: const InputDecoration(
-                    labelText: 'Label',
+                    //labelText: 'Label',
                   ),
                   controller: labelController,
                   onChanged: (value) {
@@ -118,7 +118,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     Expanded(
                       child: TextField(
                         decoration: const InputDecoration(
-                          labelText: 'Width',
+                          //labelText: 'Width',
                         ),
                         keyboardType: TextInputType.number,
                         controller: widthController,
@@ -136,7 +136,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     Expanded(
                       child: TextField(
                         decoration: const InputDecoration(
-                          labelText: 'Height',
+                          //labelText: 'Height',
                         ),
                         keyboardType: TextInputType.number,
                         controller: heightController,
@@ -203,37 +203,37 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     crossAxisSpacing: 0.0, // 열 간격
                     mainAxisSpacing: 0.0, // 행 간격
                     children: [
-                      _buildFixedSizeIconButton(
+                      buildWidgetItem(
                         icon: Remix.layout_column_line,
                         value: LayoutType.row,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      _buildFixedSizeIconButton(
+                      buildWidgetItem(
                         icon: Remix.layout_row_line,
                         value: LayoutType.column,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      _buildFixedSizeIconButton(
+                      buildWidgetItem(
                         icon: Remix.stack_line,
                         value: LayoutType.stack,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      _buildFixedSizeIconButton(
+                      buildWidgetItem(
                         icon: Remix.layout_grid_line,
                         value: LayoutType.grid,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      _buildFixedSizeIconButton(
+                      buildWidgetItem(
                         icon: Remix.text_wrap,
                         value: LayoutType.wrap,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      _buildFixedSizeIconButton(
+                      buildWidgetItem(
                         icon: Remix.list_check,
                         value: LayoutType.list,
                         selectedWidget: selectedWidget,
@@ -274,7 +274,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     },
                   ),*/
                   const SizedBox(height: 16),
-                  const Text('Alignment',style: TextStyle(fontSize: 12, color: Colors.black12),),
+                  const Text('Alignment',style: TextStyle(fontSize: 12, color: Colors.grey),),
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -289,55 +289,55 @@ class _PropertyPanelState extends State<PropertyPanel> {
                       crossAxisSpacing: 8.0, // 열 간격
                       mainAxisSpacing: 8.0, // 행 간격
                       children: [
-                        _buildFixedSizeIconButton(
+                        buildWidgetItem(
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.topLeft,
                           selectedWidget: selectedWidget,
                           selectedWidgetModel: selectedWidgetModel,
                         ),
-                        _buildFixedSizeIconButton(
+                        buildWidgetItem(
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.topCenter,
                           selectedWidget: selectedWidget,
                           selectedWidgetModel: selectedWidgetModel,
                         ),
-                        _buildFixedSizeIconButton(
+                        buildWidgetItem(
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.topRight,
                           selectedWidget: selectedWidget,
                           selectedWidgetModel: selectedWidgetModel,
                         ),
-                        _buildFixedSizeIconButton(
+                        buildWidgetItem(
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.centerLeft,
                           selectedWidget: selectedWidget,
                           selectedWidgetModel: selectedWidgetModel,
                         ),
-                        _buildFixedSizeIconButton(
+                        buildWidgetItem(
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.center,
                           selectedWidget: selectedWidget,
                           selectedWidgetModel: selectedWidgetModel,
                         ),
-                        _buildFixedSizeIconButton(
+                        buildWidgetItem(
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.centerRight,
                           selectedWidget: selectedWidget,
                           selectedWidgetModel: selectedWidgetModel,
                         ),
-                        _buildFixedSizeIconButton(
+                        buildWidgetItem(
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.bottomLeft,
                           selectedWidget: selectedWidget,
                           selectedWidgetModel: selectedWidgetModel,
                         ),
-                        _buildFixedSizeIconButton(
+                        buildWidgetItem(
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.bottomCenter,
                           selectedWidget: selectedWidget,
                           selectedWidgetModel: selectedWidgetModel,
                         ),
-                        _buildFixedSizeIconButton(
+                        buildWidgetItem(
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.bottomRight,
                           selectedWidget: selectedWidget,
@@ -365,37 +365,37 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     crossAxisSpacing: 0.0, // 열 간격
                     mainAxisSpacing: 0.0, // 행 간격
                     children: [
-                      _buildFixedSizeIconButton(
+                      buildWidgetItem(
                         icon: Remix.align_item_left_line, // Start
                         value: MainAxisAlignment.start,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      _buildFixedSizeIconButton(
+                      buildWidgetItem(
                         icon: Remix.align_item_vertical_center_line, // Center
                         value: MainAxisAlignment.center,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      _buildFixedSizeIconButton(
+                      buildWidgetItem(
                         icon: Remix.align_item_right_line, // End
                         value: MainAxisAlignment.end,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      _buildFixedSizeIconButton(
+                      buildWidgetItem(
                         icon: Remix.flip_horizontal_2_line, // Space Between
                         value: MainAxisAlignment.spaceBetween,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      _buildFixedSizeIconButton(
+                      buildWidgetItem(
                         icon: Remix.space, // Space Around
                         value: MainAxisAlignment.spaceAround,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      _buildFixedSizeIconButton(
+                      buildWidgetItem(
                         icon: Remix.space, // Space Evenly
                         value: MainAxisAlignment.spaceEvenly,
                         selectedWidget: selectedWidget,
@@ -423,25 +423,25 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     crossAxisSpacing: 0.0, // 열 간격
                     mainAxisSpacing: 0.0, // 행 간격
                     children: [
-                      _buildFixedSizeIconButton(
+                      buildWidgetItem(
                         icon: Remix.align_item_top_line, // Start
                         value: CrossAxisAlignment.start,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      _buildFixedSizeIconButton(
+                      buildWidgetItem(
                         icon: Remix.align_item_horizontal_center_line, // Center
                         value: CrossAxisAlignment.center,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      _buildFixedSizeIconButton(
+                      buildWidgetItem(
                         icon: Remix.align_item_bottom_line, // End
                         value: CrossAxisAlignment.end,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      _buildFixedSizeIconButton(
+                      buildWidgetItem(
                         icon: Remix.flip_vertical_2_line, // Stretch
                         value: CrossAxisAlignment.stretch,
                         selectedWidget: selectedWidget,
@@ -516,7 +516,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
   }
 }
 
-Widget _buildFixedSizeIconButton({
+Widget buildWidgetItem({
   required IconData icon,
   required dynamic
       value, // LayoutType 또는 Alignment, MainAxisAlignment 모두 받을 수 있도록 dynamic 사용
@@ -564,15 +564,14 @@ Widget _buildFixedSizeIconButton({
           }
         },
         style: TextButton.styleFrom(
-          backgroundColor:
-              isSelected ? Colors.grey.withOpacity(0.2) : Colors.transparent,
+          backgroundColor: isSelected ? Colors.grey.withOpacity(0.2) : Colors.transparent,
           padding: EdgeInsets.zero,
           alignment: Alignment.center,
         ),
         child: Icon(
           icon,
           size: value is Alignment ? 14.0 : 21.0,
-          color: isSelected ? Colors.black87 : Colors.grey,
+          //color: isSelected ? Colors.black87 : Colors.grey,
         ),
       ),
     ),

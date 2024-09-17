@@ -72,7 +72,7 @@ class SidebarMenu extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(item.icon, size: 24, color: Colors.black87),
+              Icon(item.icon, size: 21, color: Colors.black87),
               const SizedBox(height: 4.0),
               Text(
                 item.label,

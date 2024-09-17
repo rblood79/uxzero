@@ -1,16 +1,3 @@
-/*
-    WidgetItem(icon: Remix.input_field, label: 'Input'),
-    WidgetItem(icon: Remix.checkbox_blank_line, label: 'Button'),
-    WidgetItem(icon: Remix.dropdown_list, label: 'Select'),
-    WidgetItem(icon: Remix.image_line, label: 'Image'),
-    WidgetItem(icon: Remix.checkbox_line, label: 'Checkbox'),
-    WidgetItem(icon: Remix.radio_button_line, label: 'Radio'),
-    WidgetItem(icon: Remix.calendar_line, label: 'Calendar'),
-    WidgetItem(icon: Remix.toggle_line, label: 'Toggle'),
-    WidgetItem(icon: Remix.table_line, label: 'Table'),
-    WidgetItem(icon: Remix.bar_chart_box_line, label: 'Chart'),
-    */
-
 import 'package:flutter/material.dart';
 import 'package:remixicon/remixicon.dart';
 import '../widgets/container_widget.dart';
@@ -42,8 +29,8 @@ class WidgetPanel extends StatelessWidget {
         width: 100,
         height: 40,
         color: Colors.black,
-        label: 'Text', 
-        textAlign:TextAlign.left,
+        label: 'Text',
+        textAlign: TextAlign.left,
         alignment: Alignment.center,
       ),
     ),
@@ -51,7 +38,7 @@ class WidgetPanel extends StatelessWidget {
     WidgetItem(icon: Remix.checkbox_blank_line, label: 'Button'),
     WidgetItem(icon: Remix.dropdown_list, label: 'Select'),
     WidgetItem(icon: Remix.image_line, label: 'Image'),
-    WidgetItem(icon: Remix.checkbox_line, label: 'Checkbox'),
+    WidgetItem(icon: Remix.checkbox_line, label: 'Check'),
     WidgetItem(icon: Remix.radio_button_line, label: 'Radio'),
     WidgetItem(icon: Remix.calendar_line, label: 'Calendar'),
     WidgetItem(icon: Remix.toggle_line, label: 'Toggle'),
@@ -64,27 +51,28 @@ class WidgetPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 159,
+      width: 160,
       color: Colors.white,
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
           Container(
             padding: const EdgeInsets.all(8.0),
-            child: const Center(child: Text('Widget')),
+            child: const Center(
+              child: Text(
+                'Widget',
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+            ),
           ),
           Expanded(
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // 한 줄에 2개의 아이템
-                crossAxisSpacing: 0.0, // 아이템 간격
-                mainAxisSpacing: 0.0, // 아이템 간격
-                childAspectRatio: 1, // 1:1 비율로 설정
-              ),
-              itemCount: widgetItems.length,
-              itemBuilder: (context, index) {
-                final widgetItem = widgetItems[index];
-
+            child: GridView.count(
+              crossAxisCount: 2, // 한 줄에 2개의 아이템
+              crossAxisSpacing: 0.0, // 아이템 간격
+              mainAxisSpacing: 0.0, // 아이템 간격
+              //childAspectRatio: 48 / 64, // 원하는 비율로 조정
+              childAspectRatio: 1,
+              children: widgetItems.map((widgetItem) {
                 return LayoutBuilder(
                   builder: (context, constraints) {
                     // 아이템의 실제 크기 측정
@@ -102,15 +90,15 @@ class WidgetPanel extends StatelessWidget {
                           child: SizedBox(
                             width: itemWidth,
                             height: itemHeight,
-                            child:
-                                buildWidgetItem(widgetItem), // 그리드 아이템을 그대로 사용
+                            child: buildWidgetItem(
+                                widgetItem, context), // 그리드 아이템을 그대로 사용
                           ),
                         ),
                         childWhenDragging: Opacity(
                           opacity: 0.5,
-                          child: buildWidgetItem(widgetItem),
+                          child: buildWidgetItem(widgetItem, context),
                         ),
-                        child: buildWidgetItem(widgetItem),
+                        child: buildWidgetItem(widgetItem, context),
                       );
                     }
 
@@ -124,15 +112,15 @@ class WidgetPanel extends StatelessWidget {
                           child: SizedBox(
                             width: itemWidth,
                             height: itemHeight,
-                            child:
-                                buildWidgetItem(widgetItem), // 그리드 아이템을 그대로 사용
+                            child: buildWidgetItem(
+                                widgetItem, context), // 그리드 아이템을 그대로 사용
                           ),
                         ),
                         childWhenDragging: Opacity(
                           opacity: 0.5,
-                          child: buildWidgetItem(widgetItem),
+                          child: buildWidgetItem(widgetItem, context),
                         ),
-                        child: buildWidgetItem(widgetItem),
+                        child: buildWidgetItem(widgetItem, context),
                       );
                     }
 
@@ -143,18 +131,19 @@ class WidgetPanel extends StatelessWidget {
                         child: SizedBox(
                           width: itemWidth,
                           height: itemHeight,
-                          child: buildWidgetItem(widgetItem), // 그리드 아이템을 그대로 사용
+                          child: buildWidgetItem(
+                              widgetItem, context), // 그리드 아이템을 그대로 사용
                         ),
                       ),
                       childWhenDragging: Opacity(
                         opacity: 0.5,
-                        child: buildWidgetItem(widgetItem),
+                        child: buildWidgetItem(widgetItem, context),
                       ),
-                      child: buildWidgetItem(widgetItem),
+                      child: buildWidgetItem(widgetItem, context),
                     );
                   },
                 );
-              },
+              }).toList(),
             ),
           ),
         ],
@@ -163,21 +152,26 @@ class WidgetPanel extends StatelessWidget {
   }
 
   // 위젯 아이템 빌드
-  Widget buildWidgetItem(WidgetItem item) {
+  Widget buildWidgetItem(WidgetItem item, BuildContext context) {
     return Container(
+      //padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border.all(color: Colors.black12),
+        border: Border.all(color: Colors.black12, width: 0.5),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(item.icon, color: Colors.black87),
+          Icon(
+            item.icon,
+            color: Theme.of(context).colorScheme.primary, // 테마의 아이콘 색상 사용
+            size: 21,
+          ),
           const SizedBox(height: 4.0),
           Text(
             item.label,
-            style: const TextStyle(color: Colors.grey, fontSize: 12),
+            style: const TextStyle(color: Colors.grey, fontSize: 10),
             textAlign: TextAlign.center,
           ),
         ],
