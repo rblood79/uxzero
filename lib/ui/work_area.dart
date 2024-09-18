@@ -381,14 +381,38 @@ class _WorkAreaState extends State<WorkArea> {
   }
 ///////////////////////////////////////////////////
 
-  OverlayEntry _buildMultipleOverlay(List<_OverlayInfo> overlayInfoList, SelectedWidgetModel selectedWidgetModel) {
+  OverlayEntry _buildMultipleOverlay(List<_OverlayInfo> overlayInfoList,
+    SelectedWidgetModel selectedWidgetModel) {
   final selectedOverlayInfo = overlayInfoList.removeAt(0);
   overlayInfoList.add(selectedOverlayInfo);
+
+  // 선택된 위젯 중 리사이즈 포인트가 나타나야 할 위젯을 찾는 함수
+  List<WidgetProperties> _findTopMostParents(
+      List<WidgetProperties> selectedWidgets) {
+    // 최상위 부모나 동일 레벨 위젯 모두 포함하는 리스트 반환
+    List<WidgetProperties> topMostParents = [];
+    for (var widget in selectedWidgets) {
+      var currentWidget = widget;
+      // 부모가 선택된 위젯 중 없거나 최상위 부모를 찾는다
+      while (currentWidget.parent != null &&
+          selectedWidgets.contains(currentWidget.parent)) {
+        currentWidget = currentWidget.parent!;
+      }
+      if (!topMostParents.contains(currentWidget)) {
+        topMostParents.add(currentWidget);
+      }
+    }
+    return topMostParents;
+  }
+
+  // 선택된 위젯들 중 리사이즈 포인트가 나타나야 할 위젯들 찾기
+  final topMostParents =
+      _findTopMostParents(selectedWidgetModel.selectedWidgetProperties);
 
   return OverlayEntry(
     builder: (context) => LayoutBuilder(
       builder: (context, constraints) {
-        final maxParentWidth = constraints.maxWidth;  // 부모의 최대 너비
+        final maxParentWidth = constraints.maxWidth; // 부모의 최대 너비
         final maxParentHeight = constraints.maxHeight; // 부모의 최대 높이
 
         return Stack(
@@ -407,6 +431,13 @@ class _WorkAreaState extends State<WorkArea> {
             ];
             final color = colors[index % colors.length];
 
+            // 선택된 위젯인지 확인
+            final isSelected = selectedWidgetModel.selectedWidgetProperties
+                .contains(overlayInfo.properties);
+            // 리사이즈 포인트가 나타나야 할 위젯인지 확인
+            final isTopMostParent =
+                topMostParents.contains(overlayInfo.properties);
+
             // 크기 조정을 위한 변수
             double overlayWidth = overlayInfo.size.width;
             double overlayHeight = overlayInfo.size.height;
@@ -422,7 +453,7 @@ class _WorkAreaState extends State<WorkArea> {
                       child: IgnorePointer(
                         ignoring: true,
                         child: Container(
-                          width: overlayWidth.roundToDouble(),  // 최종 그릴 때는 반올림
+                          width: overlayWidth.roundToDouble(), // 최종 그릴 때는 반올림
                           height: overlayHeight.roundToDouble(), // 최종 그릴 때는 반올림
                           decoration: BoxDecoration(
                             border: Border.all(
@@ -440,10 +471,12 @@ class _WorkAreaState extends State<WorkArea> {
                       child: GestureDetector(
                         onTap: () {
                           selectedWidgetModel.clearSelection();
-                          selectedWidgetModel.selectWidget(overlayInfo.properties);
+                          selectedWidgetModel
+                              .selectWidget(overlayInfo.properties);
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 8.0),
                           decoration: BoxDecoration(
                             color: color.withOpacity(1.0),
                             borderRadius: BorderRadius.circular(0.0),
@@ -465,7 +498,8 @@ class _WorkAreaState extends State<WorkArea> {
                       left: overlayInfo.offset.dx, // 중앙에 맞춤
                       top: overlayInfo.offset.dy + overlayHeight, // 하단 가이드라인 안쪽에 위치
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 8.0),
                         color: color,
                         child: Text(
                           '${overlayWidth.round()} px', // 가로 크기 표시
@@ -480,12 +514,15 @@ class _WorkAreaState extends State<WorkArea> {
                     ),
                     // Height 표시 (세로 우측 가이드라인 안쪽에 위치, -90도 회전)
                     Positioned(
-                      left: overlayInfo.offset.dx + overlayWidth - 19, // 우측 가이드라인 안쪽에 위치
+                      left: overlayInfo.offset.dx +
+                          overlayWidth -
+                          19, // 우측 가이드라인 안쪽에 위치
                       top: overlayInfo.offset.dy + 19, // 세로 가운데에 맞춤
                       child: Transform.rotate(
                         angle: -90 * 3.1415927 / 180, // -90도 회전
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 8.0),
                           color: color,
                           child: Text(
                             '${overlayHeight.round()} px', // 세로 크기 표시
@@ -499,57 +536,68 @@ class _WorkAreaState extends State<WorkArea> {
                         ),
                       ),
                     ),
-                    // 우측 하단에 리사이즈 포인트 추가
-                    Positioned(
-                      left: overlayInfo.offset.dx + overlayWidth - 18, // 우측 하단 위치
-                      top: overlayInfo.offset.dy + overlayHeight - 18, // 우측 하단 위치
-                      child: GestureDetector(
-                        onPanUpdate: (details) {
-                          setState(() {
-                            // 오버레이 크기만 변경, 소수점 유지
-                            overlayWidth += details.delta.dx;
-                            overlayHeight += details.delta.dy;
+                    // 선택된 위젯 중 리사이즈 포인트 표시
+                    if (isTopMostParent)
+                      Positioned(
+                        left: overlayInfo.offset.dx +
+                            overlayWidth - 1, // 우측 하단 위치
+                        top: overlayInfo.offset.dy +
+                            overlayHeight - 1, // 우측 하단 위치
+                        child: GestureDetector(
+                          onPanUpdate: (details) {
+                            setState(() {
+                              // 오버레이 크기만 변경, 소수점 유지
+                              overlayWidth += details.delta.dx;
+                              overlayHeight += details.delta.dy;
 
-                            // 최소 크기 제한 (소수점은 유지)
-                            if (overlayWidth < 48) overlayWidth = 48;
-                            if (overlayHeight < 48) overlayHeight = 48;
+                              // 최소 크기 제한 (소수점은 유지)
+                              if (overlayWidth < 48) overlayWidth = 48;
+                              if (overlayHeight < 48) overlayHeight = 48;
 
-                            // 부모의 크기를 초과하지 않도록 제한
-                            if (overlayInfo.offset.dx + overlayWidth > maxParentWidth) {
-                              overlayWidth = maxParentWidth - overlayInfo.offset.dx;
-                            }
-                            if (overlayInfo.offset.dy + overlayHeight > maxParentHeight) {
-                              overlayHeight = maxParentHeight - overlayInfo.offset.dy;
-                            }
-                          });
-                        },
-                        onPanEnd: (details) {
-                          // 리사이즈가 끝난 후 실제 위젯의 크기를 업데이트, 소수점 제거 후 반올림 적용
-                          setState(() {
-                            overlayInfo.properties.width = overlayWidth.roundToDouble();
-                            overlayInfo.properties.height = overlayHeight.roundToDouble();
-                            selectedWidgetModel.notifyListeners(); // 모델에 변경 사항 알림
-                          });
-                        },
-                        child: Container(
-                          width: 36,
-                          height: 36,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: color,
-                              width: 1.0,
+                              // 부모의 크기를 초과하지 않도록 제한
+                              if (overlayInfo.offset.dx + overlayWidth >
+                                  maxParentWidth) {
+                                overlayWidth =
+                                    maxParentWidth - overlayInfo.offset.dx;
+                              }
+                              if (overlayInfo.offset.dy + overlayHeight >
+                                  maxParentHeight) {
+                                overlayHeight =
+                                    maxParentHeight - overlayInfo.offset.dy;
+                              }
+                            });
+                          },
+                          onPanEnd: (details) {
+                            // 리사이즈가 끝난 후 실제 위젯의 크기를 업데이트, 소수점 제거 후 반올림 적용
+                            setState(() {
+                              overlayInfo.properties.width =
+                                  overlayWidth.roundToDouble();
+                              overlayInfo.properties.height =
+                                  overlayHeight.roundToDouble();
+                              selectedWidgetModel.notifyListeners(); // 모델에 변경 사항 알림
+                            });
+                          },
+                          child: Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: color,
+                                width: 0.0,
+                              ),
+                              color: color.withOpacity(0.3),
                             ),
-                            color: Colors.black.withOpacity(0.5),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Remix.drag_move_line, // 리사이즈 아이콘
-                            size: 24,
-                            color: Colors.white,
+                            child: Transform.rotate(
+                              angle: -45 * 3.1415927 / 180, // -90도 회전
+                              child: const Icon(
+                                Remix.expand_up_down_line, // 리사이즈 아이콘
+                                size: 24,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
                   ],
                 );
               },
