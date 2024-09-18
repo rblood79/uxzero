@@ -5,7 +5,7 @@ class SidebarMenu extends StatelessWidget {
   final List<MenuItem> menuItems = [
     MenuItem(icon: Remix.file_line, label: 'Site'),
     MenuItem(icon: Remix.square_line, label: 'Widget'),
-    MenuItem(icon: Remix.node_tree, label: 'Tree'),
+    MenuItem(icon: Remix.node_tree, label: 'Node'),
     MenuItem(icon: Remix.database_2_line, label: 'Data'),
     MenuItem(icon: Remix.book_3_line, label: 'Library'),
     MenuItem(icon: Remix.account_circle_line, label: 'User'),
