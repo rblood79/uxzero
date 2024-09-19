@@ -14,10 +14,10 @@ class WidgetPanel extends StatelessWidget {
         color: Colors.black,
         label: 'Container',
         decoration: BoxDecoration(
-          color: Colors.transparent,
+          color: Colors.white,
           border: Border.all(
-            color: Colors.grey,
-            width: 0.5,
+            color: Colors.grey.shade400,
+            width: 0.0,
           ),
         ),
       ),
