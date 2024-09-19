@@ -13,7 +13,7 @@ class SelectedWidgetModel extends ChangeNotifier {
     decoration: BoxDecoration(
       color: Colors.white,
       border: Border.all(
-        color: Colors.grey,
+        color: Colors.black,
         width: 0.5,
       ),
     ),
