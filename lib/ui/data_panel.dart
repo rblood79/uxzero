@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:remixicon/remixicon.dart';
 
-class NodePanel extends StatelessWidget {
-  NodePanel({super.key});
+class DataPanel extends StatelessWidget {
+  DataPanel({super.key});
 
   static double getPanelWidth() {
-    return 320.0; // WidgetPanel의 너비
+    return 220.0; // WidgetPanel의 너비
   }
 
   @override
@@ -21,7 +21,7 @@ class NodePanel extends StatelessWidget {
               child: Align(
                 alignment: Alignment.center,
                 child: Text(
-                  'Node',
+                  'Data',
                   style: TextStyle(
                     color: Colors.red,
                     fontSize: 12,
@@ -29,7 +29,8 @@ class NodePanel extends StatelessWidget {
                     decoration: TextDecoration.none,
                   ),
                 ),
-              )),
+              )
+          ),
           Expanded(
               child: Container(
             decoration: BoxDecoration(

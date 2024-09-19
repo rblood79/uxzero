@@ -461,22 +461,24 @@ class _WorkAreaState extends State<WorkArea> {
                                 .selectWidget(overlayInfo.properties);
                           },
                           child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0, vertical: 6.0),
-                            decoration: BoxDecoration(
-                              color: color.withOpacity(1.0),
-                              borderRadius: BorderRadius.circular(0.0),
-                            ),
-                            child: Text(
-                              overlayInfo.properties.label,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.normal,
-                                decoration: TextDecoration.none,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0, vertical: 0.0),
+                              decoration: BoxDecoration(
+                                color: color.withOpacity(1.0),
+                                borderRadius: BorderRadius.circular(0.0),
                               ),
-                            ),
-                          ),
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  overlayInfo.properties.label,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.normal,
+                                    decoration: TextDecoration.none,
+                                  ),
+                                ),
+                              )),
                         ),
                       ),
                       if (isSelected) ...[
@@ -486,25 +488,27 @@ class _WorkAreaState extends State<WorkArea> {
                           left: overlayInfo.offset.dx + overlayWidth - 64,
                           top: overlayInfo.offset.dy + overlayHeight - 1,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8.0, vertical: 6.0),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.black.withOpacity(0.3),
-                                width: 0.0,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0, vertical: 0.0),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.black.withOpacity(0.3),
+                                  width: 0.0,
+                                ),
+                                color: color,
                               ),
-                              color: color,
-                            ),
-                            child: Text(
-                              '${overlayWidth.round()} px',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.normal,
-                                decoration: TextDecoration.none,
-                              ),
-                            ),
-                          ),
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  '${overlayWidth.round()} px',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.normal,
+                                    decoration: TextDecoration.none,
+                                  ),
+                                ),
+                              )),
                         ),
                         Positioned(
                           width: 64,
@@ -514,25 +518,27 @@ class _WorkAreaState extends State<WorkArea> {
                           child: Transform.rotate(
                             angle: -90 * 3.1415927 / 180,
                             child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8.0, vertical: 6.0),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.black.withOpacity(0.3),
-                                  width: 0.0,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0, vertical: 0.0),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.black.withOpacity(0.3),
+                                    width: 0.0,
+                                  ),
+                                  color: color,
                                 ),
-                                color: color,
-                              ),
-                              child: Text(
-                                '${overlayHeight.round()} px',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.normal,
-                                  decoration: TextDecoration.none,
-                                ),
-                              ),
-                            ),
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    '${overlayHeight.round()} px',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.normal,
+                                      decoration: TextDecoration.none,
+                                    ),
+                                  ),
+                                )),
                           ),
                         ),
                         Positioned(

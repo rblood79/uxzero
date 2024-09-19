@@ -13,14 +13,19 @@ class SidebarMenu extends StatelessWidget {
   ];
 
   final Function(String) onMenuButtonPressed;
+  final String selectedMenu; // 현재 선택된 메뉴
 
-  SidebarMenu({super.key, required this.onMenuButtonPressed});
+  SidebarMenu({
+    super.key,
+    required this.onMenuButtonPressed,
+    required this.selectedMenu,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 48, // 사이드바의 전체 너비
-      padding: const EdgeInsets.all(6.0),
+      padding: const EdgeInsets.all(0.0),
       decoration: BoxDecoration(
         color: Colors.white, // 배경색
         boxShadow: [
@@ -55,28 +60,34 @@ class SidebarMenu extends StatelessWidget {
 
   // 메뉴 항목을 빌드하는 헬퍼 메소드
   Widget buildMenuItem(MenuItem item) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0), // 항목 간 간격 설정
+    bool isSelected = item.label == selectedMenu; // 현재 선택된 메뉴인지 확인
+
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 0.0), // 항목 간 간격 설정
       child: GestureDetector(
         onTap: () {
           onMenuButtonPressed(item.label); // 메뉴 이름을 전달
           //print('${item.label} clicked');
         },
         child: Container(
-          width: 36, // 버튼의 너비
-          height: 54, // 버튼의 높이
+          width: 48, // 버튼의 너비
+          height: 62, // 버튼의 높이
           decoration: BoxDecoration(
-            color: Colors.white, // 버튼 배경색
-            borderRadius: BorderRadius.circular(8.0), // 모서리 둥글게
+            color: isSelected ? Colors.red.withOpacity(0.1) : Colors.white, // 선택된 경우 배경색 변경
+            //borderRadius: BorderRadius.circular(8.0), // 모서리 둥글게
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(item.icon, size: 21, color: Colors.black87),
+              Icon(item.icon, size: 21, color: isSelected ? Colors.redAccent : Colors.black87),
               const SizedBox(height: 4.0),
               Text(
                 item.label,
-                style: const TextStyle(fontSize: 10, color: Colors.grey),
+                style: TextStyle(
+                  fontSize: 10,
+                  color: isSelected ? Colors.redAccent : Colors.grey,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                ),
                 textAlign: TextAlign.center,
               ),
             ],

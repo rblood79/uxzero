@@ -51,24 +51,29 @@ class WidgetPanel extends StatelessWidget {
   static double getPanelWidth() {
     return 160.0; // WidgetPanel의 너비
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 160,
+      width: getPanelWidth(),
       color: Colors.white,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16), //EdgeInsets.all(16),
       child: Column(
         children: [
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            child: const Center(
-              child: Text(
-                'Widget',
-                style: TextStyle(fontSize: 12, color: Colors.grey),
-              ),
-            ),
-          ),
+          const SizedBox(
+              height: 62,
+              child: Align(
+                alignment: Alignment.center,
+                child: Text(
+                  'Widget',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 12,
+                    fontWeight: FontWeight.normal,
+                    decoration: TextDecoration.none,
+                  ),
+                ),
+              )),
           Expanded(
             child: GridView.count(
               crossAxisCount: 2, // 한 줄에 2개의 아이템
@@ -159,8 +164,8 @@ class WidgetPanel extends StatelessWidget {
   Widget buildWidgetItem(WidgetItem item, BuildContext context) {
     return Container(
       //padding: const EdgeInsets.all(8),
-      width: 72, // 고정된 너비
-      height: 72, // 고정된 높이
+      width: 62, // 고정된 너비
+      height: 62, // 고정된 높이
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(color: Colors.black12, width: 0.5),
