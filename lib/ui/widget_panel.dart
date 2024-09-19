@@ -48,6 +48,10 @@ class WidgetPanel extends StatelessWidget {
 
   WidgetPanel({super.key});
 
+  static double getPanelWidth() {
+    return 160.0; // WidgetPanel의 너비
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -155,6 +159,8 @@ class WidgetPanel extends StatelessWidget {
   Widget buildWidgetItem(WidgetItem item, BuildContext context) {
     return Container(
       //padding: const EdgeInsets.all(8),
+      width: 72, // 고정된 너비
+      height: 72, // 고정된 높이
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(color: Colors.black12, width: 0.5),

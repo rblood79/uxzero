@@ -481,6 +481,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
   // 색상 목록 생성 함수
   List<DropdownMenuItem<Color>> _buildColorDropdownItems() {
     return <Color>[
+      Colors.white,
       Colors.transparent,
       Colors.red,
       Colors.green,
@@ -501,6 +502,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
   // 선택된 색상이 Dropdown에 포함되지 않을 경우 처리
   Color _getValidColor(Color? selectedColor) {
     final List<Color> availableColors = [
+      Colors.white,
       Colors.transparent,
       Colors.red,
       Colors.green,
@@ -510,7 +512,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
 
     // 선택된 색상이 null이거나 목록에 없는 경우 기본값으로 Colors.red 반환
     if (selectedColor == null || !availableColors.contains(selectedColor)) {
-      return Colors.red;
+      return Colors.white;
     }
     return selectedColor;
   }

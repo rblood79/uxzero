@@ -6,6 +6,7 @@ import '../ui/sidebar_menu.dart';
 import '../ui/widget_panel.dart';
 import '../ui/work_area.dart';
 import '../ui/property_panel.dart';
+import '../ui/node_panel.dart';
 import '../models/selected_widget_model.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -15,42 +16,34 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
-    with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
   String selectedMenu = ''; // 현재 선택된 메뉴 항목
-  late AnimationController _controller;
-  late Animation<Offset> _offsetAnimation;
+  late Widget currentPanel; // 현재 표시 중인 패널 (WidgetPanel, NodePanel 등)
+  bool isPanelVisible = false; // 패널 표시 여부
+  double panelWidth = 0.0; // 패널의 동적 너비
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    _offsetAnimation = Tween<Offset>(
-      begin: const Offset(-1.0, 0.0), // 시작 위치 (왼쪽 화면 밖)
-      end: Offset.zero, // 끝 위치 (원래 위치)
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
+    // 초기 패널 설정 (초기에는 비어있음)
+    currentPanel = Container();
+    panelWidth = 0.0; // 초기에는 패널이 없으므로 너비는 0
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
+  // 메뉴 선택 시 동작
   void handleMenuSelection(String menuLabel) {
     setState(() {
       if (menuLabel == 'Widget') {
-        selectedMenu = 'Widget';
-        _controller.forward(); // 슬라이드 인 애니메이션 실행
+        currentPanel = WidgetPanel(); // WidgetPanel로 변경
+        panelWidth = WidgetPanel.getPanelWidth(); // WidgetPanel의 너비
+        isPanelVisible = true; // 패널 보이기
+      } else if (menuLabel == 'Node') {
+        currentPanel = NodePanel(); // NodePanel로 변경
+        panelWidth = NodePanel.getPanelWidth(); // NodePanel의 너비
+        isPanelVisible = true; // 패널 보이기
       } else {
-        selectedMenu = '';
-        _controller.reverse(); // 슬라이드 아웃 애니메이션 실행
+        isPanelVisible = false; // 패널 숨기기
+        panelWidth = 0.0; // 패널이 없을 때는 너비 0
       }
     });
   }
@@ -69,16 +62,19 @@ class _HomeScreenState extends State<HomeScreen>
                 Expanded(
                   child: WorkArea(),
                 ),
-                
               ],
             ),
+            // 애니메이션 컨테이너
             Positioned(
               left: 48,
               top: 48,
               bottom: 0,
-              child: SlideTransition(
-                position: _offsetAnimation,
-                child: WidgetPanel(), // WidgetPanel 슬라이드 애니메이션
+              child: AnimatedContainer(
+                width: isPanelVisible ? panelWidth : 0.0, // 선택한 패널의 너비로 애니메이션
+                duration: const Duration(milliseconds: 300), // 애니메이션 시간
+                curve: Curves.easeInOut,
+                color: Colors.white,
+                child: currentPanel, // 현재 선택된 패널을 표시
               ),
             ),
             Positioned(
@@ -91,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen>
               right: 0,
               top: 48,
               bottom: 0,
-              child: PropertyPanel(), // 선택된 위젯의 속성을 보여주고 수정할 수 있음
+              child: PropertyPanel(),
             ),
           ],
         ),
@@ -99,3 +95,4 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
+
