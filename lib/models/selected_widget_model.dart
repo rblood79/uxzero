@@ -276,6 +276,8 @@ enum WidgetType {
   text,
 }
 
+enum ResizePosition { topLeft, topRight, bottomLeft, bottomRight }
+
 // WidgetProperties 클래스
 class WidgetProperties {
   final String id;

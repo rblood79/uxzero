@@ -380,7 +380,7 @@ class _WorkAreaState extends State<WorkArea> {
     final selectedOverlayInfo = overlayInfoList.removeAt(0);
     overlayInfoList.add(selectedOverlayInfo);
 
-    List<WidgetProperties> _findTopMostParents(
+    List<WidgetProperties> findTopMostParents(
         List<WidgetProperties> selectedWidgets) {
       List<WidgetProperties> topMostParents = [];
       for (var widget in selectedWidgets) {
@@ -397,7 +397,7 @@ class _WorkAreaState extends State<WorkArea> {
     }
 
     final topMostParents =
-        _findTopMostParents(selectedWidgetModel.selectedWidgetProperties);
+        findTopMostParents(selectedWidgetModel.selectedWidgetProperties);
 
     return OverlayEntry(
       builder: (context) => LayoutBuilder(

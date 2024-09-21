@@ -58,11 +58,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // 패널 매핑
   final Map<MenuOption, Tuple2<Widget, double>> panelMap = {
-    MenuOption.Site: Tuple2(SitePanel(), 400.0),
+    MenuOption.Site: Tuple2(const SitePanel(), 400.0),
     MenuOption.Widget: Tuple2(WidgetPanel(), 160.0),
-    MenuOption.Node: Tuple2(NodePanel(), 250.0),
-    MenuOption.Data: Tuple2(DataPanel(), 220.0),
-    MenuOption.Library: Tuple2(LibraryPanel(), 280.0),
+    MenuOption.Node: Tuple2(const NodePanel(), 250.0),
+    MenuOption.Data: Tuple2(const DataPanel(), 220.0),
+    MenuOption.Library: Tuple2(const LibraryPanel(), 280.0),
     // 다른 패널을 추가할 경우 여기에 매핑 추가
   };
 

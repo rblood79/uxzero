@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:remixicon/remixicon.dart';
 
 class LibraryPanel extends StatelessWidget {
-  LibraryPanel({super.key});
+  const LibraryPanel({super.key});
 
   static double getPanelWidth() {
     return 280.0; // WidgetPanel의 너비

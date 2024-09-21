@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:remixicon/remixicon.dart';
 
 class NodePanel extends StatelessWidget {
-  NodePanel({super.key});
+  const NodePanel({super.key});
 
   static double getPanelWidth() {
     return 320.0; // WidgetPanel의 너비

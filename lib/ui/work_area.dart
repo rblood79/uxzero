@@ -1,6 +1,6 @@
+// lib/widgets/work_area.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:remixicon/remixicon.dart';
 import '../models/selected_widget_model.dart';
 import '../widgets/container_widget.dart';
 import '../widgets/text_widget.dart';
@@ -13,13 +13,17 @@ class WorkArea extends StatefulWidget {
 }
 
 class _WorkAreaState extends State<WorkArea> {
-  OverlayEntry? _guidelineOverlay;
+  final GlobalKey _workAreaKey = GlobalKey(); // WorkArea의 GlobalKey 추가
   final Map<String, GlobalKey<State<StatefulWidget>>> _globalKeys = {};
   final Map<String, ValueKey<String>> _valueKeys = {};
 
   Offset? _dragStartPosition;
   Offset? _dragEndPosition;
-  bool _isDragging = true;
+  bool _isDragging = false;
+
+  // 가이드라인 크기와 위치를 관리할 맵
+  Map<String, Size> _guidelineSizes = {};
+  Map<String, Offset> _resizeDeltas = {}; // 리사이즈 중 x, y 변화량을 저장
 
   @override
   Widget build(BuildContext context) {
@@ -29,14 +33,6 @@ class _WorkAreaState extends State<WorkArea> {
           child: Consumer<SelectedWidgetModel>(
             builder: (context, selectedWidgetModel, child) {
               final rootContainer = selectedWidgetModel.rootContainer;
-
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                _updateGuidelineOverlay(selectedWidgetModel);
-              });
-
-              if (!_globalKeys.containsKey(rootContainer.id)) {
-                _globalKeys[rootContainer.id] = GlobalKey();
-              }
 
               return GestureDetector(
                 onTap: () {
@@ -64,19 +60,27 @@ class _WorkAreaState extends State<WorkArea> {
                   });
                 },
                 child: Stack(
+                  fit: StackFit.expand, // Stack의 크기를 부모에 맞춤
                   children: [
-                    Container(
-                      key: _globalKeys[rootContainer.id],
-                      width: rootContainer.width,
-                      height: rootContainer.height,
-                      decoration: rootContainer.decoration,
-                      child: _buildDragTargetForContainer(
-                          rootContainer, selectedWidgetModel),
+                    Positioned(
+                      left: rootContainer.x,
+                      top: rootContainer.y,
+                      child: Container(
+                        key: _workAreaKey, // WorkArea의 key 설정
+                        width: rootContainer.width,
+                        height: rootContainer.height,
+                        decoration: rootContainer.decoration,
+                        child: _buildDragTargetForContainer(
+                            rootContainer, selectedWidgetModel),
+                      ),
                     ),
+                    // 드래그 중일 때 선택 박스 표시
                     if (_isDragging &&
                         _dragStartPosition != null &&
                         _dragEndPosition != null)
                       _buildDragSelectionBox(context),
+                    // 선택된 위젯들의 가이드라인과 레이블 표시
+                    ..._buildSelectionGuidelines(selectedWidgetModel),
                   ],
                 ),
               );
@@ -108,6 +112,232 @@ class _WorkAreaState extends State<WorkArea> {
     );
   }
 
+  // 선택된 위젯들에 대한 가이드라인과 레이블을 생성
+  List<Widget> _buildSelectionGuidelines(
+      SelectedWidgetModel selectedWidgetModel) {
+    List<Widget> guidelines = [];
+
+    // WorkArea의 RenderBox 가져오기
+    final workAreaContext = _workAreaKey.currentContext;
+    if (workAreaContext == null) return guidelines;
+    final workAreaRenderBox = workAreaContext.findRenderObject() as RenderBox;
+    final workAreaPosition = workAreaRenderBox.localToGlobal(Offset.zero);
+
+    for (var widgetProp in selectedWidgetModel.selectedWidgetProperties) {
+      final key = _globalKeys[widgetProp.id];
+      if (key != null && key.currentContext != null) {
+        final renderBox = key.currentContext!.findRenderObject() as RenderBox?;
+        if (renderBox != null) {
+          final widgetPosition = renderBox.localToGlobal(Offset.zero);
+          final size = renderBox.size;
+
+          // WorkArea 내 상대적인 위치 계산
+          final relativeLeft = widgetProp.x;
+          final relativeTop = widgetProp.y;
+
+          // 가이드라인 크기 초기화
+          _guidelineSizes.putIfAbsent(widgetProp.id, () => size);
+
+          guidelines.add(Positioned(
+            left: relativeLeft,
+            top: relativeTop,
+            width: _guidelineSizes[widgetProp.id]!.width,
+            height: _guidelineSizes[widgetProp.id]!.height,
+            child: Stack(
+              children: [
+                // 가이드라인 경계에만 IgnorePointer 적용
+                IgnorePointer(
+                  child: SizedBox(
+                    width: _guidelineSizes[widgetProp.id]!.width,
+                    height: _guidelineSizes[widgetProp.id]!.height,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.blue, width: 2),
+                      ),
+                    ),
+                  ),
+                ),
+                // 리사이즈 버튼 추가 - 각 모서리에 위치
+                _buildResizeHandle(
+                    widgetId: widgetProp.id, position: ResizePosition.topLeft),
+                _buildResizeHandle(
+                    widgetId: widgetProp.id, position: ResizePosition.topRight),
+                _buildResizeHandle(
+                    widgetId: widgetProp.id,
+                    position: ResizePosition.bottomLeft),
+                _buildResizeHandle(
+                    widgetId: widgetProp.id,
+                    position: ResizePosition.bottomRight),
+                // 레이블 표시 - IgnorePointer 밖에 배치
+                Positioned(
+                  left: 0,
+                  top: 0, // 필요에 따라 조정 가능
+                  child: Container(
+                    width: _guidelineSizes[widgetProp.id]!.width,
+                    height: 24,
+                    color: Colors.blue.withOpacity(0.7),
+                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                    child: Text(
+                      widgetProp.label,
+                      overflow: TextOverflow.ellipsis, // 텍스트 오버플로우 처리
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        shadows: [
+                          Shadow(
+                            offset: Offset(1.0, 1.0),
+                            blurRadius: 2.0,
+                            color: Colors.black54,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ));
+        }
+      }
+    }
+
+    return guidelines;
+  }
+
+  // 리사이즈 버튼을 생성하는 헬퍼 메서드
+  Widget _buildResizeHandle(
+      {required String widgetId, required ResizePosition position}) {
+    double left = 0;
+    double top = 0;
+
+    switch (position) {
+      case ResizePosition.topLeft:
+        left = 0;
+        top = 0;
+        break;
+      case ResizePosition.topRight:
+        left = _guidelineSizes[widgetId]!.width - 12;
+        top = 0;
+        break;
+      case ResizePosition.bottomLeft:
+        left = 0;
+        top = _guidelineSizes[widgetId]!.height - 12;
+        break;
+      case ResizePosition.bottomRight:
+        left = _guidelineSizes[widgetId]!.width - 12;
+        top = _guidelineSizes[widgetId]!.height - 12;
+        break;
+    }
+
+    return Positioned(
+      left: left,
+      top: top,
+      child: GestureDetector(
+        onPanUpdate: (details) {
+          setState(() {
+            // 가이드라인의 크기만 변경
+            Size currentSize = _guidelineSizes[widgetId]!;
+            double newWidth = currentSize.width;
+            double newHeight = currentSize.height;
+            double deltaX = 0;
+            double deltaY = 0;
+
+            switch (position) {
+              case ResizePosition.topLeft:
+                newWidth -= details.delta.dx;
+                newHeight -= details.delta.dy;
+                deltaX += details.delta.dx;
+                deltaY += details.delta.dy;
+                break;
+              case ResizePosition.topRight:
+                newWidth += details.delta.dx;
+                newHeight -= details.delta.dy;
+                deltaY += details.delta.dy;
+                break;
+              case ResizePosition.bottomLeft:
+                newWidth -= details.delta.dx;
+                newHeight += details.delta.dy;
+                deltaX += details.delta.dx;
+                break;
+              case ResizePosition.bottomRight:
+                newWidth += details.delta.dx;
+                newHeight += details.delta.dy;
+                break;
+            }
+
+            // 최소 크기 설정
+            if (newWidth < 50) {
+              deltaX += newWidth < 50 ? (50 - newWidth) : 0;
+              newWidth = 50;
+            }
+            if (newHeight < 50) {
+              deltaY += newHeight < 50 ? (50 - newHeight) : 0;
+              newHeight = 50;
+            }
+
+            // 가이드라인 크기 업데이트
+            _guidelineSizes[widgetId] = Size(newWidth, newHeight);
+
+            // 리사이즈 중인 위젯의 x, y 변화량 업데이트
+            _resizeDeltas.update(widgetId, (existing) {
+              return Offset(existing.dx + deltaX, existing.dy + deltaY);
+            }, ifAbsent: () => Offset(deltaX, deltaY));
+          });
+        },
+        onPanEnd: (details) {
+          setState(() {
+            // 리사이즈 종료 시, 가이드라인의 크기를 선택된 위젯의 크기로 업데이트
+            Size newSize = _guidelineSizes[widgetId]!;
+            Offset delta = _resizeDeltas[widgetId] ?? Offset.zero;
+
+            // 선택된 위젯의 크기 및 위치 업데이트
+            SelectedWidgetModel selectedWidgetModel =
+                Provider.of<SelectedWidgetModel>(context, listen: false);
+            WidgetProperties? widgetProp =
+                selectedWidgetModel.selectedWidgetProperties.firstWhere(
+              (element) => element.id == widgetId,
+              orElse: () => selectedWidgetModel.rootContainer,
+            );
+
+            // x, y 업데이트
+            widgetProp.x += delta.dx;
+            widgetProp.y += delta.dy;
+
+            // 크기 업데이트
+            widgetProp.width = newSize.width;
+            widgetProp.height = newSize.height;
+
+            // 크기 변경 후, 가이드라인 크기를 위젯의 크기에 맞게 초기화
+            _guidelineSizes[widgetId] =
+                Size(widgetProp.width, widgetProp.height);
+
+            // 리사이즈 델타 초기화
+            _resizeDeltas.remove(widgetId);
+
+            // 상태 업데이트 알림
+            selectedWidgetModel.notifyListeners();
+          });
+        },
+        onTap: () {
+          // 리사이즈 버튼 탭 시 동작
+          print('Resize handle tapped');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Resize 버튼이 탭되었습니다.')),
+          );
+        },
+        child: Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(
+            color: Colors.blue,
+            shape: BoxShape.circle,
+          ),
+        ),
+      ),
+    );
+  }
+
   void _selectWidgetsInDragArea(SelectedWidgetModel selectedWidgetModel) {
     if (_dragStartPosition == null || _dragEndPosition == null) return;
 
@@ -130,14 +360,16 @@ class _WorkAreaState extends State<WorkArea> {
       if (renderBox == null || renderBox is! RenderBox) {
         return;
       }
-      final position = renderBox.localToGlobal(Offset.zero);
-      final size = renderBox.size;
+      final position = container.x;
+      //final size = container.size;
+      final width = container.width;
+      final height = container.height;
 
       final widgetRect = Rect.fromLTWH(
-        position.dx,
-        position.dy,
-        size.width,
-        size.height,
+        container.x,
+        container.y,
+        container.width,
+        container.height,
       );
 
       if (dragArea.contains(widgetRect.topLeft) &&
@@ -294,28 +526,34 @@ class _WorkAreaState extends State<WorkArea> {
             // Handle drag and drop
           },
           builder: (context, candidateData, rejectedData) {
-            return Container(
-              key: _globalKeys.containsKey(childProperties.id)
-                  ? _globalKeys[childProperties.id]
-                  : _valueKeys[childProperties.id],
-              width: childProperties.width,
-              height: childProperties.height,
-              decoration: childProperties.decoration,
-              child: childProperties.type == WidgetType.text
-                  ? Align(
-                      alignment: childProperties.alignment ?? Alignment.center,
-                      child: Text(
-                        childProperties.label,
-                        textAlign:
-                            childProperties.textAlign ?? TextAlign.center,
-                        style: TextStyle(
-                          fontSize: childProperties.fontSize ?? 12.0,
-                          color: Colors.black,
+            return Positioned(
+              left: childProperties.x,
+              top: childProperties.y,
+              child: Container(
+                key: _globalKeys.containsKey(childProperties.id)
+                    ? _globalKeys[childProperties.id]
+                    : _valueKeys[childProperties.id],
+                width: childProperties.width,
+                height: childProperties.height,
+                decoration: childProperties.decoration,
+                child: childProperties.type == WidgetType.text
+                    ? Align(
+                        alignment:
+                            childProperties.alignment ?? Alignment.center,
+                        child: Text(
+                          childProperties.label,
+                          overflow: TextOverflow.ellipsis, // 오버플로우 처리
+                          textAlign:
+                              childProperties.textAlign ?? TextAlign.center,
+                          style: TextStyle(
+                            fontSize: childProperties.fontSize ?? 12.0,
+                            color: Colors.black,
+                          ),
                         ),
-                      ),
-                    )
-                  : _buildDragTargetForContainer(
-                      childProperties, selectedWidgetModel),
+                      )
+                    : _buildDragTargetForContainer(
+                        childProperties, selectedWidgetModel),
+              ),
             );
           },
         ),
@@ -332,325 +570,4 @@ class _WorkAreaState extends State<WorkArea> {
       return childWidget;
     }).toList();
   }
-
-  void _updateGuidelineOverlay(SelectedWidgetModel selectedWidgetModel) {
-    final selectedWidgets = selectedWidgetModel.selectedWidgetProperties;
-
-    if (_guidelineOverlay != null) {
-      _guidelineOverlay!.remove();
-      _guidelineOverlay = null;
-    }
-
-    if (selectedWidgets.isNotEmpty) {
-      List<_OverlayInfo> overlayInfoList = [];
-
-      for (var selectedWidget in selectedWidgets) {
-        WidgetProperties? currentWidget = selectedWidget;
-        int depth = 0;
-        while (currentWidget != null) {
-          final key = _globalKeys[currentWidget.id];
-          if (key != null && key.currentContext != null) {
-            final renderBox = key.currentContext!.findRenderObject();
-            if (renderBox == null || renderBox is! RenderBox) {
-              return;
-            }
-            final size = renderBox.size;
-            final offset = renderBox.localToGlobal(Offset.zero);
-
-            overlayInfoList.add(_OverlayInfo(
-              properties: currentWidget,
-              size: size,
-              offset: offset,
-            ));
-          }
-
-          currentWidget = currentWidget.parent;
-          depth++;
-        }
-      }
-
-      _guidelineOverlay =
-          _buildMultipleOverlay(overlayInfoList, selectedWidgetModel);
-      Overlay.of(context).insert(_guidelineOverlay!);
-    }
-  }
-
-  OverlayEntry _buildMultipleOverlay(List<_OverlayInfo> overlayInfoList,
-      SelectedWidgetModel selectedWidgetModel) {
-    final selectedOverlayInfo = overlayInfoList.removeAt(0);
-    overlayInfoList.add(selectedOverlayInfo);
-
-    List<WidgetProperties> _findTopMostParents(
-        List<WidgetProperties> selectedWidgets) {
-      List<WidgetProperties> topMostParents = [];
-      for (var widget in selectedWidgets) {
-        var currentWidget = widget;
-        while (currentWidget.parent != null &&
-            selectedWidgets.contains(currentWidget.parent)) {
-          currentWidget = currentWidget.parent!;
-        }
-        if (!topMostParents.contains(currentWidget)) {
-          topMostParents.add(currentWidget);
-        }
-      }
-      return topMostParents;
-    }
-
-    final topMostParents =
-        _findTopMostParents(selectedWidgetModel.selectedWidgetProperties);
-
-    return OverlayEntry(
-      builder: (context) => LayoutBuilder(
-        builder: (context, constraints) {
-          final maxParentWidth = constraints.maxWidth;
-          final maxParentHeight = constraints.maxHeight;
-
-          return Stack(
-            children: overlayInfoList.asMap().entries.map((entry) {
-              final index = entry.key;
-              final overlayInfo = entry.value;
-              final colors = [
-                Colors.red,
-                Colors.orange,
-                Colors.green,
-                Colors.lightBlue,
-                Colors.lightBlueAccent,
-                Colors.blue,
-                Colors.blueAccent,
-                Colors.purple,
-              ];
-              final color = colors[index % colors.length];
-
-              final isSelected = selectedWidgetModel.selectedWidgetProperties
-                  .contains(overlayInfo.properties);
-              final isTopMostParent =
-                  topMostParents.contains(overlayInfo.properties);
-
-              double overlayWidth = overlayInfo.size.width;
-              double overlayHeight = overlayInfo.size.height;
-
-              return StatefulBuilder(
-                builder: (context, setState) {
-                  return Stack(
-                    children: [
-                      Positioned(
-                        left: overlayInfo.offset.dx,
-                        top: overlayInfo.offset.dy,
-                        child: IgnorePointer(
-                          ignoring: true,
-                          child: Container(
-                            width: overlayWidth.roundToDouble(),
-                            height: overlayHeight.roundToDouble(),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: color,
-                                width: 1.0,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        height: 24,
-                        left: overlayInfo.offset.dx,
-                        top: overlayInfo.offset.dy - 23,
-                        child: GestureDetector(
-                          onTap: () {
-                            selectedWidgetModel.clearSelection();
-                            selectedWidgetModel
-                                .selectWidget(overlayInfo.properties);
-                          },
-                          child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0, vertical: 0.0),
-                              decoration: BoxDecoration(
-                                color: color.withOpacity(1.0),
-                                borderRadius: BorderRadius.circular(0.0),
-                              ),
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  overlayInfo.properties.label,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.normal,
-                                    decoration: TextDecoration.none,
-                                  ),
-                                ),
-                              )),
-                        ),
-                      ),
-                      if (isSelected) ...[
-                        Positioned(
-                          width: 64,
-                          height: 24,
-                          left: overlayInfo.offset.dx + overlayWidth - 64,
-                          top: overlayInfo.offset.dy + overlayHeight - 1,
-                          child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8.0, vertical: 0.0),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.black.withOpacity(0.3),
-                                  width: 0.0,
-                                ),
-                                color: color,
-                              ),
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  '${overlayWidth.round()} px',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.normal,
-                                    decoration: TextDecoration.none,
-                                  ),
-                                ),
-                              )),
-                        ),
-                        Positioned(
-                          width: 64,
-                          height: 24,
-                          left: overlayInfo.offset.dx + overlayWidth - 21,
-                          top: overlayInfo.offset.dy + overlayHeight - 44,
-                          child: Transform.rotate(
-                            angle: -90 * 3.1415927 / 180,
-                            child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8.0, vertical: 0.0),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Colors.black.withOpacity(0.3),
-                                    width: 0.0,
-                                  ),
-                                  color: color,
-                                ),
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    '${overlayHeight.round()} px',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.normal,
-                                      decoration: TextDecoration.none,
-                                    ),
-                                  ),
-                                )),
-                          ),
-                        ),
-                        Positioned(
-                          left: overlayInfo.offset.dx - 23,
-                          top: overlayInfo.offset.dy - 23,
-                          child: GestureDetector(
-                            onTap: () {
-                              // 해당 위젯 삭제
-                              selectedWidgetModel
-                                  .selectWidget(overlayInfo.properties);
-                              selectedWidgetModel.deleteSelectedWidget();
-                            },
-                            child: Container(
-                              width: 24,
-                              height: 24,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.black.withOpacity(0.3),
-                                  width: 1.0,
-                                ),
-                                color: color,
-                              ),
-                              child: const Icon(
-                                Remix.close_line,
-                                size: 21,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                        if (isTopMostParent)
-                          Positioned(
-                            left: overlayInfo.offset.dx + overlayWidth - 1,
-                            top: overlayInfo.offset.dy + overlayHeight - 1,
-                            child: GestureDetector(
-                              onPanUpdate: (details) {
-                                setState(() {
-                                  overlayWidth += details.delta.dx;
-                                  overlayHeight += details.delta.dy;
-
-                                  if (overlayWidth < 48) overlayWidth = 48;
-                                  if (overlayHeight < 48) overlayHeight = 48;
-
-                                  if (overlayInfo.offset.dx + overlayWidth >
-                                      maxParentWidth) {
-                                    overlayWidth =
-                                        maxParentWidth - overlayInfo.offset.dx;
-                                  }
-                                  if (overlayInfo.offset.dy + overlayHeight >
-                                      maxParentHeight) {
-                                    overlayHeight =
-                                        maxParentHeight - overlayInfo.offset.dy;
-                                  }
-                                });
-                              },
-                              onPanEnd: (details) {
-                                setState(() {
-                                  overlayInfo.properties.width =
-                                      overlayWidth.roundToDouble();
-                                  overlayInfo.properties.height =
-                                      overlayHeight.roundToDouble();
-                                  selectedWidgetModel.notifyListeners();
-                                });
-                              },
-                              child: Container(
-                                width: 24,
-                                height: 24,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Colors.black.withOpacity(0.3),
-                                    width: 1.0,
-                                  ),
-                                  color: color,
-                                ),
-                                child: Transform.rotate(
-                                  angle: -45 * 3.1415927 / 180,
-                                  child: const Icon(
-                                    Remix.expand_up_down_line,
-                                    size: 21,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                      ]
-                    ],
-                  );
-                },
-              );
-            }).toList(),
-          );
-        },
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _guidelineOverlay?.remove();
-    super.dispose();
-  }
-}
-
-class _OverlayInfo {
-  final WidgetProperties properties;
-  final Size size;
-  final Offset offset;
-
-  _OverlayInfo({
-    required this.properties,
-    required this.size,
-    required this.offset,
-  });
 }
