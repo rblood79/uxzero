@@ -40,10 +40,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String selectedMenu = ''; // 현재 선택된 메뉴 항목
-  Widget currentPanel = Container(); // 현재 표시 중인 패널
-  double panelWidth = 0.0; // 패널의 현재 너비
-  bool isPanelVisible = false; // 패널 표시 여부
+  String selectedMenu = 'Widget'; // 현재 선택된 메뉴 항목
+  Widget currentPanel = WidgetPanel(); // 현재 표시 중인 패널
+  double panelWidth = 160.0; // 패널의 현재 너비
+  bool isPanelVisible = true; // 패널 표시 여부
 
   // 메뉴 라벨을 Enum으로 매핑
   final Map<String, MenuOption> labelToOptionMap = {
