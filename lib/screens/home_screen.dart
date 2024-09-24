@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../util/monitor.dart';
 import '../ui/custom_app_bar.dart';
 import '../ui/top_panel.dart';
 import '../ui/sidebar_menu.dart';
@@ -165,6 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 selectedMenu: selectedMenu,
               ),
             ),
+            const FrameRateMonitor(),
           ],
         ),
       ),
