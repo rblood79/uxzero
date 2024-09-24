@@ -162,7 +162,7 @@ class _WorkAreaState extends State<WorkArea> {
             final textWidget = details.data as TextWidget;
             properties.children.add(
               WidgetProperties(
-                id: DateTime.now().toString(),
+                id: UID.generate(),
                 label: textWidget.label,
                 width: textWidget.width,
                 height: textWidget.height,
@@ -185,7 +185,7 @@ class _WorkAreaState extends State<WorkArea> {
             final containerWidget = details.data as ContainerWidget;
             properties.children.add(
               WidgetProperties(
-                id: DateTime.now().toString(),
+                id: UID.generate(),
                 label: containerWidget.label,
                 width: containerWidget.width,
                 height: containerWidget.height,
