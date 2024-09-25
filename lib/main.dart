@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
-import './ui/theme.dart';
 import 'package:provider/provider.dart';
-import 'screens/home_screen.dart';
 import 'models/selected_widget_model.dart';
+import 'models/keyboard_model.dart';
+import 'screens/home_screen.dart';
+import './ui/theme.dart';
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => SelectedWidgetModel()),
+        ChangeNotifierProvider(
+          create: (context) => SelectedWidgetModel(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => KeyboardModel(),
+        ),
       ],
       child: const MyApp(),
     ),
