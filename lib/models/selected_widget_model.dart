@@ -29,6 +29,34 @@ class SelectedWidgetModel extends ChangeNotifier {
   final List<WidgetProperties> _history = [];
   int _historyIndex = -1;
 
+  // 위젯 사이즈 변경을 처리하는 메서드
+  
+  void updateWidgetSize(String widgetId, double newWidth, double newHeight) {
+    WidgetProperties? widget = _widgetMap[widgetId];
+    if (widget != null) {
+      widget.width = newWidth;
+      widget.height = newHeight;
+      addToHistory();
+      notifyListeners();
+    }
+  }
+
+  // 모든 위젯을 ID로 빠르게 찾을 수 있는 맵을 유지
+  final Map<String, WidgetProperties> _widgetMap = {};
+
+  // 위젯을 추가할 때 맵 업데이트
+  void addWidgetToMap(WidgetProperties widget) {
+    _widgetMap[widget.id] = widget;
+    for (var child in widget.children) {
+      addWidgetToMap(child);
+    }
+  }
+
+  // ID로 위젯 찾기
+  WidgetProperties? findWidgetById(String id) {
+    return _widgetMap[id];
+  }
+
   // 선택 상태를 변경할 때는 기존 선택을 초기화하고 새로운 선택을 설정
   void selectWidget(WidgetProperties? properties) {
     if (properties == null) return;
@@ -183,8 +211,7 @@ class SelectedWidgetModel extends ChangeNotifier {
   }
 
   // CrossAxisAlignment 업데이트
-  void updateCrossAxisAlignment(CrossAxisAlignment alignment,
-      [TextBaseline? baseline]) {
+  void updateCrossAxisAlignment(CrossAxisAlignment alignment, [TextBaseline? baseline]) {
     if (selectedWidgetProperties.isNotEmpty) {
       for (var selectedWidget in selectedWidgetProperties) {
         selectedWidget.crossAxisAlignment = alignment;
@@ -202,9 +229,13 @@ class SelectedWidgetModel extends ChangeNotifier {
     if (_historyIndex < _history.length - 1) {
       _history.removeRange(_historyIndex + 1, _history.length);
     }
-    _history.add(rootContainer.copyWith()); // 현재 상태를 복사하여 이력에 추가
-    _historyIndex++;
-    notifyListeners(); // 상태 변경 알림
+
+    // 현재 상태와 이전 상태가 동일하지 않은 경우에만 이력 추가
+    if (_history.isEmpty || rootContainer != _history[_historyIndex]) {
+      _history.add(rootContainer.copyWith());
+      _historyIndex++;
+      notifyListeners(); // 상태 변경 알림
+    }
   }
 
   // Undo 가능한지 여부
@@ -232,7 +263,7 @@ class SelectedWidgetModel extends ChangeNotifier {
   }
 
   // 선택된 위젯 삭제
-  void deleteSelectedWidget() {
+  /*void deleteSelectedWidget() {
     if (selectedWidgetProperties.isNotEmpty) {
       for (var selectedWidget in List.from(selectedWidgetProperties)) {
         _deleteWidgetRecursive(rootContainer, selectedWidget);
@@ -241,25 +272,19 @@ class SelectedWidgetModel extends ChangeNotifier {
       addToHistory(); // 이력 추가
       notifyListeners();
     }
-  }
-
-  // 재귀적으로 위젯을 삭제하는 함수
-  bool _deleteWidgetRecursive(
-      WidgetProperties parent, WidgetProperties target) {
-    if (parent.children.contains(target)) {
-      parent.children.remove(target);
-      return true;
-    } else {
-      for (var child in parent.children) {
-        if (_deleteWidgetRecursive(child, target)) {
-          return true;
-        }
+  }*/
+  void deleteSelectedWidget() {
+    if (selectedWidgetProperties.isNotEmpty) {
+      for (var selectedWidget in List.from(selectedWidgetProperties)) {
+        // 부모 참조를 통해 직접 삭제
+        selectedWidget.parent?.children.remove(selectedWidget);
       }
+      clearSelection(); // 삭제 후 선택된 위젯 초기화
+      addToHistory(); // 이력 추가
+      notifyListeners();
     }
-    return false;
   }
 }
-
 
 // LayoutType 열거형
 enum LayoutType {
@@ -302,6 +327,8 @@ class WidgetProperties {
   double? fontSize; // 폰트 크기
   TextAlign? textAlign; // 텍스트 정렬
   Alignment? alignment;
+  // 마우스의 상대적 위치를 저장하는 필드 추가
+  Offset? resizeOffset;
 
   WidgetProperties({
     required this.id,
@@ -322,6 +349,7 @@ class WidgetProperties {
     this.fontSize, // 텍스트 위젯을 위한 폰트 크기
     this.textAlign, // 텍스트 위젯을 위한 텍스트 정렬
     this.alignment,
+    this.resizeOffset,  // 필드 초기화
   }) : children = children ?? [];
 
   // copyWith 메서드에서 부모 참조 및 새로운 속성 처리
@@ -355,10 +383,8 @@ class WidgetProperties {
       y: y ?? this.y,
       layoutType: layoutType ?? this.layoutType,
       children: children != null
-          ? List<WidgetProperties>.from(
-              children.map((child) => child.copyWith(parent: this)))
-          : List<WidgetProperties>.from(
-              this.children.map((child) => child.copyWith(parent: this))),
+          ? List<WidgetProperties>.from(children.map((child) => child.copyWith(parent: this)))
+          : List<WidgetProperties>.from(this.children.map((child) => child.copyWith(parent: this))),
       mainAxisAlignment: mainAxisAlignment ?? this.mainAxisAlignment,
       crossAxisAlignment: crossAxisAlignment ?? this.crossAxisAlignment,
       textBaseline: textBaseline ?? this.textBaseline,
@@ -398,15 +424,13 @@ class WidgetProperties {
   }
 }
 
-
 class UID {
   static final _random = Random();
 
   /// 고유한 ID를 생성합니다.
   /// [length]는 생성할 ID의 길이를 지정합니다.
   static String generate({int length = 16}) {
-    const availableChars =
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const availableChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     final timestamp = DateTime.now().millisecondsSinceEpoch;
 
     // 무작위로 문자열을 생성
