@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../util/monitor.dart';
 import '../ui/custom_app_bar.dart';
@@ -9,11 +10,11 @@ import '../ui/node_panel.dart';
 import '../ui/site_panel.dart';
 import '../ui/data_panel.dart';
 import '../ui/library_panel.dart';
-
 import '../ui/work_area.dart';
 import '../ui/property_panel.dart';
 
-import '../models/selected_widget_model.dart';
+import '../models/selected_widget_model.dart'; // SelectedWidgetModel 파일 import
+import '../models/keyboard_model.dart'; // KeyboardModel 파일 import
 
 // Enum을 사용하여 메뉴 옵션 정의
 enum MenuOption {
@@ -41,6 +42,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  
   String selectedMenu = 'Widget'; // 현재 선택된 메뉴 항목
   Widget currentPanel = WidgetPanel(); // 현재 표시 중인 패널
   double panelWidth = 160.0; // 패널의 현재 너비
@@ -106,13 +108,22 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  final FocusNode _focusNode = FocusNode(); // FocusNode를 사용하여 키보드 이벤트를 감지
+  
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => SelectedWidgetModel(),
-      child: Scaffold(
-        appBar: const CustomAppBar(),
-        body: Stack(
+    return Scaffold(
+      appBar: const CustomAppBar(),
+      body: KeyboardListener(
+        focusNode: _focusNode, // focusNode를 설정
+        autofocus: true,       // 자동으로 포커스를 받도록 설정
+        onKeyEvent: (KeyEvent event) {
+          // 키 이벤트를 KeyboardModel로 전달
+          if (event is KeyDownEvent || event is KeyUpEvent) {
+            context.read<KeyboardModel>().handleKeyEvent(event);
+          }
+        },
+        child: Stack(
           children: [
             // 메인 콘텐츠
             const Column(
@@ -121,6 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: WorkArea(),
                 ),
+                
               ],
             ),
             // 애니메이션 패널
@@ -132,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
               curve: Curves.easeInOut,
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
-                width: panelWidth,  // 패널 너비 설정
+                width: panelWidth, // 패널 너비 설정
                 curve: Curves.easeInOut,
                 color: Colors.white,
                 child: AnimatedSwitcher(
@@ -167,6 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             const FrameRateMonitor(),
+            //const PerformanceOverlay(),
           ],
         ),
       ),
