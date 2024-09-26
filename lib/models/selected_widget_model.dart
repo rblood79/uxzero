@@ -16,7 +16,7 @@ class SelectedWidgetModel extends ChangeNotifier {
       color: Colors.white,
       border: Border.all(
         color: Colors.black,
-        width: 0.5,
+        width: 0.0,
       ),
     ),
     x: 0,
