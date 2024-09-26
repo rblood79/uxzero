@@ -48,8 +48,25 @@ class _PropertyPanelState extends State<PropertyPanel> {
   Widget build(BuildContext context) {
     return Container(
       width: 224,
-      color: Colors.white,
       padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white, // 배경색
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            spreadRadius: 1,
+            blurRadius: 8,
+            offset: const Offset(-4, 0),
+          ),
+        ],
+        border: const Border(
+          left: BorderSide(
+            // 오른쪽에만 테두리 적용
+            color: Colors.grey,
+            width: 0.5,
+          ),
+        ),
+      ),
       child: Consumer<SelectedWidgetModel>(
         builder: (context, selectedWidgetModel, child) {
           final selectedWidgets = selectedWidgetModel.selectedWidgetProperties;
@@ -101,8 +118,8 @@ class _PropertyPanelState extends State<PropertyPanel> {
                 // 라벨 수정
                 TextField(
                   decoration: const InputDecoration(
-                    //labelText: 'Label',
-                  ),
+                      //labelText: 'Label',
+                      ),
                   controller: labelController,
                   onChanged: (value) {
                     if (value != selectedWidget.label) {
@@ -118,16 +135,14 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     Expanded(
                       child: TextField(
                         decoration: const InputDecoration(
-                          //labelText: 'Width',
-                        ),
+                            //labelText: 'Width',
+                            ),
                         keyboardType: TextInputType.number,
                         controller: widthController,
                         onChanged: (value) {
-                          final newWidth =
-                              double.tryParse(value) ?? selectedWidget.width;
+                          final newWidth = double.tryParse(value) ?? selectedWidget.width;
                           if (newWidth != selectedWidget.width) {
-                            selectedWidgetModel.updateSize(
-                                newWidth, selectedWidget.height);
+                            selectedWidgetModel.updateSize(newWidth, selectedWidget.height);
                           }
                         },
                       ),
@@ -136,16 +151,14 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     Expanded(
                       child: TextField(
                         decoration: const InputDecoration(
-                          //labelText: 'Height',
-                        ),
+                            //labelText: 'Height',
+                            ),
                         keyboardType: TextInputType.number,
                         controller: heightController,
                         onChanged: (value) {
-                          final newHeight =
-                              double.tryParse(value) ?? selectedWidget.height;
+                          final newHeight = double.tryParse(value) ?? selectedWidget.height;
                           if (newHeight != selectedWidget.height) {
-                            selectedWidgetModel.updateSize(
-                                selectedWidget.width, newHeight);
+                            selectedWidgetModel.updateSize(selectedWidget.width, newHeight);
                           }
                         },
                       ),
@@ -155,7 +168,10 @@ class _PropertyPanelState extends State<PropertyPanel> {
                 const SizedBox(height: 16),
 
                 // 색상 선택 (Background Color)
-                const Text('Background Color',style: TextStyle(fontSize: 12, color: Colors.grey),),
+                const Text(
+                  'Background Color',
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
                 DropdownButton<Color>(
                   value: _getValidColor(selectedWidget.decoration.color),
                   items: _buildColorDropdownItems(),
@@ -168,18 +184,19 @@ class _PropertyPanelState extends State<PropertyPanel> {
                 const SizedBox(height: 16),
 
                 // 테두리 색상 선택 (Border Color)
-                const Text('Border Color',style: TextStyle(fontSize: 12, color: Colors.grey),),
+                const Text(
+                  'Border Color',
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
                 DropdownButton<Color>(
-                  value: _getValidColor(
-                      selectedWidget.decoration.border?.top.color),
+                  value: _getValidColor(selectedWidget.decoration.border?.top.color),
                   items: _buildColorDropdownItems(),
                   onChanged: (Color? newColor) {
                     if (newColor != null) {
                       selectedWidgetModel.updateBorder(
                         Border.all(
                           color: newColor,
-                          width: selectedWidget.decoration.border?.top.width ??
-                              1.0,
+                          width: selectedWidget.decoration.border?.top.width ?? 1.0,
                         ),
                       );
                     }
@@ -188,52 +205,54 @@ class _PropertyPanelState extends State<PropertyPanel> {
                 const SizedBox(height: 16),
 
                 // 레이아웃 타입 변경
-                const Text('Layout Type',style: TextStyle(fontSize: 12, color: Colors.grey),),
+                const Text(
+                  'Layout Type',
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
                 Container(
-                  decoration: BoxDecoration(
+                  /*decoration: BoxDecoration(
                     color: Colors.white,
-                    border: Border.all(color: Colors.black12, width: 0.5),
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
+                    border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.16), width: 0.0),
+                  ),*/
                   padding: const EdgeInsets.all(0.0),
                   width: 192, // GridView의 너비 설정
-                  height: 97, // GridView의 높이 설정
+                  height: 96, // GridView의 높이 설정
                   child: GridView.count(
                     crossAxisCount: 4, // 3개의 열로 설정
                     crossAxisSpacing: 0.0, // 열 간격
                     mainAxisSpacing: 0.0, // 행 간격
                     children: [
-                      buildWidgetItem(
+                      buildWidgetItem(context: context,
                         icon: Remix.layout_column_line,
                         value: LayoutType.row,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      buildWidgetItem(
+                      buildWidgetItem(context: context,
                         icon: Remix.layout_row_line,
                         value: LayoutType.column,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      buildWidgetItem(
+                      buildWidgetItem(context: context,
                         icon: Remix.stack_line,
                         value: LayoutType.stack,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      buildWidgetItem(
+                      buildWidgetItem(context: context,
                         icon: Remix.layout_grid_line,
                         value: LayoutType.grid,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      buildWidgetItem(
+                      buildWidgetItem(context: context,
                         icon: Remix.text_wrap,
                         value: LayoutType.wrap,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      buildWidgetItem(
+                      buildWidgetItem(context: context,
                         icon: Remix.list_check,
                         value: LayoutType.list,
                         selectedWidget: selectedWidget,
@@ -247,8 +266,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
 
                 // 텍스트 위젯인 경우만 표시
                 if (hasText) ...[
-                  Text(
-                      'Font Size: ${selectedWidget.fontSize?.toStringAsFixed(0) ?? '12'}',style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                  Text('Font Size: ${selectedWidget.fontSize?.toStringAsFixed(0) ?? '12'}', style: const TextStyle(fontSize: 12, color: Colors.grey)),
                   Slider(
                     min: 8,
                     max: 64,
@@ -274,12 +292,14 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     },
                   ),*/
                   const SizedBox(height: 16),
-                  const Text('Alignment',style: TextStyle(fontSize: 12, color: Colors.grey),),
+                  const Text(
+                    'Alignment',
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      border: Border.all(color: Colors.black12, width: 0.5),
-                      borderRadius: BorderRadius.circular(8.0),
+                      border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.24), width: 0.5),
                     ),
                     padding: const EdgeInsets.all(8.0),
                     width: 144, // GridView의 너비 설정
@@ -289,55 +309,55 @@ class _PropertyPanelState extends State<PropertyPanel> {
                       crossAxisSpacing: 8.0, // 열 간격
                       mainAxisSpacing: 8.0, // 행 간격
                       children: [
-                        buildWidgetItem(
+                        buildWidgetItem(context: context,
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.topLeft,
                           selectedWidget: selectedWidget,
                           selectedWidgetModel: selectedWidgetModel,
                         ),
-                        buildWidgetItem(
+                        buildWidgetItem(context: context,
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.topCenter,
                           selectedWidget: selectedWidget,
                           selectedWidgetModel: selectedWidgetModel,
                         ),
-                        buildWidgetItem(
+                        buildWidgetItem(context: context,
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.topRight,
                           selectedWidget: selectedWidget,
                           selectedWidgetModel: selectedWidgetModel,
                         ),
-                        buildWidgetItem(
+                        buildWidgetItem(context: context,
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.centerLeft,
                           selectedWidget: selectedWidget,
                           selectedWidgetModel: selectedWidgetModel,
                         ),
-                        buildWidgetItem(
+                        buildWidgetItem(context: context,
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.center,
                           selectedWidget: selectedWidget,
                           selectedWidgetModel: selectedWidgetModel,
                         ),
-                        buildWidgetItem(
+                        buildWidgetItem(context: context,
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.centerRight,
                           selectedWidget: selectedWidget,
                           selectedWidgetModel: selectedWidgetModel,
                         ),
-                        buildWidgetItem(
+                        buildWidgetItem(context: context,
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.bottomLeft,
                           selectedWidget: selectedWidget,
                           selectedWidgetModel: selectedWidgetModel,
                         ),
-                        buildWidgetItem(
+                        buildWidgetItem(context: context,
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.bottomCenter,
                           selectedWidget: selectedWidget,
                           selectedWidgetModel: selectedWidgetModel,
                         ),
-                        buildWidgetItem(
+                        buildWidgetItem(context: context,
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.bottomRight,
                           selectedWidget: selectedWidget,
@@ -350,52 +370,54 @@ class _PropertyPanelState extends State<PropertyPanel> {
                 ],
 
                 // MainAxisAlignment 선택
-                const Text('Main Axis Alignment',style: TextStyle(fontSize: 12, color: Colors.grey),),
+                const Text(
+                  'Main Axis Alignment',
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
                 Container(
-                  decoration: BoxDecoration(
+                  /*decoration: BoxDecoration(
                     color: Colors.white,
                     border: Border.all(color: Colors.black12, width: 0.5),
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
+                  ),*/
                   padding: const EdgeInsets.all(0.0),
                   width: 192, // GridView의 너비 설정
-                  height: 97, // GridView의 높이 설정
+                  height: 96, // GridView의 높이 설정
                   child: GridView.count(
                     crossAxisCount: 4, // 3개의 열로 설정
                     crossAxisSpacing: 0.0, // 열 간격
                     mainAxisSpacing: 0.0, // 행 간격
                     children: [
-                      buildWidgetItem(
+                      buildWidgetItem(context: context,
                         icon: Remix.align_item_left_line, // Start
                         value: MainAxisAlignment.start,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      buildWidgetItem(
+                      buildWidgetItem(context: context,
                         icon: Remix.align_item_vertical_center_line, // Center
                         value: MainAxisAlignment.center,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      buildWidgetItem(
+                      buildWidgetItem(context: context,
                         icon: Remix.align_item_right_line, // End
                         value: MainAxisAlignment.end,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      buildWidgetItem(
+                      buildWidgetItem(context: context,
                         icon: Remix.flip_horizontal_2_line, // Space Between
                         value: MainAxisAlignment.spaceBetween,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      buildWidgetItem(
+                      buildWidgetItem(context: context,
                         icon: Remix.space, // Space Around
                         value: MainAxisAlignment.spaceAround,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      buildWidgetItem(
+                      buildWidgetItem(context: context,
                         icon: Remix.space, // Space Evenly
                         value: MainAxisAlignment.spaceEvenly,
                         selectedWidget: selectedWidget,
@@ -408,40 +430,42 @@ class _PropertyPanelState extends State<PropertyPanel> {
                 const SizedBox(height: 16),
 
                 // CrossAxisAlignment 선택
-                const Text('Cross Axis Alignment',style: TextStyle(fontSize: 12, color: Colors.grey),),
+                const Text(
+                  'Cross Axis Alignment',
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
                 Container(
-                  decoration: BoxDecoration(
+                  /*decoration: BoxDecoration(
                     color: Colors.white,
                     border: Border.all(color: Colors.black12, width: 0.5),
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
+                  ),*/
                   padding: const EdgeInsets.all(0.0),
                   width: 192, // GridView의 너비 설정
-                  height: 49, // GridView의 높이 설정
+                  height: 48, // GridView의 높이 설정
                   child: GridView.count(
                     crossAxisCount: 4, // 2개의 열로 설정
                     crossAxisSpacing: 0.0, // 열 간격
                     mainAxisSpacing: 0.0, // 행 간격
                     children: [
-                      buildWidgetItem(
+                      buildWidgetItem(context: context,
                         icon: Remix.align_item_top_line, // Start
                         value: CrossAxisAlignment.start,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      buildWidgetItem(
+                      buildWidgetItem(context: context,
                         icon: Remix.align_item_horizontal_center_line, // Center
                         value: CrossAxisAlignment.center,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      buildWidgetItem(
+                      buildWidgetItem(context: context,
                         icon: Remix.align_item_bottom_line, // End
                         value: CrossAxisAlignment.end,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      buildWidgetItem(
+                      buildWidgetItem(context: context,
                         icon: Remix.flip_vertical_2_line, // Stretch
                         value: CrossAxisAlignment.stretch,
                         selectedWidget: selectedWidget,
@@ -453,7 +477,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                 const SizedBox(height: 16),
 
                 // Flex 속성 수정 (Slider 사용)
-                Text("Flex: ${selectedWidget.flex}",style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                Text("Flex: ${selectedWidget.flex}", style: const TextStyle(fontSize: 12, color: Colors.grey)),
                 Slider(
                   min: 0,
                   max: 10,
@@ -480,14 +504,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
 
   // 색상 목록 생성 함수
   List<DropdownMenuItem<Color>> _buildColorDropdownItems() {
-    return <Color>[
-      Colors.white,
-      Colors.transparent,
-      Colors.red,
-      Colors.green,
-      Colors.blue,
-      Colors.yellow
-    ].map((Color color) {
+    return <Color>[Colors.white, Colors.transparent, Colors.red, Colors.green, Colors.blue, Colors.yellow].map((Color color) {
       return DropdownMenuItem<Color>(
         value: color,
         child: Container(
@@ -519,9 +536,9 @@ class _PropertyPanelState extends State<PropertyPanel> {
 }
 
 Widget buildWidgetItem({
+  required BuildContext context, // context를 파라미터로 받음
   required IconData icon,
-  required dynamic
-      value, // LayoutType 또는 Alignment, MainAxisAlignment 모두 받을 수 있도록 dynamic 사용
+  required dynamic value, // LayoutType 또는 Alignment, MainAxisAlignment 모두 받을 수 있도록 dynamic 사용
   required WidgetProperties selectedWidget,
   required SelectedWidgetModel selectedWidgetModel,
 }) {
@@ -535,8 +552,7 @@ Widget buildWidgetItem({
   } else if (value is MainAxisAlignment) {
     isSelected = selectedWidget.mainAxisAlignment == value;
   } else if (value is CrossAxisAlignment) {
-    isSelected =
-        selectedWidget.crossAxisAlignment == value; // CrossAxisAlignment 체크 추가
+    isSelected = selectedWidget.crossAxisAlignment == value; // CrossAxisAlignment 체크 추가
   } else {
     isSelected = false;
   }
@@ -547,9 +563,7 @@ Widget buildWidgetItem({
     child: Container(
       decoration: BoxDecoration(
         color: value is Alignment ? Colors.transparent : Colors.white,
-        border: Border.all(
-            color: value is Alignment ? Colors.transparent : Colors.black12,
-            width: 0.5),
+        border: Border.all(color: value is Alignment ? Colors.transparent : Theme.of(context).colorScheme.outline.withOpacity(0.16), width: 0.5),
       ),
       child: TextButton(
         onPressed: () {
@@ -561,8 +575,7 @@ Widget buildWidgetItem({
           } else if (value is MainAxisAlignment) {
             selectedWidgetModel.updateMainAxisAlignment(value);
           } else if (value is CrossAxisAlignment) {
-            selectedWidgetModel
-                .updateCrossAxisAlignment(value); // CrossAxisAlignment 업데이트 추가
+            selectedWidgetModel.updateCrossAxisAlignment(value); // CrossAxisAlignment 업데이트 추가
           }
         },
         style: TextButton.styleFrom(

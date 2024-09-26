@@ -180,9 +180,23 @@ class _WorkAreaState extends State<WorkArea> {
                 }
 
                 return Stack(
-                  children: uniqueOverlayInfoList.map((overlayInfo) {
+                  children: uniqueOverlayInfoList.asMap().entries.map((entry) {
+                    final index = entry.key; // 인덱스를 가져옴
+                    final overlayInfo = entry.value; // overlayInfo 가져오기
                     final isSelected = selectedWidgets.contains(overlayInfo.properties);
                     final isTopMostParent = overlayInfo.properties.parent == null || !selectedWidgets.contains(overlayInfo.properties.parent);
+
+                    final colors = [
+                      Colors.red,
+                      Colors.orange,
+                      Colors.green,
+                      Colors.lightBlue,
+                      Colors.lightBlueAccent,
+                      Colors.blue,
+                      Colors.blueAccent,
+                      Colors.purple,
+                    ];
+                    final color = colors[index % colors.length];
 
                     double overlayWidth = overlayInfo.size.width;
                     double overlayHeight = overlayInfo.size.height;
@@ -202,7 +216,7 @@ class _WorkAreaState extends State<WorkArea> {
                               height: overlayHeight.roundToDouble(),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: Theme.of(context).colorScheme.primary,
+                                  color: color, //Theme.of(context).colorScheme.primary,
                                   width: 1.0,
                                 ),
                               ),
@@ -222,7 +236,7 @@ class _WorkAreaState extends State<WorkArea> {
                             child: Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
                                 decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.primary.withOpacity(1.0),
+                                  color: color, //Theme.of(context).colorScheme.primary.withOpacity(1.0),
                                   borderRadius: BorderRadius.circular(0.0),
                                 ),
                                 child: Align(
@@ -239,6 +253,33 @@ class _WorkAreaState extends State<WorkArea> {
                                 )),
                           ),
                         ),
+                        // 삭제 버튼
+                          Positioned(
+                            left: correctedDx - 23,
+                            top: correctedDy - 23,
+                            child: GestureDetector(
+                              onTap: () {
+                                selectedWidgetModel.selectWidget(overlayInfo.properties);
+                                selectedWidgetModel.deleteSelectedWidget();
+                              },
+                              child: Container(
+                                width: 24,
+                                height: 24,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.black.withOpacity(0.3),
+                                    width: 1.0,
+                                  ),
+                                  color: Theme.of(context).colorScheme.secondary,
+                                ),
+                                child: const Icon(
+                                  Remix.close_line,
+                                  size: 21,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
                         // 리사이즈 핸들
                         //if (isSelected && isTopMostParent)
                         if (isSelected) ...[
@@ -303,33 +344,7 @@ class _WorkAreaState extends State<WorkArea> {
                               ),
                             ),
                           ),
-                          // 삭제 버튼
-                          Positioned(
-                            left: correctedDx - 23,
-                            top: correctedDy - 23,
-                            child: GestureDetector(
-                              onTap: () {
-                                selectedWidgetModel.selectWidget(overlayInfo.properties);
-                                selectedWidgetModel.deleteSelectedWidget();
-                              },
-                              child: Container(
-                                width: 24,
-                                height: 24,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Colors.black.withOpacity(0.3),
-                                    width: 1.0,
-                                  ),
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                child: const Icon(
-                                  Remix.close_line,
-                                  size: 21,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
+                          
                           Positioned(
                             width: 64,
                             height: 24,
@@ -574,7 +589,7 @@ class _WorkAreaState extends State<WorkArea> {
 
   List<Widget> _buildChildWidgets(WidgetProperties parentProperties, SelectedWidgetModel selectedWidgetModel) {
     return parentProperties.children.map((childProperties) {
-      bool isSelected = selectedWidgetModel.selectedWidgetProperties.contains(childProperties);
+      //final isSelected = selectedWidgetModel.selectedWidgetProperties.contains(childProperties);
 
       if (!_globalKeys.containsKey(childProperties.id) && (childProperties.type == WidgetType.container || childProperties.type == WidgetType.text)) {
         _globalKeys[childProperties.id] = GlobalKey();

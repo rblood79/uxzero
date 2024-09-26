@@ -5,17 +5,43 @@ class AppTheme {
   // 라이트 테마 정의
   static ThemeData lightTheme = ThemeData(
     //primaryColor: Colors.teal,
+    /*
     colorScheme: ColorScheme.fromSwatch().copyWith(
-      primary: Colors.red,
-      secondary: Colors.blueAccent,
-      surface: Colors.grey[100],
-      onPrimary: Colors.red,
-      onSecondary: Colors.orange,
-      onSurface: Colors.blue,
+      primary: 애플리케이션의 기본 색상으로, 앱의 많은 부분에서 주로 사용됩니다.
+      onPrimary: primary 색상 위에 나타나는 텍스트나 아이콘의 색상.
+      primaryContainer: primary 색상의 대조적인 버전으로, UI에서 컨테이너, 카드 등의 배경에 사용됩니다.
+      onPrimaryContainer: primaryContainer 색상 위에 나타나는 텍스트나 아이콘의 색상.
+      secondary: 보조 색상으로, 주요 UI 요소 외에 보조적인 요소들에 사용됩니다.
+      onSecondary: secondary 색상 위에 나타나는 텍스트나 아이콘의 색상.
+      secondaryContainer: secondary 색상의 대조적인 버전으로, UI에서 보조적인 컨테이너나 카드 배경 등에 사용됩니다.
+      onSecondaryContainer: secondaryContainer 색상 위에 나타나는 텍스트나 아이콘의 색상.
+      tertiary: 세 번째 주요 색상으로, 추가적인 강조를 위해 사용됩니다. 보통 색상의 대비를 위한 요소에서 활용됩니다.
+      onTertiary: tertiary 색상 위에 나타나는 텍스트나 아이콘의 색상.
+      tertiaryContainer: tertiary 색상의 대조적인 버전으로, UI에서 추가적인 배경에 사용됩니다.
+      onTertiaryContainer: tertiaryContainer 색상 위에 나타나는 텍스트나 아이콘의 색상.
+      error: 오류 상태를 나타내는 색상.
+      onError: error 색상 위에 나타나는 텍스트나 아이콘의 색상.
+      errorContainer: 오류 상태를 강조하는 배경색.
+      onErrorContainer: errorContainer 색상 위에 나타나는 텍스트나 아이콘의 색상.
+      surface: 표면 색상. 카드나 시트 같은 표면 요소의 배경색으로 사용됩니다.
+      onSurface: surface 색상 위에 나타나는 텍스트나 아이콘의 색상.
+      surfaceContainerHighest: surface 색상의 변형된 버전으로, 보다 다양한 색상 팔레트를 제공하여 디자인에 일관성을 줍니다.
+      onSurfaceVariant: surfaceVariant 위에 나타나는 텍스트나 아이콘의 색상.
+      outline: 버튼이나 카드의 테두리 등에서 사용되는 색상.
+      shadow: 그림자 색상.
+      inverseSurface: 밝은 테마에서 어두운 색상, 어두운 테마에서 밝은 색상으로 반전된 표면 색상.
+      onInverseSurface: inverseSurface 색상 위에 나타나는 텍스트나 아이콘의 색상.
+      inversePrimary: 반전된 primary 색상. 어두운 테마에서는 밝은 색상, 밝은 테마에서는 어두운 색상을 사용하여 대비를 줍니다.
+      surfaceTint: surface 색상에 적용되는 색조.
     ),
+    */
+
+    /*colorScheme: ColorScheme.fromSeed(
+      seedColor: Colors.red, // 여기에 seedColor 지정
+      brightness: Brightness.light, // 라이트 테마 설정
+    ),*/
 
     appBarTheme: const AppBarTheme(
-      //backgroundColor: Colors.red,
       titleTextStyle: TextStyle(
           //color: Colors.white,
           //fontSize: 14.0,

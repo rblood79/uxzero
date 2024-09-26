@@ -13,12 +13,14 @@ class SidebarMenu extends StatelessWidget {
   ];
 
   final Function(String) onMenuButtonPressed;
-  final String selectedMenu; // 현재 선택된 메뉴
+  final String selectedMenu;
+  final bool isPanelVisible; // 현재 선택된 메뉴
 
   SidebarMenu({
     super.key,
     required this.onMenuButtonPressed,
     required this.selectedMenu,
+    required this.isPanelVisible,
   });
 
   @override
@@ -30,27 +32,31 @@ class SidebarMenu extends StatelessWidget {
         color: Colors.white, // 배경색
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.16), // 그림자 색상 및 투명도
-            spreadRadius: 1, // 그림자의 확산 반경
-            blurRadius: 8, // 그림자의 흐림 정도
-            offset: const Offset(2, 0), // 그림자의 위치
+            color: Colors.black.withOpacity(0.08),
+            spreadRadius: 1,
+            blurRadius: 8,
+            offset: const Offset(4, 0),
           ),
         ],
+        border: const Border(
+          right: BorderSide(
+            // 오른쪽에만 테두리 적용
+            color: Colors.grey,
+            width: 0.5,
+          ),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center, // 아이템을 중앙 정렬
         children: [
           // 첫 번째 그룹: 상단에 배치될 메뉴 항목들
-          ...menuItems.sublist(0, 5).map((item) => buildMenuItem(item)),
+          ...menuItems.sublist(0, 5).map((item) => buildMenuItem(context, item)),
 
           // Flexible을 사용하여 남은 공간을 유연하게 차지하도록 함
           Flexible(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: menuItems
-                  .sublist(5)
-                  .map((item) => buildMenuItem(item))
-                  .toList(),
+              children: menuItems.sublist(5).map((item) => buildMenuItem(context, item)).toList(),
             ),
           ),
         ],
@@ -59,7 +65,7 @@ class SidebarMenu extends StatelessWidget {
   }
 
   // 메뉴 항목을 빌드하는 헬퍼 메소드
-  Widget buildMenuItem(MenuItem item) {
+  Widget buildMenuItem(BuildContext context, MenuItem item) {
     bool isSelected = item.label == selectedMenu; // 현재 선택된 메뉴인지 확인
 
     return Container(
@@ -72,21 +78,30 @@ class SidebarMenu extends StatelessWidget {
         child: Container(
           width: 48, // 버튼의 너비
           height: 62, // 버튼의 높이
+          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 0.0),
           decoration: BoxDecoration(
-            color: isSelected ? Colors.red.withOpacity(0.1) : Colors.white, // 선택된 경우 배경색 변경
+            color: isPanelVisible && isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onPrimary, // 선택된 경우 배경색 변경
             //borderRadius: BorderRadius.circular(8.0), // 모서리 둥글게
+            /*
+            border: Border.all(
+              color: Colors.black,
+              width: 1.0,
+            ),
+            */
           ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(item.icon, size: 21, color: isSelected ? Colors.redAccent : Colors.black87),
-              const SizedBox(height: 4.0),
+              Icon(item.icon, size: 21, color: isPanelVisible && isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.primary),
+              //const SizedBox(height: 4.0),
               Text(
                 item.label,
                 style: TextStyle(
                   fontSize: 10,
-                  color: isSelected ? Colors.redAccent : Colors.grey,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  color: isPanelVisible && isSelected ? Theme.of(context).colorScheme.onPrimary : Colors.grey,
+                  fontWeight: FontWeight.normal,
+                  decoration: TextDecoration.none,
                 ),
                 textAlign: TextAlign.center,
               ),

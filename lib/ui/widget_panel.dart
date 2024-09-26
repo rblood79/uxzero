@@ -56,18 +56,19 @@ class WidgetPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: getPanelWidth(),
-      color: Colors.white,
+      //color: Theme.of(context).colorScheme.surface,
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16), //EdgeInsets.all(16),
+
       child: Column(
         children: [
-          const SizedBox(
+          SizedBox(
               height: 62,
               child: Align(
                 alignment: Alignment.center,
                 child: Text(
                   'Widget',
                   style: TextStyle(
-                    color: Colors.red,
+                    color: Theme.of(context).colorScheme.secondary,
                     fontSize: 12,
                     fontWeight: FontWeight.normal,
                     decoration: TextDecoration.none,
@@ -89,8 +90,7 @@ class WidgetPanel extends StatelessWidget {
                     final itemHeight = constraints.maxHeight;
 
                     if (widgetItem.widget is ContainerWidget) {
-                      final containerWidget =
-                          widgetItem.widget as ContainerWidget;
+                      final containerWidget = widgetItem.widget as ContainerWidget;
 
                       return Draggable<ContainerWidget>(
                         data: containerWidget,
@@ -99,8 +99,7 @@ class WidgetPanel extends StatelessWidget {
                           child: SizedBox(
                             width: itemWidth,
                             height: itemHeight,
-                            child: buildWidgetItem(
-                                widgetItem, context), // 그리드 아이템을 그대로 사용
+                            child: buildWidgetItem(widgetItem, context), // 그리드 아이템을 그대로 사용
                           ),
                         ),
                         childWhenDragging: Opacity(
@@ -121,8 +120,7 @@ class WidgetPanel extends StatelessWidget {
                           child: SizedBox(
                             width: itemWidth,
                             height: itemHeight,
-                            child: buildWidgetItem(
-                                widgetItem, context), // 그리드 아이템을 그대로 사용
+                            child: buildWidgetItem(widgetItem, context), // 그리드 아이템을 그대로 사용
                           ),
                         ),
                         childWhenDragging: Opacity(
@@ -140,8 +138,7 @@ class WidgetPanel extends StatelessWidget {
                         child: SizedBox(
                           width: itemWidth,
                           height: itemHeight,
-                          child: buildWidgetItem(
-                              widgetItem, context), // 그리드 아이템을 그대로 사용
+                          child: buildWidgetItem(widgetItem, context), // 그리드 아이템을 그대로 사용
                         ),
                       ),
                       childWhenDragging: Opacity(
@@ -167,8 +164,8 @@ class WidgetPanel extends StatelessWidget {
       width: 62, // 고정된 너비
       height: 62, // 고정된 높이
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Colors.black12, width: 0.5),
+        color: Theme.of(context).colorScheme.onPrimary,
+        border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.24), width: 0.5),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

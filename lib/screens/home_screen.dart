@@ -13,7 +13,7 @@ import '../ui/library_panel.dart';
 import '../ui/work_area.dart';
 import '../ui/property_panel.dart';
 
-import '../models/selected_widget_model.dart'; // SelectedWidgetModel 파일 import
+// SelectedWidgetModel 파일 import
 import '../models/keyboard_model.dart'; // KeyboardModel 파일 import
 
 // Enum을 사용하여 메뉴 옵션 정의
@@ -42,7 +42,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  
   String selectedMenu = 'Widget'; // 현재 선택된 메뉴 항목
   Widget currentPanel = WidgetPanel(); // 현재 표시 중인 패널
   double panelWidth = 160.0; // 패널의 현재 너비
@@ -109,14 +108,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   final FocusNode _focusNode = FocusNode(); // FocusNode를 사용하여 키보드 이벤트를 감지
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppBar(),
       body: KeyboardListener(
         focusNode: _focusNode, // focusNode를 설정
-        autofocus: true,       // 자동으로 포커스를 받도록 설정
+        autofocus: true, // 자동으로 포커스를 받도록 설정
         onKeyEvent: (KeyEvent event) {
           // 키 이벤트를 KeyboardModel로 전달
           if (event is KeyDownEvent || event is KeyUpEvent) {
@@ -130,9 +129,10 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 TopPanel(),
                 Expanded(
-                  child: WorkArea(),
+                  child: RepaintBoundary(
+                    child: WorkArea(),
+                  ),
                 ),
-                
               ],
             ),
             // 애니메이션 패널
@@ -146,7 +146,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 duration: const Duration(milliseconds: 300),
                 width: panelWidth, // 패널 너비 설정
                 curve: Curves.easeInOut,
-                color: Colors.white,
+                decoration: BoxDecoration(
+                  color: Colors.white, // 배경색
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      spreadRadius: 1,
+                      blurRadius: 8,
+                      offset: const Offset(4, 0),
+                    ),
+                  ],
+                  border: const Border(
+                    right: BorderSide(
+                      // 오른쪽에만 테두리 적용
+                      color: Colors.grey,
+                      width: 0.5,
+                    ),
+                  ),
+                ),
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 300),
                   transitionBuilder: (Widget child, Animation<double> animation) {
@@ -161,6 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
+
             // 오른쪽 프로퍼티 패널
             const Positioned(
               right: 0,
@@ -176,6 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: SidebarMenu(
                 onMenuButtonPressed: handleMenuSelection,
                 selectedMenu: selectedMenu,
+                isPanelVisible: isPanelVisible,
               ),
             ),
             const FrameRateMonitor(),
