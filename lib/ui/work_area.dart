@@ -139,6 +139,7 @@ class _WorkAreaState extends State<WorkArea> {
                 ),
               ),
             ),
+
             // 가이드라인 및 리사이즈 오버레이 추가
             Consumer<SelectedWidgetModel>(
               builder: (context, selectedWidgetModel, child) {
@@ -178,7 +179,8 @@ class _WorkAreaState extends State<WorkArea> {
                     uniqueOverlayInfoList.add(info);
                   }
                 }
-
+                
+                
                 return Stack(
                   children: uniqueOverlayInfoList.asMap().entries.map((entry) {
                     final index = entry.key; // 인덱스를 가져옴
@@ -203,6 +205,8 @@ class _WorkAreaState extends State<WorkArea> {
                     // WorkArea의 실제 글로벌 위치를 기준으로 가이드라인 위치 조정
                     double correctedDx = overlayInfo.offset.dx - _workAreaGlobalOffset.dx;
                     double correctedDy = overlayInfo.offset.dy - _workAreaGlobalOffset.dy;
+
+                    
 
                     return Stack(
                       children: [
@@ -408,6 +412,7 @@ class _WorkAreaState extends State<WorkArea> {
                     );
                   }).toList(),
                 );
+                
               },
             ),
           ],
