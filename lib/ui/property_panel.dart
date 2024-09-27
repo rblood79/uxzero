@@ -86,30 +86,15 @@ class _PropertyPanelState extends State<PropertyPanel> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Undo 및 Redo 버튼 추가
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextButton(
-                      onPressed: selectedWidgetModel.canUndo
-                          ? () {
-                              selectedWidgetModel.undo();
-                            }
-                          : null,
-                      child: const Text('U'),
-                    ),
-                    TextButton(
-                      onPressed: selectedWidgetModel.canRedo
-                          ? () {
-                              selectedWidgetModel.redo();
-                            }
-                          : null,
-                      child: const Text('R'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        selectedWidgetModel.deleteSelectedWidget();
-                      },
-                      child: const Text('D'),
+                    Text(selectedWidget.label),
+                    Text(
+                      selectedWidget.id,
+                      maxLines: 1, // 한 줄로 제한
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
@@ -222,37 +207,43 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     crossAxisSpacing: 0.0, // 열 간격
                     mainAxisSpacing: 0.0, // 행 간격
                     children: [
-                      buildWidgetItem(context: context,
+                      buildWidgetItem(
+                        context: context,
                         icon: Remix.layout_column_line,
                         value: LayoutType.row,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      buildWidgetItem(context: context,
+                      buildWidgetItem(
+                        context: context,
                         icon: Remix.layout_row_line,
                         value: LayoutType.column,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      buildWidgetItem(context: context,
+                      buildWidgetItem(
+                        context: context,
                         icon: Remix.stack_line,
                         value: LayoutType.stack,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      buildWidgetItem(context: context,
+                      buildWidgetItem(
+                        context: context,
                         icon: Remix.layout_grid_line,
                         value: LayoutType.grid,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      buildWidgetItem(context: context,
+                      buildWidgetItem(
+                        context: context,
                         icon: Remix.text_wrap,
                         value: LayoutType.wrap,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      buildWidgetItem(context: context,
+                      buildWidgetItem(
+                        context: context,
                         icon: Remix.list_check,
                         value: LayoutType.list,
                         selectedWidget: selectedWidget,
@@ -309,55 +300,64 @@ class _PropertyPanelState extends State<PropertyPanel> {
                       crossAxisSpacing: 8.0, // 열 간격
                       mainAxisSpacing: 8.0, // 행 간격
                       children: [
-                        buildWidgetItem(context: context,
+                        buildWidgetItem(
+                          context: context,
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.topLeft,
                           selectedWidget: selectedWidget,
                           selectedWidgetModel: selectedWidgetModel,
                         ),
-                        buildWidgetItem(context: context,
+                        buildWidgetItem(
+                          context: context,
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.topCenter,
                           selectedWidget: selectedWidget,
                           selectedWidgetModel: selectedWidgetModel,
                         ),
-                        buildWidgetItem(context: context,
+                        buildWidgetItem(
+                          context: context,
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.topRight,
                           selectedWidget: selectedWidget,
                           selectedWidgetModel: selectedWidgetModel,
                         ),
-                        buildWidgetItem(context: context,
+                        buildWidgetItem(
+                          context: context,
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.centerLeft,
                           selectedWidget: selectedWidget,
                           selectedWidgetModel: selectedWidgetModel,
                         ),
-                        buildWidgetItem(context: context,
+                        buildWidgetItem(
+                          context: context,
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.center,
                           selectedWidget: selectedWidget,
                           selectedWidgetModel: selectedWidgetModel,
                         ),
-                        buildWidgetItem(context: context,
+                        buildWidgetItem(
+                          context: context,
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.centerRight,
                           selectedWidget: selectedWidget,
                           selectedWidgetModel: selectedWidgetModel,
                         ),
-                        buildWidgetItem(context: context,
+                        buildWidgetItem(
+                          context: context,
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.bottomLeft,
                           selectedWidget: selectedWidget,
                           selectedWidgetModel: selectedWidgetModel,
                         ),
-                        buildWidgetItem(context: context,
+                        buildWidgetItem(
+                          context: context,
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.bottomCenter,
                           selectedWidget: selectedWidget,
                           selectedWidgetModel: selectedWidgetModel,
                         ),
-                        buildWidgetItem(context: context,
+                        buildWidgetItem(
+                          context: context,
                           icon: Remix.checkbox_blank_fill,
                           value: Alignment.bottomRight,
                           selectedWidget: selectedWidget,
@@ -387,37 +387,43 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     crossAxisSpacing: 0.0, // 열 간격
                     mainAxisSpacing: 0.0, // 행 간격
                     children: [
-                      buildWidgetItem(context: context,
+                      buildWidgetItem(
+                        context: context,
                         icon: Remix.align_item_left_line, // Start
                         value: MainAxisAlignment.start,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      buildWidgetItem(context: context,
+                      buildWidgetItem(
+                        context: context,
                         icon: Remix.align_item_vertical_center_line, // Center
                         value: MainAxisAlignment.center,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      buildWidgetItem(context: context,
+                      buildWidgetItem(
+                        context: context,
                         icon: Remix.align_item_right_line, // End
                         value: MainAxisAlignment.end,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      buildWidgetItem(context: context,
+                      buildWidgetItem(
+                        context: context,
                         icon: Remix.flip_horizontal_2_line, // Space Between
                         value: MainAxisAlignment.spaceBetween,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      buildWidgetItem(context: context,
+                      buildWidgetItem(
+                        context: context,
                         icon: Remix.space, // Space Around
                         value: MainAxisAlignment.spaceAround,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      buildWidgetItem(context: context,
+                      buildWidgetItem(
+                        context: context,
                         icon: Remix.space, // Space Evenly
                         value: MainAxisAlignment.spaceEvenly,
                         selectedWidget: selectedWidget,
@@ -447,25 +453,29 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     crossAxisSpacing: 0.0, // 열 간격
                     mainAxisSpacing: 0.0, // 행 간격
                     children: [
-                      buildWidgetItem(context: context,
+                      buildWidgetItem(
+                        context: context,
                         icon: Remix.align_item_top_line, // Start
                         value: CrossAxisAlignment.start,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      buildWidgetItem(context: context,
+                      buildWidgetItem(
+                        context: context,
                         icon: Remix.align_item_horizontal_center_line, // Center
                         value: CrossAxisAlignment.center,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      buildWidgetItem(context: context,
+                      buildWidgetItem(
+                        context: context,
                         icon: Remix.align_item_bottom_line, // End
                         value: CrossAxisAlignment.end,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,
                       ),
-                      buildWidgetItem(context: context,
+                      buildWidgetItem(
+                        context: context,
                         icon: Remix.flip_vertical_2_line, // Stretch
                         value: CrossAxisAlignment.stretch,
                         selectedWidget: selectedWidget,

@@ -51,7 +51,7 @@ class AppTheme {
           ),
     ),
 
-// TextTheme을 사용해 입력 텍스트 색상을 정의
+    // TextTheme을 사용해 입력 텍스트 색상을 정의
     textTheme: const TextTheme(
       bodyLarge: TextStyle(
         color: Colors.black87, // 기본 입력 텍스트 색상
@@ -174,9 +174,12 @@ class AppTheme {
   );
 
   // 다크 테마 정의
-  static ThemeData darkTheme = ThemeData.dark().copyWith(
-    //primaryColor: Colors.blueGrey,
-    //colorScheme: const ColorScheme.dark().copyWith(secondary: Colors.orange),
+  static ThemeData darkTheme = ThemeData(
+    /*colorScheme: ColorScheme.fromSeed(
+      seedColor: Colors.red, // 여기에 seedColor 지정
+      brightness: Brightness.light, // 라이트 테마 설정
+    ),*/
+    
     appBarTheme: const AppBarTheme(
       //backgroundColor: Colors.blueGrey,
       titleTextStyle: TextStyle(

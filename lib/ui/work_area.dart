@@ -189,6 +189,7 @@ class _WorkAreaState extends State<WorkArea> {
                     final isTopMostParent = overlayInfo.properties.parent == null || !selectedWidgets.contains(overlayInfo.properties.parent);
 
                     final colors = [
+                      Theme.of(context).colorScheme.primary,
                       Colors.red,
                       Colors.orange,
                       Colors.green,
@@ -431,9 +432,9 @@ class _WorkAreaState extends State<WorkArea> {
       child: IgnorePointer(
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.lightBlue.withOpacity(0.3),
+            color: Theme.of(context).colorScheme.onPrimaryFixed.withOpacity(0.3),
             border: Border.all(
-              color: Colors.lightBlue,
+              color: Theme.of(context).colorScheme.onPrimaryFixed,
               width: 1,
             ),
           ),

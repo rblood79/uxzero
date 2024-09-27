@@ -8,7 +8,7 @@ class SelectedWidgetModel extends ChangeNotifier {
 
   // rootContainer를 상태로 관리
   WidgetProperties rootContainer = WidgetProperties(
-    id: 'page_01',
+    id: UID.generate(),
     label: 'page_01',
     width: 1200,
     height: 600,
