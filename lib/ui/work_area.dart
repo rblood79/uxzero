@@ -179,7 +179,8 @@ class _WorkAreaState extends State<WorkArea> {
                     uniqueOverlayInfoList.add(info);
                   }
                 }
-
+                
+                
                 return Stack(
                   children: uniqueOverlayInfoList.asMap().entries.map((entry) {
                     final index = entry.key; // 인덱스를 가져옴
@@ -205,6 +206,8 @@ class _WorkAreaState extends State<WorkArea> {
                     double correctedDx = overlayInfo.offset.dx - _workAreaGlobalOffset.dx;
                     double correctedDy = overlayInfo.offset.dy - _workAreaGlobalOffset.dy;
 
+                    
+
                     return Stack(
                       children: [
                         // 가이드라인 박스
@@ -224,41 +227,37 @@ class _WorkAreaState extends State<WorkArea> {
                             ),
                           ),
                         ),
-
-                        // 리사이즈 핸들
-                        //if (isSelected && isTopMostParent)
-                        if (isSelected) ...[
-                          // 라벨
-                          Positioned(
-                            left: correctedDx,
-                            top: correctedDy - 23,
-                            height: 24,
-                            child: GestureDetector(
-                              onTap: () {
-                                selectedWidgetModel.clearSelection();
-                                selectedWidgetModel.selectWidget(overlayInfo.properties);
-                              },
-                              child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
-                                  decoration: BoxDecoration(
-                                    color: color, //Theme.of(context).colorScheme.primary.withOpacity(1.0),
-                                    borderRadius: BorderRadius.circular(0.0),
-                                  ),
-                                  child: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      overlayInfo.properties.label,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.normal,
-                                        decoration: TextDecoration.none,
-                                      ),
+                        // 라벨
+                        Positioned(
+                          left: correctedDx,
+                          top: correctedDy - 23,
+                          height: 24,
+                          child: GestureDetector(
+                            onTap: () {
+                              selectedWidgetModel.clearSelection();
+                              selectedWidgetModel.selectWidget(overlayInfo.properties);
+                            },
+                            child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
+                                decoration: BoxDecoration(
+                                  color: color, //Theme.of(context).colorScheme.primary.withOpacity(1.0),
+                                  borderRadius: BorderRadius.circular(0.0),
+                                ),
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    overlayInfo.properties.label,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.normal,
+                                      decoration: TextDecoration.none,
                                     ),
-                                  )),
-                            ),
+                                  ),
+                                )),
                           ),
-                          // 삭제 버튼
+                        ),
+                        // 삭제 버튼
                           Positioned(
                             left: correctedDx - 23,
                             top: correctedDy - 23,
@@ -285,7 +284,9 @@ class _WorkAreaState extends State<WorkArea> {
                               ),
                             ),
                           ),
-                          //
+                        // 리사이즈 핸들
+                        //if (isSelected && isTopMostParent)
+                        if (isSelected) ...[
                           Positioned(
                             left: correctedDx + overlayWidth - 1,
                             top: correctedDy + overlayHeight - 1,
@@ -307,6 +308,8 @@ class _WorkAreaState extends State<WorkArea> {
                                     // 변경된 크기를 properties에 반영
                                     overlayInfo.properties.width = newWidth;
                                     overlayInfo.properties.height = newHeight;
+                                    // 상태 변화를 즉시 반영하여 UI 업데이트
+                                    //selectedWidgetModel.updateWidgetSize(overlayInfo.properties.id, newWidth, newHeight);
                                   });
                                 }
                               },
@@ -346,7 +349,6 @@ class _WorkAreaState extends State<WorkArea> {
                             ),
                           ),
                           
-
                           Positioned(
                             width: 64,
                             height: 24,
@@ -410,307 +412,9 @@ class _WorkAreaState extends State<WorkArea> {
                     );
                   }).toList(),
                 );
+                
               },
             ),
-            /*
-            Consumer<SelectedWidgetModel>(
-              builder: (context, selectedWidgetModel, child) {
-                final selectedWidgets = selectedWidgetModel.selectedWidgetProperties;
-
-                if (selectedWidgets.isEmpty) {
-                  return const SizedBox.shrink();
-                }
-
-                List<_OverlayInfo> overlayInfoList = [];
-
-                for (var selectedWidget in selectedWidgets) {
-                  WidgetProperties? currentWidget = selectedWidget;
-                  while (currentWidget != null) {
-                    final key = _globalKeys[currentWidget.id];
-                    if (key != null && key.currentContext != null) {
-                      final renderBox = key.currentContext!.findRenderObject() as RenderBox?;
-                      if (renderBox == null) continue;
-                      final size = renderBox.size;
-                      final offset = renderBox.localToGlobal(Offset.zero);
-
-                      overlayInfoList.add(_OverlayInfo(
-                        properties: currentWidget,
-                        size: size,
-                        offset: offset,
-                      ));
-                    }
-
-                    currentWidget = currentWidget.parent;
-                  }
-                }
-
-                // 중복 제거 및 최상위 부모 찾기
-                List<_OverlayInfo> uniqueOverlayInfoList = [];
-                for (var info in overlayInfoList) {
-                  if (!uniqueOverlayInfoList.any((existing) => existing.properties.id == info.properties.id)) {
-                    uniqueOverlayInfoList.add(info);
-                  }
-                }
-
-                return Stack(
-                  children: uniqueOverlayInfoList.asMap().entries.map((entry) {
-                    final index = entry.key; // 인덱스를 가져옴
-                    final overlayInfo = entry.value; // overlayInfo 가져오기
-                    final isSelected = selectedWidgets.contains(overlayInfo.properties);
-                    final isTopMostParent = overlayInfo.properties.parent == null || !selectedWidgets.contains(overlayInfo.properties.parent);
-
-                    final colors = [
-                      Colors.red,
-                      Colors.orange,
-                      Colors.green,
-                      Colors.lightBlue,
-                      Colors.lightBlueAccent,
-                      Colors.blue,
-                      Colors.blueAccent,
-                      Colors.purple,
-                    ];
-                    final color = colors[index % colors.length];
-
-                    double overlayWidth = overlayInfo.size.width;
-                    double overlayHeight = overlayInfo.size.height;
-                    // WorkArea의 실제 글로벌 위치를 기준으로 가이드라인 위치 조정
-                    double correctedDx = overlayInfo.offset.dx - _workAreaGlobalOffset.dx;
-                    double correctedDy = overlayInfo.offset.dy - _workAreaGlobalOffset.dy;
-
-                    // 계층 구조를 따라 라벨 리스트 생성
-                    List<_OverlayInfo> hierarchyList = [];
-                    WidgetProperties? current = overlayInfo.properties;
-                    while (current != null) {
-                      hierarchyList.add(_OverlayInfo(
-                        properties: current,
-                        size: Size.zero, // 크기는 필요 없으므로 임의로 설정
-                        offset: Offset.zero, // 위치는 필요 없으므로 임의로 설정
-                      ));
-                      current = current.parent;
-                    }
-                    // 최상위부터 순서대로
-                    hierarchyList = hierarchyList.reversed.toList();
-
-                    return Stack(
-                      children: [
-                        // 가이드라인 박스
-                        Positioned(
-                          left: correctedDx,
-                          top: correctedDy,
-                          child: IgnorePointer(
-                            child: Container(
-                              width: overlayWidth.roundToDouble(),
-                              height: overlayHeight.roundToDouble(),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: color,
-                                  width: 1.0,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        if (isTopMostParent) ...[
-                          // 라벨 및 삭제 버튼을 포함한 Row
-                          Positioned(
-                            left: correctedDx,
-                            top: correctedDy - 23, // 라벨 높이와 간격을 고려하여 조정
-                            child: Row(
-                              children: hierarchyList.asMap().entries.map((hierarchyEntry) {
-                                final hierarchyIndex = hierarchyEntry.key;
-                                final hierarchyInfo = hierarchyEntry.value;
-                                final hierarchyColor = colors[hierarchyIndex % colors.length];
-
-                                return Row(
-                                  children: [
-                                    // 삭제 버튼
-                                    GestureDetector(
-                                      onTap: () {
-                                        selectedWidgetModel.selectWidget(hierarchyInfo.properties);
-                                        selectedWidgetModel.deleteSelectedWidget();
-                                      },
-                                      child: Container(
-                                        width: 24,
-                                        height: 24,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: Colors.black.withOpacity(0.3),
-                                            width: 1.0,
-                                          ),
-                                          color: Theme.of(context).colorScheme.secondary,
-                                        ),
-                                        child: const Icon(
-                                          Remix.close_line,
-                                          size: 21,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                    // 라벨
-                                    GestureDetector(
-                                      onTap: () {
-                                        selectedWidgetModel.clearSelection();
-                                        selectedWidgetModel.selectWidget(hierarchyInfo.properties);
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
-                                        height: 24,
-                                        decoration: BoxDecoration(
-                                          color: hierarchyColor,
-                                        ),
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          hierarchyInfo.properties.label,
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.normal,
-                                            decoration: TextDecoration.none,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    // 라벨 간 간격
-                                    if (hierarchyIndex != hierarchyList.length - 1) const SizedBox(width: 4.0),
-                                  ],
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                        ],
-                        // 리사이즈 핸들 및 크기 표시는 기존과 동일하게 유지
-                        if (isSelected) ...[
-                          Positioned(
-                            left: correctedDx + overlayWidth - 1,
-                            top: correctedDy + overlayHeight - 1,
-                            child: GestureDetector(
-                              onPanStart: (details) {
-                                setState(() {
-                                  _resizingWidgetId = overlayInfo.properties.id;
-                                  _resizeStartPosition = details.globalPosition;
-                                  _initialWidth = overlayWidth;
-                                  _initialHeight = overlayHeight;
-                                });
-                              },
-                              onPanUpdate: (details) {
-                                if (_resizingWidgetId == overlayInfo.properties.id) {
-                                  setState(() {
-                                    // 현재 드래그 위치에서 이전 드래그 위치를 뺀 값을 누적하여 크기를 계산
-                                    double newWidth = (_initialWidth! + (details.globalPosition.dx - _resizeStartPosition!.dx)).clamp(48.0, double.infinity);
-                                    double newHeight = (_initialHeight! + (details.globalPosition.dy - _resizeStartPosition!.dy)).clamp(48.0, double.infinity);
-                                    // 변경된 크기를 properties에 반영
-                                    overlayInfo.properties.width = newWidth;
-                                    overlayInfo.properties.height = newHeight;
-                                    // 상태 변화를 즉시 반영하여 UI 업데이트
-                                    //selectedWidgetModel.updateWidgetSize(overlayInfo.properties.id, newWidth, newHeight);
-                                  });
-                                }
-                              },
-                              onPanEnd: (details) {
-                                if (_resizingWidgetId == overlayInfo.properties.id) {
-                                  setState(() {
-                                    overlayInfo.properties.width = (_initialWidth! + (details.globalPosition.dx - _resizeStartPosition!.dx)).roundToDouble();
-                                    overlayInfo.properties.height = (_initialHeight! + (details.globalPosition.dy - _resizeStartPosition!.dy)).roundToDouble();
-                                    // 리사이즈 종료 시 상태 업데이트 및 초기화
-                                    selectedWidgetModel.notifyListeners();
-                                    _resizingWidgetId = null;
-                                    _resizeStartPosition = null;
-                                    _initialWidth = null;
-                                    _initialHeight = null;
-                                  });
-                                }
-                              },
-                              child: Container(
-                                width: 24,
-                                height: 24,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Colors.black.withOpacity(0.3),
-                                    width: 1.0,
-                                  ),
-                                  color: Theme.of(context).colorScheme.secondary,
-                                ),
-                                child: Transform.rotate(
-                                  angle: -45 * 3.1415927 / 180,
-                                  child: const Icon(
-                                    Remix.expand_up_down_line,
-                                    size: 16,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          Positioned(
-                            width: 64,
-                            height: 24,
-                            left: correctedDx + overlayWidth - 64,
-                            top: correctedDy + overlayHeight - 1,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0.0),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.black.withOpacity(0.3),
-                                  width: 0.0,
-                                ),
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  '${overlayWidth.round()} px',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.normal,
-                                    decoration: TextDecoration.none,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          // 크기 표시
-                          Positioned(
-                            width: 64,
-                            height: 24,
-                            left: correctedDx + overlayWidth - 21,
-                            top: correctedDy + overlayHeight - 44,
-                            child: Transform.rotate(
-                              angle: -90 * 3.1415927 / 180,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0.0),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Colors.black.withOpacity(0.3),
-                                    width: 0.0,
-                                  ),
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    '${overlayHeight.round()} px',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.normal,
-                                      decoration: TextDecoration.none,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ]
-                      ],
-                    );
-                  }).toList(),
-                );
-              },
-            ),
-            */
           ],
         );
       },
