@@ -237,7 +237,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                       ),
                       buildWidgetItem(
                         context: context,
-                        icon: Remix.text_wrap,
+                        icon: Remix.stacked_view,
                         value: LayoutType.wrap,
                         selectedWidget: selectedWidget,
                         selectedWidgetModel: selectedWidgetModel,

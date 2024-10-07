@@ -25,11 +25,7 @@ class TopPanel extends StatelessWidget {
               const SizedBox(width: 0),
               IconButton(
                 icon: Icon(Remix.delete_bin_2_line, color: Theme.of(context).colorScheme.onInverseSurface, size: 21),
-                onPressed: selectedWidgetModel.canRedo
-                    ? () {
-                        selectedWidgetModel.deleteSelectedWidget();
-                      }
-                    : null,
+                onPressed: selectedWidgetModel.deleteSelectedWidget
               ),
               IconButton(
                 icon: Icon(Remix.arrow_go_back_line, color: Theme.of(context).colorScheme.onInverseSurface, size: 21),

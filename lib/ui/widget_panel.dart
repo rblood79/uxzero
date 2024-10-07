@@ -34,7 +34,7 @@ class WidgetPanel extends StatelessWidget {
         alignment: Alignment.center,
       ),
     ),
-    WidgetItem(icon: Remix.input_field, label: 'Input'),
+    WidgetItem(icon: Remix.t_box_line, label: 'Input'),
     WidgetItem(icon: Remix.checkbox_blank_line, label: 'Button'),
     WidgetItem(icon: Remix.dropdown_list, label: 'Select'),
     WidgetItem(icon: Remix.image_line, label: 'Image'),
@@ -42,7 +42,7 @@ class WidgetPanel extends StatelessWidget {
     WidgetItem(icon: Remix.radio_button_line, label: 'Radio'),
     WidgetItem(icon: Remix.calendar_line, label: 'Calendar'),
     WidgetItem(icon: Remix.toggle_line, label: 'Toggle'),
-    WidgetItem(icon: Remix.table_line, label: 'Table'),
+    WidgetItem(icon: Remix.table_view, label: 'Table'),
     WidgetItem(icon: Remix.bar_chart_box_line, label: 'Chart'),
   ];
 
