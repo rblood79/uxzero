@@ -18,13 +18,13 @@ import '../models/keyboard_model.dart'; // KeyboardModel 파일 import
 
 // Enum을 사용하여 메뉴 옵션 정의
 enum MenuOption {
-  Site,
-  Widget,
-  Node,
-  Data,
-  Library,
-  User,
-  Setting,
+  site,
+  widget,
+  node,
+  data,
+  library,
+  user,
+  setting,
 }
 
 // Tuple2 클래스 정의 (필요시 패키지 사용 가능)
@@ -49,22 +49,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // 메뉴 라벨을 Enum으로 매핑
   final Map<String, MenuOption> labelToOptionMap = {
-    'Site': MenuOption.Site,
-    'Widget': MenuOption.Widget,
-    'Node': MenuOption.Node,
-    'Data': MenuOption.Data,
-    'Library': MenuOption.Library,
-    'User': MenuOption.User,
-    'Setting': MenuOption.Setting,
+    'Site': MenuOption.site,
+    'Widget': MenuOption.widget,
+    'Node': MenuOption.node,
+    'Data': MenuOption.data,
+    'Library': MenuOption.library,
+    'User': MenuOption.user,
+    'Setting': MenuOption.setting,
   };
 
   // 패널 매핑
   final Map<MenuOption, Tuple2<Widget, double>> panelMap = {
-    MenuOption.Site: Tuple2(const SitePanel(), 400.0),
-    MenuOption.Widget: Tuple2(WidgetPanel(), 160.0),
-    MenuOption.Node: Tuple2(const NodePanel(), 250.0),
-    MenuOption.Data: Tuple2(const DataPanel(), 220.0),
-    MenuOption.Library: Tuple2(const LibraryPanel(), 280.0),
+    MenuOption.site: Tuple2(const SitePanel(), 400.0),
+    MenuOption.widget: Tuple2(WidgetPanel(), 160.0),
+    MenuOption.node: Tuple2(const NodePanel(), 250.0),
+    MenuOption.data: Tuple2(const DataPanel(), 220.0),
+    MenuOption.library: Tuple2(const LibraryPanel(), 280.0),
     // 다른 패널을 추가할 경우 여기에 매핑 추가
   };
 

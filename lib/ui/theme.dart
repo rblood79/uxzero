@@ -37,7 +37,7 @@ class AppTheme {
     */
 
     /*colorScheme: ColorScheme.fromSeed(
-      seedColor: Colors.red, // 여기에 seedColor 지정
+      seedColor: Colors.redAccent, // 여기에 seedColor 지정
       brightness: Brightness.light, // 라이트 테마 설정
     ),*/
 

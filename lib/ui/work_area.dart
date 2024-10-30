@@ -287,7 +287,7 @@ class _WorkAreaState extends State<WorkArea> {
                           ),
                         // 리사이즈 핸들
                         //if (isSelected && isTopMostParent)
-                        if (isSelected) ...[
+                        if (isSelected && isTopMostParent) ...[
                           Positioned(
                             left: correctedDx + overlayWidth - 1,
                             top: correctedDy + overlayHeight - 1,
@@ -320,7 +320,11 @@ class _WorkAreaState extends State<WorkArea> {
                                     overlayInfo.properties.width = (_initialWidth! + (details.globalPosition.dx - _resizeStartPosition!.dx)).roundToDouble();
                                     overlayInfo.properties.height = (_initialHeight! + (details.globalPosition.dy - _resizeStartPosition!.dy)).roundToDouble();
                                     // 리사이즈 종료 시 상태 업데이트 및 초기화
-                                    selectedWidgetModel.notifyListeners();
+                                    selectedWidgetModel.updateWidgetSize(
+                                      overlayInfo.properties.id,
+                                      overlayInfo.properties.width,
+                                      overlayInfo.properties.height
+                                    );
                                     _resizingWidgetId = null;
                                     _resizeStartPosition = null;
                                     _initialWidth = null;

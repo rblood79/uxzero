@@ -262,17 +262,6 @@ class SelectedWidgetModel extends ChangeNotifier {
     }
   }
 
-  // 선택된 위젯 삭제
-  /*void deleteSelectedWidget() {
-    if (selectedWidgetProperties.isNotEmpty) {
-      for (var selectedWidget in List.from(selectedWidgetProperties)) {
-        _deleteWidgetRecursive(rootContainer, selectedWidget);
-      }
-      clearSelection(); // 삭제 후 선택된 위젯 초기화
-      addToHistory(); // 이력 추가
-      notifyListeners();
-    }
-  }*/
   void deleteSelectedWidget() {
     if (selectedWidgetProperties.isNotEmpty) {
       for (var selectedWidget in List.from(selectedWidgetProperties)) {
