@@ -14,7 +14,7 @@ class SidebarMenu extends StatelessWidget {
 
   final Function(String) onMenuButtonPressed;
   final String selectedMenu;
-  final bool isPanelVisible; // 현재 선택된 메뉴
+  final bool isPanelVisible;
 
   SidebarMenu({
     super.key,
@@ -49,10 +49,9 @@ class SidebarMenu extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center, // 아이템을 중앙 정렬
         children: [
-          // 첫 번째 그룹: 상단에 배치될 메뉴 항목들
+          // 상단 메뉴 항목들
           ...menuItems.sublist(0, 5).map((item) => buildMenuItem(context, item)),
-
-          // Flexible을 사용하여 남은 공간을 유연하게 차지하도록 함
+          // 하단 메뉴 항목들을 Flexible 영역에 배치
           Flexible(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -64,42 +63,40 @@ class SidebarMenu extends StatelessWidget {
     );
   }
 
-  // 메뉴 항목을 빌드하는 헬퍼 메소드
+  // 개선된 메뉴 항목 빌더: 터치 영역 확대 및 머티리얼 효과를 제공하기 위해 InkWell 사용
   Widget buildMenuItem(BuildContext context, MenuItem item) {
-    bool isSelected = item.label == selectedMenu; // 현재 선택된 메뉴인지 확인
+    final bool isSelected = item.label == selectedMenu;
+    final Color bgColor = isPanelVisible && isSelected
+        ? Theme.of(context).colorScheme.primary
+        : Colors.transparent; // 선택되지 않은 경우 투명 배경
 
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 0.0), // 항목 간 간격 설정
-      child: GestureDetector(
-        onTap: () {
-          onMenuButtonPressed(item.label); // 메뉴 이름을 전달
-          //print('${item.label} clicked');
-        },
+    final Color iconColor = isPanelVisible && isSelected
+        ? Theme.of(context).colorScheme.onPrimary
+        : Theme.of(context).colorScheme.primary;
+
+    final Color textColor = isPanelVisible && isSelected
+        ? Theme.of(context).colorScheme.onPrimary
+        : Colors.grey;
+
+    return Material(
+      color: bgColor,
+      child: InkWell(
+        onTap: () => onMenuButtonPressed(item.label),
+        splashColor: Colors.black12,
         child: Container(
           width: 48, // 버튼의 너비
           height: 62, // 버튼의 높이
-          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 0.0),
-          decoration: BoxDecoration(
-            color: isPanelVisible && isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onPrimary, // 선택된 경우 배경색 변경
-            //borderRadius: BorderRadius.circular(8.0), // 모서리 둥글게
-            /*
-            border: Border.all(
-              color: Colors.black,
-              width: 1.0,
-            ),
-            */
-          ),
+          padding: const EdgeInsets.symmetric(vertical: 12.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(item.icon, size: 21, color: isPanelVisible && isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.primary),
-              //const SizedBox(height: 4.0),
+              Icon(item.icon, size: 21, color: iconColor),
               Text(
                 item.label,
                 style: TextStyle(
                   fontSize: 10,
-                  color: isPanelVisible && isSelected ? Theme.of(context).colorScheme.onPrimary : Colors.grey,
+                  color: textColor,
                   fontWeight: FontWeight.normal,
                   decoration: TextDecoration.none,
                 ),

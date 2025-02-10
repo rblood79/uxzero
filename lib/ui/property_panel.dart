@@ -15,6 +15,13 @@ class _PropertyPanelState extends State<PropertyPanel> {
   late TextEditingController widthController;
   late TextEditingController heightController;
 
+  static const double containerWidth = 224.0;
+  static const double paddingValue = 16.0;
+  static const double gridViewWidth = 192.0;
+  static const double gridViewHeight = 96.0;
+  static const double alignmentGridViewSize = 144.0;
+  static const double textFieldSpacing = 16.0;
+
   @override
   void initState() {
     super.initState();
@@ -47,8 +54,8 @@ class _PropertyPanelState extends State<PropertyPanel> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 224,
-      padding: const EdgeInsets.all(16.0),
+      width: containerWidth,
+      padding: const EdgeInsets.all(paddingValue),
       decoration: BoxDecoration(
         color: Colors.white, // 배경색
         boxShadow: [
@@ -101,10 +108,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                 const SizedBox(height: 10),
 
                 // 라벨 수정
-                TextField(
-                  decoration: const InputDecoration(
-                      //labelText: 'Label',
-                      ),
+                _buildTextField(
                   controller: labelController,
                   onChanged: (value) {
                     if (value != selectedWidget.label) {
@@ -112,18 +116,15 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     }
                   },
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: textFieldSpacing),
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      child: TextField(
-                        decoration: const InputDecoration(
-                            //labelText: 'Width',
-                            ),
-                        keyboardType: TextInputType.number,
+                      child: _buildTextField(
                         controller: widthController,
+                        keyboardType: TextInputType.number,
                         onChanged: (value) {
                           final newWidth = double.tryParse(value) ?? selectedWidget.width;
                           if (newWidth != selectedWidget.width) {
@@ -132,14 +133,11 @@ class _PropertyPanelState extends State<PropertyPanel> {
                         },
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    const SizedBox(width: textFieldSpacing),
                     Expanded(
-                      child: TextField(
-                        decoration: const InputDecoration(
-                            //labelText: 'Height',
-                            ),
-                        keyboardType: TextInputType.number,
+                      child: _buildTextField(
                         controller: heightController,
+                        keyboardType: TextInputType.number,
                         onChanged: (value) {
                           final newHeight = double.tryParse(value) ?? selectedWidget.height;
                           if (newHeight != selectedWidget.height) {
@@ -150,32 +148,30 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: textFieldSpacing),
 
                 // 색상 선택 (Background Color)
                 const Text(
                   'Background Color',
                   style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
-                DropdownButton<Color>(
+                _buildColorDropdown(
                   value: _getValidColor(selectedWidget.decoration.color),
-                  items: _buildColorDropdownItems(),
                   onChanged: (Color? newColor) {
                     if (newColor != null) {
                       selectedWidgetModel.updateColor(newColor);
                     }
                   },
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: textFieldSpacing),
 
                 // 테두리 색상 선택 (Border Color)
                 const Text(
                   'Border Color',
                   style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
-                DropdownButton<Color>(
+                _buildColorDropdown(
                   value: _getValidColor(selectedWidget.decoration.border?.top.color),
-                  items: _buildColorDropdownItems(),
                   onChanged: (Color? newColor) {
                     if (newColor != null) {
                       selectedWidgetModel.updateBorder(
@@ -187,7 +183,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     }
                   },
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: textFieldSpacing),
 
                 // 레이아웃 타입 변경
                 const Text(
@@ -195,13 +191,9 @@ class _PropertyPanelState extends State<PropertyPanel> {
                   style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
                 Container(
-                  /*decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.16), width: 0.0),
-                  ),*/
                   padding: const EdgeInsets.all(0.0),
-                  width: 192, // GridView의 너비 설정
-                  height: 96, // GridView의 높이 설정
+                  width: gridViewWidth, // GridView의 너비 설정
+                  height: gridViewHeight, // GridView의 높이 설정
                   child: GridView.count(
                     crossAxisCount: 4, // 3개의 열로 설정
                     crossAxisSpacing: 0.0, // 열 간격
@@ -253,7 +245,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                   ),
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: textFieldSpacing),
 
                 // 텍스트 위젯인 경우만 표시
                 if (hasText) ...[
@@ -266,23 +258,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                       selectedWidgetModel.updateFontSize(value);
                     },
                   ),
-                  /*const SizedBox(height: 16),
-                  const Text('Text Align'),
-                  DropdownButton<TextAlign>(
-                    value: selectedWidget.textAlign ?? TextAlign.left,
-                    items: TextAlign.values.map((TextAlign align) {
-                      return DropdownMenuItem<TextAlign>(
-                        value: align,
-                        child: Text(align.toString().split('.').last),
-                      );
-                    }).toList(),
-                    onChanged: (TextAlign? newAlign) {
-                      if (newAlign != null) {
-                        selectedWidgetModel.updateTextAlign(newAlign);
-                      }
-                    },
-                  ),*/
-                  const SizedBox(height: 16),
+                  const SizedBox(height: textFieldSpacing),
                   const Text(
                     'Alignment',
                     style: TextStyle(fontSize: 12, color: Colors.grey),
@@ -293,8 +269,8 @@ class _PropertyPanelState extends State<PropertyPanel> {
                       border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.24), width: 0.5),
                     ),
                     padding: const EdgeInsets.all(8.0),
-                    width: 144, // GridView의 너비 설정
-                    height: 144, // GridView의 높이 설정
+                    width: alignmentGridViewSize, // GridView의 너비 설정
+                    height: alignmentGridViewSize, // GridView의 높이 설정
                     child: GridView.count(
                       crossAxisCount: 3, // 3x3 그리드 설정
                       crossAxisSpacing: 8.0, // 열 간격
@@ -366,7 +342,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: textFieldSpacing),
                 ],
 
                 // MainAxisAlignment 선택
@@ -375,13 +351,9 @@ class _PropertyPanelState extends State<PropertyPanel> {
                   style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
                 Container(
-                  /*decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Colors.black12, width: 0.5),
-                  ),*/
                   padding: const EdgeInsets.all(0.0),
-                  width: 192, // GridView의 너비 설정
-                  height: 96, // GridView의 높이 설정
+                  width: gridViewWidth, // GridView의 너비 설정
+                  height: gridViewHeight, // GridView의 높이 설정
                   child: GridView.count(
                     crossAxisCount: 4, // 3개의 열로 설정
                     crossAxisSpacing: 0.0, // 열 간격
@@ -433,7 +405,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                   ),
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: textFieldSpacing),
 
                 // CrossAxisAlignment 선택
                 const Text(
@@ -441,12 +413,8 @@ class _PropertyPanelState extends State<PropertyPanel> {
                   style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
                 Container(
-                  /*decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Colors.black12, width: 0.5),
-                  ),*/
                   padding: const EdgeInsets.all(0.0),
-                  width: 192, // GridView의 너비 설정
+                  width: gridViewWidth, // GridView의 너비 설정
                   height: 48, // GridView의 높이 설정
                   child: GridView.count(
                     crossAxisCount: 4, // 2개의 열로 설정
@@ -484,7 +452,7 @@ class _PropertyPanelState extends State<PropertyPanel> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: textFieldSpacing),
 
                 // Flex 속성 수정 (Slider 사용)
                 Text("Flex: ${selectedWidget.flex}", style: const TextStyle(fontSize: 12, color: Colors.grey)),
@@ -542,6 +510,34 @@ class _PropertyPanelState extends State<PropertyPanel> {
       return Colors.white;
     }
     return selectedColor;
+  }
+
+  // TextField 빌드 함수
+  Widget _buildTextField({
+    required TextEditingController controller,
+    TextInputType? keyboardType,
+    required Function(String) onChanged,
+  }) {
+    return TextField(
+      decoration: const InputDecoration(
+        //labelText: 'Label',
+      ),
+      controller: controller,
+      keyboardType: keyboardType,
+      onChanged: onChanged,
+    );
+  }
+
+  // ColorDropdown 빌드 함수
+  Widget _buildColorDropdown({
+    required Color value,
+    required Function(Color?) onChanged,
+  }) {
+    return DropdownButton<Color>(
+      value: value,
+      items: _buildColorDropdownItems(),
+      onChanged: onChanged,
+    );
   }
 }
 
